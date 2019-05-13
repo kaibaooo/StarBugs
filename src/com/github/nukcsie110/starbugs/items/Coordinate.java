@@ -35,13 +35,29 @@ public class Coordinate{
      * move the object
      * @param posX_ new coordinate X of object
      * @param posY_ new coordinate Y of object
+     * @return true move successed, move failed
      * @since             0.1
      */
-    public void moveTo(float posX_, float posY_){
+    public boolean moveTo(float posX_, float posY_){
         // TODO: 
         // Check the posX and posY if illegle with map and other object collision
         posX = posX_;
         posY = posY_;
+        return true;
+    }
+    /**
+     * check position illegle
+     * @param offsetX offset of X with current position X 
+     * @param offsetY offset of Y with current position Y
+     * @return true move successed, move failed
+     * @since             0.1
+     */
+    public boolean moveOffset(float offsetX, float offsetY){
+        // TODO: 
+        // Check the posX and posY if illegle with map and other object collision
+        posX += offsetX;
+        posY += offsetY;
+        return true;
     }
     /**
      * turn the object
@@ -50,5 +66,29 @@ public class Coordinate{
      */
     public void turnDir(float dir_){
         dir = dir_ % 360;
+    }
+    /**
+     * get the position X of object
+     * @return posX
+     * @since             0.1
+     */
+    public float getPosX(){
+        return posX;
+    }
+    /**
+     * get the position of object
+     * @return posY
+     * @since             0.1
+     */
+    public float getPosY(){
+        return posY;
+    }
+    /**
+     * get the direction of object
+     * @return dir
+     * @since             0.1
+     */
+    public float getDir(){
+        return dir;
     }
 }
