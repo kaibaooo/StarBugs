@@ -27,7 +27,7 @@ public class Item{
     }
     /**
      * get the item id in byte object
-     * @return byte itemID
+     * @return  byte itemID
      * @since             0.1
      */
     public byte getItemID(){
