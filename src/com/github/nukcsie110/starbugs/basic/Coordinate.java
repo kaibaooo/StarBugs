@@ -1,7 +1,7 @@
-package com.github.nukcsie110.starbugs.items;
+package com.github.nukcsie110.starbugs.basic;
 
 /**
- * @author     kaibao  <a1065514@mail.nuk.edu.tw>
+ * @author     kaibao  
  * @version    0.1
  * @since      0.1
  */
