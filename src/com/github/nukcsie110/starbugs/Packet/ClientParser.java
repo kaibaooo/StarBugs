@@ -61,8 +61,8 @@ public class ClientParser{
         byte[] id = new byte[2];
         //TODO:
         //I dont know if this correct
-        id[0] = data[1];
-        id[1] = data[2];
+        id[0] = data[2];
+        id[1] = data[1];
         result.put("state", state);
         result.put("userID", id);
         return result;
@@ -121,11 +121,24 @@ public class ClientParser{
         // TODO: implement it
         return result;
     }
+    /**
+     * Update game informations
+     * 0x06    |    Current Lives{BYTE}    |    saveZone{coordinate}    |    timeLeft{DWORD}
+     * - saveZone: Current save zone position. X,Y,dir(Radius)
+     * - timeLeft: Time left of next saveZone in seconds
+     * @since  0.1
+     */
     private static HashMap<String, Object> parseUpdateMap(){
         HashMap<String, Object> result = new HashMap<>();
         // TODO: implement it
         return result;
     }
+    /**
+     * Game over
+     * 0x10    |    rank{BYTE}
+     * - Liggle key code: WSADE1234, mouse click left, mouse move
+     * @since  0.1
+     */
     private static HashMap<String, Object> parseGameOver(){
         HashMap<String, Object> result = new HashMap<>();
         // TODO: implement it
