@@ -23,7 +23,7 @@ public class Coordinate{
      * Constructer of Coordinate
      * @param posX_ initial object X coordinate
      * @param posY_ initial object Y coordinate
-     * @param dir_ initial object face direction
+     * @param dir_ initial object face direction in degree
      * @since             0.1
      */
     public Coordinate(float posX_, float posY_, float dir_){
@@ -91,4 +91,27 @@ public class Coordinate{
     public float getDir(){
         return dir;
     }
+    /**
+     * set the position X of object
+     * @since             0.1
+     */
+    public void setPosX(float newX){
+        posX = newX;
+    }
+    /**
+     * set the position of object
+     * @since             0.1
+     */
+    public void setPosY(float newY){
+        posY = newY;
+    }
+    /**
+     * set the direction of object in degree
+     * @since             0.1
+     */
+    public void setDir(float newDir){
+        // I believe the newDir wont be greater than 2 PI
+        dir = newDir;
+    }
+
 }
