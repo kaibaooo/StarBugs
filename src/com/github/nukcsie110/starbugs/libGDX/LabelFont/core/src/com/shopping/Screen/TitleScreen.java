@@ -4,6 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -132,19 +134,23 @@ public class TitleScreen implements Screen {
 
     public void registerScreen(Skin Skin1,Skin Skin2){
 
-
-        final TextField textField = new TextField("user name",Skin1);
+        final TextField textField = new TextField("",Skin1);
         textField.setWidth(Gdx.graphics.getWidth()/3);
-        textField.setPosition(Gdx.graphics.getWidth()/3,Gdx.graphics.getHeight()/2);
+        textField.setPosition(Gdx.graphics.getWidth()/3+150,Gdx.graphics.getHeight()/2);
 
         Texture texture1 = new Texture(Gdx.files.absolute("assets/pic/joystick.png"));
         Image icon = new Image(texture1);
         icon.setSize(100,100);
-        icon.setPosition(Gdx.graphics.getWidth()/3-80,Gdx.graphics.getHeight()/2+100);
+        icon.setPosition(Gdx.graphics.getWidth()/3-150,Gdx.graphics.getHeight()/2+130);
+
+        Texture texture2 = new Texture(Gdx.files.absolute("assets/pic/Symbol 2 – 1.png"));
+        Image str = new Image(texture2);
+        str.setSize(250,28);
+        str.setPosition(Gdx.graphics.getWidth()/3-120,Gdx.graphics.getHeight()/2+12);
 
         final Button queue = new TextButton("Ready!",Skin2,"oval2");
         queue.setSize(200,50);
-        queue.setPosition(Gdx.graphics.getWidth()/3+500,Gdx.graphics.getHeight()/2-200);
+        queue.setPosition(Gdx.graphics.getWidth()/3+500,Gdx.graphics.getHeight()/2-150);
 
         queue.addListener(new InputListener(){
             @Override
@@ -163,6 +169,7 @@ public class TitleScreen implements Screen {
         stage.addActor(icon);
         stage.addActor(textField);
         stage.addActor(queue);
+        stage.addActor(str);
     }
 
     public void scoreBoard(){
