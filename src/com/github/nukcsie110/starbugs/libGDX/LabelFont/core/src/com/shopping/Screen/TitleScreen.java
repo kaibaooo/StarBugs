@@ -3,6 +3,7 @@ package com.shopping.Screen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,13 +18,15 @@ import com.shopping.Screen.GameScreen;
 import com.shopping.Screen.LoadToGameScreen;
 
 public class TitleScreen implements Screen {
-
+    Music music = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/PUBG.mp3"));
     private Stage stage;
     private Game game;
     private OrthographicCamera camera;
 
 
     public TitleScreen(Game aGame) {
+        music.setLooping(true);
+        music.play();
         game = aGame;
         stage = new Stage(new ScreenViewport());
         camera = (OrthographicCamera) stage.getViewport().getCamera();
