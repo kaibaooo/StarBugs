@@ -1,6 +1,9 @@
 package com.shopping.Screen;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Random;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -24,6 +27,10 @@ public class GameScreen implements Screen {
     private Sprite sprite;
     private SpriteBatch batch;
 
+
+    private final int userSpeedX = 15;
+    private final int userSpeedY = 15;
+
     private final int startX = Gdx.graphics.getWidth()/2;// -Gdx.graphics.getWidth()/2;
     private final int startY = Gdx.graphics.getHeight()/2;
 
@@ -42,11 +49,20 @@ public class GameScreen implements Screen {
     private float currentY = startY;
     private float percentZ = Math.abs(percent - 0.5f)*2;
     private float currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ  ;
-    public GameScreen(Game aGame,String Player, AssetManager manager) {
+    Sprite itemSprite;
+
+    private float halfWindowWidth = Gdx.graphics.getWidth()/2;
+    private float halfWindowHeight = Gdx.graphics.getHeight()/2;
+    private ArrayList<Item> lst = new ArrayList<Item>();
+    private AssetManager manager = new AssetManager();
+
+    public GameScreen(Game aGame,String Player, AssetManager mng) {
         game = aGame;
         stage = new Stage(new ScreenViewport());
         player = Player;
-        map = new Image(new Texture("assets/map/map.png"));
+        batch = new SpriteBatch();
+        manager = mng;
+        map = new Image(manager.get("assets/map/map.png", Texture.class));
         System.out.println(map.getX()+" "+map.getY());
         stage.addActor(map);
         camera = (OrthographicCamera) stage.getViewport().getCamera();
@@ -54,7 +70,8 @@ public class GameScreen implements Screen {
         counter = 0;
         startTime = Instant.now().toEpochMilli();
 
-        Pixmap pixmap = new Pixmap(Gdx.files.internal("assets/pic/icons8-center-of-gravity-64.png"));
+        itemSprite = new Sprite(manager.get("assets/pic/iron_chestplate.png", Texture.class));
+        Pixmap pixmap = manager.get("assets/pic/icons8-center-of-gravity-64.png", Pixmap.class);
         int xHotspot = pixmap.getWidth() / 2;
         int yHotspot = pixmap.getHeight() / 2;
         Cursor cursor = Gdx.graphics.newCursor(pixmap, xHotspot, yHotspot);
@@ -71,69 +88,16 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        float width=Gdx.graphics.getWidth()/2;
-        float height=Gdx.graphics.getHeight()/2;
-        double deltaX = Gdx.input.getX()-width;
-        double deltaY = height - Gdx.input.getY();
-        // dot with (1,0)
-        double dot = deltaX;
-        double normalize = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-        double ang = Math.acos(dot/normalize);
-        double deg = 0;
-        //Gdx.app.log("mousePos", String.valueOf(deltaX) + " " + String.valueOf(deltaY));
-        if(deltaY<0){
-            deg = 360 - Math.toDegrees(ang);
-            Gdx.app.log("angle between mouse", String.valueOf(360 - Math.toDegrees(ang)));
-        }
-        else{
-            deg = Math.toDegrees(ang);
-            Gdx.app.log("angle between mouse", String.valueOf(Math.toDegrees(ang)));
-        }
-
-
-        // FPS
-        Gdx.app.log("render FPS",String.valueOf(Gdx.graphics.getFramesPerSecond()));
-
-        if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT))
-                currentX-=20;
-            else
-                currentX-=20;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT))
-                currentX+=20;
-            else
-                currentX+=20;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.S)){
-            if(Gdx.input.isKeyPressed(Input.Keys.DOWN))
-                currentY-=20;
-            else
-                currentY-=20;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.W)){
-            if(Gdx.input.isKeyPressed(Input.Keys.UP))
-                currentY+=20;
-            else
-                currentY+=20;
-        }
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        keyInProcess();
         moveCamera();
         stage.act();
         stage.draw();
 
-        BitmapFont font = new BitmapFont(Gdx.files.internal("assets/skin/craftacular/font-export.fnt"),Gdx.files.internal("assets/skin/craftacular/font-export.png"),false);
-        sprite = new Sprite(new Texture(Gdx.files.internal("assets/map/navigation.png")));
-        batch = new SpriteBatch();
-        batch.begin();
-        font.draw(batch,player,width,height+100);
-        sprite.setPosition(width, height);
-        //float deltaAngle = Gdx.input.getX();
-        sprite.rotate((float)deg);
-        sprite.draw(batch);
-        batch.end();
+
+        drawItems();
+        drawMainPlayer();
     }
 
     private void moveCamera(){
@@ -141,7 +105,7 @@ public class GameScreen implements Screen {
         camera.position.y = currentY;
         camera.zoom = currentZ;
         camera.update();
-}
+    }
 
 
     @Override
@@ -169,5 +133,79 @@ public class GameScreen implements Screen {
         stage.dispose();
     }
 
+    private void keyInProcess(){
+        if(Gdx.input.isKeyPressed(Input.Keys.A)){
+            currentX-=userSpeedX;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.D)){
+            currentX+=userSpeedX;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.S)){
+            currentY-=userSpeedY;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.W)){
+            currentY+=userSpeedY;
+        }
+        // 切換高倍鏡
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+            if(minAltitude==1.7f)
+                minAltitude = 2.5f;
+            else
+                minAltitude = 1.7f;
+        }
+    }
+    private void drawItems(){
+        batch.begin();
+        //旋轉要除以縮放比例
+        // 物品放置
+        for(Item ele : lst) {
+            float deltaItemX = (ele.posX - currentX) / minAltitude;
+            float deltaItemY = (ele.posY - currentY) / minAltitude;
+            if (ele.posX < currentX + halfWindowWidth * minAltitude && ele.posX > currentX - halfWindowWidth * minAltitude) {
+                if (ele.posY < currentY + halfWindowHeight * minAltitude && ele.posY > currentY - halfWindowHeight * minAltitude) {
+                    batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude, itemSprite.getOriginY() / minAltitude, itemSprite.getHeight() / minAltitude, itemSprite.getWidth() / minAltitude, 1, 1, 0);
+                }
+            }
+        }
+        batch.end();
+    }
+    private void drawMainPlayer(){
+        double deltaX = Gdx.input.getX()-800;
+        double deltaY = 450 - Gdx.input.getY();
+        float percentZ = Math.abs(percent - 0.5f)*2;
+        currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ  ;
+        // vector dot with (1,0)
+        double dot = deltaX;
+        double normalize = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+        double ang = Math.acos(dot/normalize);
+        double deg = 0;
+        if(deltaY<0){
+            deg = 360 - Math.toDegrees(ang);
+        }
+        else{
+            deg = Math.toDegrees(ang);
+        }
 
+        sprite = new Sprite(manager.get("assets/map/navigation.png", Texture.class));
+        //sprite.setPosition(-10,100);
+        sprite.rotate((float)deg);
+        batch.begin();
+        BitmapFont font = new BitmapFont(Gdx.files.internal("assets/skin/craftacular/font-export.fnt"),Gdx.files.internal("assets/skin/craftacular/font-export.png"),false);
+        font.draw(batch,player,halfWindowWidth,halfWindowHeight+100);
+        //旋轉要除以縮放比例
+        batch.draw(sprite,halfWindowWidth, halfWindowHeight,sprite.getOriginX()/minAltitude, sprite.getOriginY()/minAltitude, sprite.getHeight()/minAltitude, sprite.getWidth()/minAltitude,1,1,(float)deg);
+        //Gdx.app.log("pos", String.valueOf(sprite.getWidth()/minAltitude) + " " + String.valueOf(sprite.getHeight()));
+        sprite.draw(batch);
+        batch.end();
+    }
+
+    class Item{
+        public float posX;
+        public float posY;
+        Random rnd = new Random();
+        public Item(){
+            posX = rnd.nextInt(10000)+500;
+            posY = rnd.nextInt(10000)+500;
+        }
+    }
 }

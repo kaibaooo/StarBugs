@@ -5,7 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -20,7 +22,10 @@ public class LoadToGameScreen implements Screen {
     public LoadToGameScreen(Game aGame, String name){
         game = aGame;
         stage = new Stage(new ScreenViewport());
+        manager.load("assets/pic/iron_chestplate.png", Texture.class);
         manager.load("assets/map/map.png", Texture.class);
+        manager.load("assets/pic/icons8-center-of-gravity-64.png", Pixmap.class);
+        manager.load("assets/map/navigation.png", Texture.class);
         user_name = name;
     }
     @Override
