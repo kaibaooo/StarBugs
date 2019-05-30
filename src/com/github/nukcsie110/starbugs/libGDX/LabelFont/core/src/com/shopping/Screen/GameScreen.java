@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.assets.AssetManager;
 
 public class GameScreen implements Screen {
 
@@ -41,7 +42,7 @@ public class GameScreen implements Screen {
     private float currentY = startY;
     private float percentZ = Math.abs(percent - 0.5f)*2;
     private float currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ  ;
-    public GameScreen(Game aGame,String Player) {
+    public GameScreen(Game aGame,String Player, AssetManager manager) {
         game = aGame;
         stage = new Stage(new ScreenViewport());
         player = Player;

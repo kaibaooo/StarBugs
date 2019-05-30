@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.shopping.Actors.Background;
 import com.shopping.Screen.GameScreen;
+import com.shopping.Screen.LoadToGameScreen;
 
 public class TitleScreen implements Screen {
 
@@ -158,7 +159,7 @@ public class TitleScreen implements Screen {
                 //catch user name
                 String user_name = textField.getText();
                 System.out.println(user_name);
-                game.setScreen(new GameScreen(game,user_name));
+                game.setScreen(new LoadToGameScreen(game, user_name));
             }
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
