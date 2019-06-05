@@ -8,7 +8,7 @@ import com.github.nukcsie110.starbugs.basic.Coordinate;
 /**
  * @version 0.1
  * @since 0.1
- * Union data type of all possiblly field
+ * Union data type of all possible field
  * Every data member is public
  * Bacause the instance of this class should be use only one time
  */
@@ -19,6 +19,7 @@ public final class Union{
     public byte cnt;
     public ArrayList<User> nameTable;
     public String name;
+    public ArrayList<Item> items;
     public byte weaponType;
     public byte shortWeaponType;
     public byte longWeaponType;
