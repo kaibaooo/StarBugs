@@ -1,4 +1,4 @@
-package com.github.nukcsie110.starbugs.Packet;
+package com.github.nukcsie110.starbugs.packet;
 import com.github.nukcsie110.starbugs.basic.Item;
 import java.util.Arrays;
 import java.util.HashMap;

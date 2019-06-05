@@ -1,4 +1,4 @@
-package com.github.nukcsie110.starbugs.Packet;
+package com.github.nukcsie110.starbugs.packet;
 
 /**
  * @version    0.1
