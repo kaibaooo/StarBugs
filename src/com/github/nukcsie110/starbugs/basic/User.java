@@ -14,7 +14,7 @@ public class User{
      * Default constructor
      */
     public User(){
-        this(0, "");
+        this(0, "bug");
     }
 
     /**
@@ -45,6 +45,13 @@ public class User{
      */
     public String getIDString(){
         return String.format("0x%04X", this.id);
+    }
+
+    /**
+     * Tool for standard formatted user id
+     */
+    public static String getIDString(int x){
+        return String.format("0x%04X", x);
     }
 
     /**

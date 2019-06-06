@@ -15,7 +15,7 @@ import com.github.nukcsie110.starbugs.basic.Coordinate;
 public final class Union{
     public byte pkID;
     public byte state;
-    public short playerID;
+    public int playerID;
     public byte cnt;
     public ArrayList<User> nameTable;
     public String name;
