@@ -15,7 +15,7 @@ import com.github.nukcsie110.starbugs.basic.Coordinate;
 public final class Union{
     public byte pkID;
     public byte state;
-    public int playerID;
+    public short playerID;
     public byte cnt;
     public ArrayList<User> nameTable;
     public String name;
@@ -26,10 +26,10 @@ public final class Union{
     public byte ArmorType;
     public byte posionCnt;
     public Coordinate coordinate;
-    public int blood;
-    public int currentLives;
+    public short blood;
+    public byte currentLives;
     public Coordinate saveZone;
-    public int timeLeft;
+    public short timeLeft;
     public byte rank;
     public byte keyCode;
     public float newDirection;

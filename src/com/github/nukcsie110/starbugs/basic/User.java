@@ -7,20 +7,20 @@ package com.github.nukcsie110.starbugs.basic;
  */
 
 public class User{
-    protected int id; //Unsigned short actually(16-bits long)
+    protected short id; //Unsigned short actually(16-bits long)
     protected String name;
 
     /**
      * Default constructor
      */
     public User(){
-        this(0, "bug");
+        this((short)0, "bug");
     }
 
     /**
      * Fully functional constructor
      */
-    public User(int _id, String _name){
+    public User(short _id, String _name){
         setID(_id);
         setName(_name);
     }
@@ -28,7 +28,7 @@ public class User{
     /**
      * Check id which is going to set and set it
      */
-    public void setID(int x){
+    public void setID(short x){
         assert x>=0 && x<=0xffff;
         this.id = x;
     }
@@ -36,7 +36,7 @@ public class User{
     /**
      * Get raw user id
      */
-    public int getID(){
+    public short getID(){
         return this.id;
     }
 
@@ -50,7 +50,7 @@ public class User{
     /**
      * Tool for standard formatted user id
      */
-    public static String getIDString(int x){
+    public static String getIDString(short x){
         return String.format("0x%04X", x);
     }
 
