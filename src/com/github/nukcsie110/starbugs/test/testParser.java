@@ -3,6 +3,7 @@ package com.github.nukcsie110.starbugs.test;
 import com.github.nukcsie110.starbugs.packet.Parser;
 import com.github.nukcsie110.starbugs.packet.Union;
 import com.github.nukcsie110.starbugs.basic.User;
+import com.github.nukcsie110.starbugs.basic.Coordinate;
 import java.util.ArrayList;
 
 public class testParser{
@@ -27,8 +28,8 @@ public class testParser{
 
         println("---Testing updateNameTable parser---");
         ArrayList<User> userTable = new ArrayList<>();
-        userTable.add(new User((short)0xDEAD, "ABC"));
-        userTable.add(new User((short)0xBEEF, "123456"));
+        userTable.add(new User((short)0xDEAD, "ABC", new Coordinate(0,0,0)));
+        userTable.add(new User((short)0xBEEF, "123456", new Coordinate(0,0,0)));
         byte[] updateNameTablePacket = Parser.updateNameTable(userTable);
         printBytes(updateNameTablePacket);
         Union parsedUpdateNameTable = Parser.toUnion(updateNameTablePacket);

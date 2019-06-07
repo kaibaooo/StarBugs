@@ -15,12 +15,13 @@ public class Parser{
 
     public static Union toUnion(byte[] x){
         Union rtVal = new Union();
-        if(x.length == 0){
+        if(x.length < 5){
             rtVal.pkID = -1;
             log("Invaild packet length");
         }
         rtVal.pkID = x[0];
-        switch(x[0]){
+        x = Arrays.copyOfRange(x, 5, x.length);
+        switch(rtVal.pkID){
             case 0x00: _join(x, rtVal); break;
             case 0x01: _joinReply(x, rtVal); break;
             case 0x02: _updateNameTable(x, rtVal); break;
@@ -41,29 +42,25 @@ public class Parser{
     }
 
     private static void _join(byte[] x, Union y){
-        int len = Math.min(x.length-1, 32);
+        int len = Math.min(x.length, 32);
         try{
-            y.name = new String(Arrays.copyOfRange(x, 1, len), "US-ASCII");
+            y.name = new String(x, "US-ASCII");
         }catch(UnsupportedEncodingException e){
             log("Error: UnsupportedEncodingException");
         }
     }
     public static byte[] join(String name){
         name = trimAndPadName(name);
-
-        ByteBuffer buf = ByteBuffer.allocate(33);
-        buf.put((byte)0x00);
-        buf.put(name.getBytes());
-        return byteBuffer2byte(buf);
+        return makePacket((byte)0x00, name.getBytes());
     }
 
     private static void _joinReply(byte[] x, Union y){
-        if(x.length != 4){
+        if(x.length != 3){
             log("Illigle joinReply packet size");
             y.pkID = -1;
             return;
         }
-        ByteBuffer buf = ByteBuffer.wrap(x, 1, 3);
+        ByteBuffer buf = ByteBuffer.wrap(x);
         y.state = buf.get();
 
         //Big-endian player id
@@ -71,23 +68,23 @@ public class Parser{
     }
 
     public static byte[] joinReply(byte state, short playerID){
-        ByteBuffer buf = ByteBuffer.allocate(4);
-        buf.put((byte)0x01);
-        buf.put(state);
+        byte[] buf = new byte[3];
+        buf[0] = state;
         //Big-endian player id
-        buf.putShort(playerID);
+        buf[1] = (byte)((playerID>>8)&0xFF);
+        buf[2] = (byte)(playerID&0xFF);
 
-        return byteBuffer2byte(buf);
+        return makePacket((byte)0x01, buf);
     }
 
     private static void _updateNameTable(byte[] x, Union y){
-        byte cnt = x[1];
-        if(x.length != cnt*34+2){
+        byte cnt = x[0];
+        if(x.length != 1+cnt*34){
             log("Illigle updateNameTable packet length");
             y.pkID = -1;
             return;
         }
-        ByteBuffer buf = ByteBuffer.wrap(x, 2, x.length-2);
+        ByteBuffer buf = ByteBuffer.wrap(x, 1, x.length-1);
         y.nameTable = new ArrayList<User>();
         while(cnt-- != 0){
             User tmpUser = new User();
@@ -106,8 +103,7 @@ public class Parser{
     }
 
     public static byte[] updateNameTable(ArrayList<User> table){
-        ByteBuffer buf = ByteBuffer.allocate(2+table.size()*34);
-        buf.put((byte)0x02);
+        ByteBuffer buf = ByteBuffer.allocate(1+table.size()*34);
         buf.put((byte)table.size());
         for(User i:table){
             buf.putShort(i.getID());
@@ -115,7 +111,7 @@ public class Parser{
                 trimAndPadName(i.getName()).getBytes()
                 );
         }
-        return byteBuffer2byte(buf);
+        return makePacket((byte)0x02, buf);
     }
 
     private static String trimAndPadName(String name){
@@ -130,6 +126,21 @@ public class Parser{
         }
         return name;
     }
+    private static byte[] makePacket(byte pkID, ByteBuffer _data){
+        byte[] data = byteBuffer2byte(_data);
+        return makePacket(pkID, data);
+    }
+
+    //Encapsulate data segment with pkID and len
+    private static byte[] makePacket(byte pkID, byte[] data){
+        log("Length of data:"+data.length);
+        ByteBuffer packetFactory = ByteBuffer.allocate(5+data.length);
+        packetFactory.put(pkID);
+        packetFactory.putInt((int)(data.length));
+        packetFactory.put(data);
+        return byteBuffer2byte(packetFactory);
+    }
+    
     private static byte[] byteBuffer2byte(ByteBuffer x){
         x.rewind();
         byte[] rtVal = new byte[x.remaining()];
