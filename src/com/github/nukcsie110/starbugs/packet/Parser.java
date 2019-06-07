@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
+import com.github.nukcsie110.starbugs.basic.Equipment;
 import java.io.UnsupportedEncodingException;
 
 public class Parser{
@@ -34,8 +35,8 @@ public class Parser{
             case 0x01: _joinReply(x, rtVal); break;
             case 0x02: _updateNameTable(x, rtVal); break;
             case 0x03: _updateGlobalItem(x, rtVal); break;
-            /*case 0x04: _updateSinglePlayer(x, rtVal); break;
-            case 0x05: _updateYou(x, rtVal); break;
+            case 0x04: _updateSinglePlayer(x, rtVal); break;
+            /*case 0x05: _updateYou(x, rtVal); break;
             case 0x06: _updateMap(x, rtVal); break;
             case 0x07: _keyDown(x, rtVal); break;
             case 0x08: _keyUp(x, rtVal); break;
@@ -52,7 +53,8 @@ public class Parser{
     private static void _join(byte[] x, Union y){
         int len = Math.min(x.length, 32);
         try{
-            y.name = new String(x, "US-ASCII");
+            y.player = new User();
+            y.player.setName(new String(x, "US-ASCII"));
         }catch(UnsupportedEncodingException e){
             log("Error: UnsupportedEncodingException");
         }
@@ -71,8 +73,9 @@ public class Parser{
         ByteBuffer buf = ByteBuffer.wrap(x);
         y.state = buf.get();
 
+        y.player = new User();
         //Big-endian player id
-        y.playerID = buf.getShort();
+        y.player.setID(buf.getShort());
     }
 
     public static byte[] joinReply(byte state, short playerID){
@@ -87,7 +90,8 @@ public class Parser{
 
     private static void _updateNameTable(byte[] x, Union y){
         byte cnt = x[0];
-        if(x.length != 1+cnt*34){
+        int elementSize = 34;
+        if(x.length != 1+cnt*elementSize){
             log("Illigle updateNameTable packet length");
             y.pkID = -1;
             return;
@@ -124,7 +128,8 @@ public class Parser{
     
     private static void _updateGlobalItem(byte[] x, Union y){
         byte cnt = x[0];
-        if(x.length != 1+cnt*13){
+        int elementSize = 13;
+        if(x.length != 1+cnt*elementSize){
             log("Illigle updateGlobalItem packet length");
             y.pkID = -1;
             return;
@@ -152,6 +157,37 @@ public class Parser{
             buf.putFloat(i.getCoordinate().getDir());
         }
         return makePacket((byte)0x03, buf);
+    }
+
+    private static void _updateSinglePlayer(byte[] x, Union y){
+        ByteBuffer buf = ByteBuffer.wrap(x);
+        int playerID = (int)buf.getShort();
+        float posX = buf.getFloat();
+        float posY = buf.getFloat();
+        float dir = buf.getFloat();
+        Coordinate pos = new Coordinate(posX, posY, dir);
+        y.player = new User(playerID, "", pos);
+        byte equipment = buf.get();
+        Equipment weaponInHand = Equipment.getName((equipment>>4)&0xF);
+        Equipment armor = Equipment.getName((equipment)&0xF);
+        y.player.addEquip(weaponInHand);
+        y.player.addEquip(armor);
+        y.player.setWeaponInHand(weaponInHand);
+    }
+
+    public static byte[] updateSinglePlayer(User target){
+        ByteBuffer buf = ByteBuffer.allocate(15);
+        buf.putShort(target.getID());
+        buf.putFloat(target.getPos().getPosX());
+        buf.putFloat(target.getPos().getPosY());
+        buf.putFloat(target.getPos().getDir());
+
+        byte equipment = 0;
+        equipment |= (((target.getWeaponInHand().getID())&0xF)<<4);
+        equipment |= ((target.getArmor().getID())&0xF);
+        buf.put(equipment);
+
+        return makePacket((byte)0x04, buf);
     }
 
     private static String trimAndPadName(String name){

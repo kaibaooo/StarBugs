@@ -5,6 +5,7 @@ import com.github.nukcsie110.starbugs.packet.Union;
 import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
+import com.github.nukcsie110.starbugs.basic.Equipment;
 import java.util.ArrayList;
 
 public class testParser{
@@ -13,19 +14,19 @@ public class testParser{
         byte[] joinPacket = Parser.join("test123");
         printBytes(joinPacket);
         Union parsedJoin = Parser.toUnion(joinPacket);
-        println(parsedJoin.name);
+        println(parsedJoin.player.getName());
         
         joinPacket = Parser.join("0123456789012345678901234567890123456789");
         printBytes(joinPacket);
         parsedJoin = Parser.toUnion(joinPacket);
-        println(parsedJoin.name);
+        println(parsedJoin.player.getName());
 
         println("---Testing joinReply parser---");
         byte[] joinReplyPacket = Parser.joinReply((byte)0, (short)0xbeef);
         printBytes(joinReplyPacket);
         Union parsedJoinReply = Parser.toUnion(joinReplyPacket);
         println(parsedJoinReply.state);
-        println(User.getIDString(parsedJoinReply.playerID));
+        println(User.getIDString(parsedJoinReply.player.getID()));
 
         println("---Testing updateNameTable parser---");
         ArrayList<User> userTable = new ArrayList<>();
@@ -48,6 +49,19 @@ public class testParser{
         for(Item i: parsedUpdateGlobalItem.items){
             println(i.getItemID()+" "+i.getCoordinate());
         }
+
+        println("---Testing updateSinglePlayer parser---");
+        User a = new User();
+        a.setID(0x8787);
+        a.getPos().moveTo(3.5f, 100.0001f);
+        a.getPos().turnDir(87.45f);
+        a.addEquip(Equipment.LONG_BOW);
+        a.addEquip(Equipment.ARMOR_LV1);
+        a.setWeaponInHand(Equipment.LONG_BOW);
+        byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(a);
+        printBytes(updateSinglePlayerPacket);
+        Union parsedUpdateSinglePlayer = Parser.toUnion(updateSinglePlayerPacket);
+        println(parsedUpdateSinglePlayer.player);
     }
     private static void println(Object x){
         System.out.println(x);

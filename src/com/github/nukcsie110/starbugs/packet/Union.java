@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
+import com.github.nukcsie110.starbugs.basic.Equipment;
 
 /**
  * @version 0.1
@@ -15,18 +16,19 @@ import com.github.nukcsie110.starbugs.basic.Coordinate;
 public final class Union{
     public byte pkID;
     public byte state;
-    public short playerID;
+    public User player;
+    //public short playerID;
     public byte cnt;
     public ArrayList<User> nameTable;
-    public String name;
+    //public String name;
     public ArrayList<Item> items;
-    public byte weaponType;
-    public byte shortWeaponType;
-    public byte longWeaponType;
-    public byte ArmorType;
-    public byte posionCnt;
-    public Coordinate coordinate;
-    public short blood;
+    //public Equipment weaponInHand;
+    //public Equipment shortWeapon;
+    //public Equipment longWeapon;
+    //public Equipment ArmorType;
+    //public int posionCnt;
+    //public Coordinate coordinate;
+    //public int blood;
     public byte currentLives;
     public Coordinate saveZone;
     public short timeLeft;

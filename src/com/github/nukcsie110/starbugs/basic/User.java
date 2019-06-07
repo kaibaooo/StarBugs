@@ -52,7 +52,7 @@ public class User{
      */
     public void setID(int x){
         assert x>=0 && x<=0xffff;
-        this.id = x;
+        this.id = x&0xffff;
     }
 
     /**
@@ -104,7 +104,7 @@ public class User{
      * @param newEquip the equipment you want to add(Either short, long or armor)
      * @return Old equipment in that slot
      */
-    public Equipment addWeapon(Equipment newEquip){
+    public Equipment addEquip(Equipment newEquip){
         Equipment rtVal = Equipment.NONE;
         switch(newEquip){
             case LONG_GUN:

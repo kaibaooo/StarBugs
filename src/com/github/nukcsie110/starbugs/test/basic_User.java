@@ -18,27 +18,27 @@ public class basic_User{
         a = new User();
         println(a);
 
-        Equipment rt = a.addWeapon(Equipment.LONG_GUN);
+        Equipment rt = a.assEquip(Equipment.LONG_GUN);
         println(a);
         println("\tReturn value: "+rt);
         
-        rt = a.addWeapon(Equipment.LONG_BOW);
+        rt = a.assEquip(Equipment.LONG_BOW);
         println(a);
         println("\tReturn value: "+rt);
         
-        rt = a.addWeapon(Equipment.SHORT_SWORD);
+        rt = a.assEquip(Equipment.SHORT_SWORD);
         println(a);
         println("\tReturn value: "+rt);
         
-        rt = a.addWeapon(Equipment.ARMOR_LV1);
+        rt = a.assEquip(Equipment.ARMOR_LV1);
         println(a);
         println("\tReturn value: "+rt);
         
-        rt = a.addWeapon(Equipment.LONG_GUN);
+        rt = a.assEquip(Equipment.LONG_GUN);
         println(a);
         println("\tReturn value: "+rt);
         
-        rt = a.addWeapon(Equipment.NONE);
+        rt = a.assEquip(Equipment.NONE);
         println(a);
         println("\tReturn value: "+rt);
 
