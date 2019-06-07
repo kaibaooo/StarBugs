@@ -8,6 +8,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -31,6 +32,8 @@ public class GameScreen implements Screen {
     private Texture texture;
     private TextureRegion region;
     private Pixmap pixmap;
+    private Music click;
+
     // Player settings
     private final int userSpeedX = 15;
     private final int userSpeedY = 15;
@@ -78,6 +81,7 @@ public class GameScreen implements Screen {
         camera.translate(startX,startY);
         counter = 0;
         //startTime = Instant.now().toEpochMilli();
+        click = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/ButtonSoundEffects.mp3"));
 
         itemSprite = new Sprite(manager.get("assets/pic/iron_chestplate.png", Texture.class));
         Pixmap pixmap = manager.get("assets/pic/icons8-center-of-gravity-64.png", Pixmap.class);
@@ -179,14 +183,18 @@ public class GameScreen implements Screen {
         //Inventory
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)){
             inventoryChoose = 0;
+            click.play();
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2) && inventory[1] > 0){
             inventoryChoose = 1;
+            click.play();
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_3) && inventory[2] > 0){
             inventoryChoose = 2;
+            click.play();
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_4) && inventory[3] > 0){
+            click.play();
             inventory[3]--;
             blood = (100-blood)/2+blood;
         }
@@ -237,6 +245,7 @@ public class GameScreen implements Screen {
         batch.end();
     }
     private void inventory(){
+
         inventory65.setSize(88, 260);
         batch.begin();
         inventory65.setPosition(Gdx.graphics.getWidth()-120, Gdx.graphics.getHeight()/3);
