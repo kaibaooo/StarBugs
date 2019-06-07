@@ -7,96 +7,57 @@ public class basic_User{
     public static void main(String[] argv){
         User a = new User();
         println("===============Testing name and id===================");
-        println(a.getID());
-        println(a.getIDString());
-        println(a.getName());
-        println(a.getDisplayName());
+        println(a);
         a.setID(0xbeef);
         a.setName("test");
-        println(a.getID());
-        println(a.getIDString());
-        println(a.getName());
-        println(a.getDisplayName());
+        println(a);
         a.setID(0x100000);
         a.setName("dadasdasddasdasdsadsadsadasdsadsadasdasddsadasdsadasdasdsadsadsadsadasd");
-        println(a.getID());
-        println(a.getIDString());
-        println(a.getName());
-        println(a.getDisplayName());
+        println(a);
         println("=============Testing weapon and armor=================");
         a = new User();
-        println("Long: " + a.getLongWeapon());
-        println("Short: " + a.getShortWeapon());
-        println("Armor: " + a.getArmor());
-        println("");
+        println(a);
 
         Equipment rt = a.addWeapon(Equipment.LONG_GUN);
-        println("rt: " + rt);
-        println("Long: " + a.getLongWeapon());
-        println("Short: " + a.getShortWeapon());
-        println("Armor: " + a.getArmor());
-        println("");
+        println(a);
+        println("\tReturn value: "+rt);
         
         rt = a.addWeapon(Equipment.LONG_BOW);
-        println("rt: " + rt);
-        println("Long: " + a.getLongWeapon());
-        println("Short: " + a.getShortWeapon());
-        println("Armor: " + a.getArmor());
-        println("");
+        println(a);
+        println("\tReturn value: "+rt);
         
         rt = a.addWeapon(Equipment.SHORT_SWORD);
-        println("rt: " + rt);
-        println("Long: " + a.getLongWeapon());
-        println("Short: " + a.getShortWeapon());
-        println("Armor: " + a.getArmor());
-        println("");
+        println(a);
+        println("\tReturn value: "+rt);
         
         rt = a.addWeapon(Equipment.ARMOR_LV1);
-        println("rt: " + rt);
-        println("Long: " + a.getLongWeapon());
-        println("Short: " + a.getShortWeapon());
-        println("Armor: " + a.getArmor());
-        println("");
+        println(a);
+        println("\tReturn value: "+rt);
         
         rt = a.addWeapon(Equipment.LONG_GUN);
-        println("rt: " + rt);
-        println("Long: " + a.getLongWeapon());
-        println("Short: " + a.getShortWeapon());
-        println("Armor: " + a.getArmor());
-        println("");
+        println(a);
+        println("\tReturn value: "+rt);
         
         rt = a.addWeapon(Equipment.NONE);
-        println("rt: " + rt);
-        println("Long: " + a.getLongWeapon());
-        println("Short: " + a.getShortWeapon());
-        println("Armor: " + a.getArmor());
-        println("");
+        println(a);
+        println("\tReturn value: "+rt);
 
         rt = a.clearSlot(EquipmentSlot.LONG);
-        println("rt: " + rt);
-        println("Long: " + a.getLongWeapon());
-        println("Short: " + a.getShortWeapon());
-        println("Armor: " + a.getArmor());
-        println("");
+        println(a);
+        println("\tReturn value: "+rt);
 
         rt = a.clearSlot(EquipmentSlot.SHORT);
-        println("rt: " + rt);
-        println("Long: " + a.getLongWeapon());
-        println("Short: " + a.getShortWeapon());
-        println("Armor: " + a.getArmor());
-        println("");
+        println(a);
+        println("\tReturn value: "+rt);
 
         rt = a.clearSlot(EquipmentSlot.ARMOR);
-        println("rt: " + rt);
-        println("Long: " + a.getLongWeapon());
-        println("Short: " + a.getShortWeapon());
-        println("Armor: " + a.getArmor());
-        println("");
+        println(a);
+        println("\tReturn value: "+rt);
 
         println("=============Testing pos=================");
-        println("X: "+a.getPos().getPosX()+",Y: "+a.getPos().getPosY());
+        println(a);
         a.getPos().moveTo(100, 100);
-        println("X: "+a.getPos().getPosX()+",Y: "+a.getPos().getPosY());
+        println(a);
 
     }
     private static void println(Object x){

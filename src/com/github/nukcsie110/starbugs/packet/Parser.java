@@ -4,6 +4,8 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.ArrayList;
 import com.github.nukcsie110.starbugs.basic.User;
+import com.github.nukcsie110.starbugs.basic.Item;
+import com.github.nukcsie110.starbugs.basic.Coordinate;
 import java.io.UnsupportedEncodingException;
 
 public class Parser{
@@ -18,15 +20,21 @@ public class Parser{
         if(x.length < 5){
             rtVal.pkID = -1;
             log("Invaild packet length");
+        }else if(x.length != (x[1]<<24)+(x[2]<<16)+(x[3]<<8)+x[4]+5){
+            rtVal.pkID = -1;
+            log("Invaild packet length");
+        }else{
+            rtVal.pkID = x[0];
         }
-        rtVal.pkID = x[0];
+
+        //Get rid of header
         x = Arrays.copyOfRange(x, 5, x.length);
         switch(rtVal.pkID){
             case 0x00: _join(x, rtVal); break;
             case 0x01: _joinReply(x, rtVal); break;
             case 0x02: _updateNameTable(x, rtVal); break;
-            /*case 0x03: _updateGlobalItem(x, rtVal); break;
-            case 0x04: _updateSinglePlayer(x, rtVal); break;
+            case 0x03: _updateGlobalItem(x, rtVal); break;
+            /*case 0x04: _updateSinglePlayer(x, rtVal); break;
             case 0x05: _updateYou(x, rtVal); break;
             case 0x06: _updateMap(x, rtVal); break;
             case 0x07: _keyDown(x, rtVal); break;
@@ -112,6 +120,38 @@ public class Parser{
                 );
         }
         return makePacket((byte)0x02, buf);
+    }
+    
+    private static void _updateGlobalItem(byte[] x, Union y){
+        byte cnt = x[0];
+        if(x.length != 1+cnt*13){
+            log("Illigle updateGlobalItem packet length");
+            y.pkID = -1;
+            return;
+        }
+        ByteBuffer buf = ByteBuffer.wrap(x, 1, x.length-1);
+        y.items = new ArrayList<Item>();
+        while(cnt-- != 0){
+            byte itemID = buf.get();
+            float posX = buf.getFloat();
+            float posY = buf.getFloat();
+            float dir = buf.getFloat();
+            Coordinate tmpPos = new Coordinate(posX, posY, dir);
+            Item tmpItem = new Item(itemID, tmpPos);
+            y.items.add(tmpItem);
+        }
+    }
+
+    public static byte[] updateGlobalItem(ArrayList<Item> items){
+        ByteBuffer buf = ByteBuffer.allocate(1+items.size()*13);
+        buf.put((byte)items.size());
+        for(Item i:items){
+            buf.put(i.getItemID());
+            buf.putFloat(i.getCoordinate().getPosX());
+            buf.putFloat(i.getCoordinate().getPosY());
+            buf.putFloat(i.getCoordinate().getDir());
+        }
+        return makePacket((byte)0x03, buf);
     }
 
     private static String trimAndPadName(String name){

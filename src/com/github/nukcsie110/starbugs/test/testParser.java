@@ -3,6 +3,7 @@ package com.github.nukcsie110.starbugs.test;
 import com.github.nukcsie110.starbugs.packet.Parser;
 import com.github.nukcsie110.starbugs.packet.Union;
 import com.github.nukcsie110.starbugs.basic.User;
+import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
 import java.util.ArrayList;
 
@@ -35,6 +36,17 @@ public class testParser{
         Union parsedUpdateNameTable = Parser.toUnion(updateNameTablePacket);
         for(User i: parsedUpdateNameTable.nameTable){
             println(i.getDisplayName());
+        }
+        
+        println("---Testing updateGlobalItem parser---");
+        ArrayList<Item> items = new ArrayList<>();
+        items.add(new Item((byte)12, new Coordinate(0.5f,0.5f,0.5f)));
+        items.add(new Item((byte)87, new Coordinate(10f,10f,179.9f)));
+        byte[] updateGlobalItemPacket = Parser.updateGlobalItem(items);
+        printBytes(updateGlobalItemPacket);
+        Union parsedUpdateGlobalItem = Parser.toUnion(updateGlobalItemPacket);
+        for(Item i: parsedUpdateGlobalItem.items){
+            println(i.getItemID()+" "+i.getCoordinate());
         }
     }
     private static void println(Object x){

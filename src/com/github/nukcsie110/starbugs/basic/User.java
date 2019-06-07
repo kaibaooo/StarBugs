@@ -191,4 +191,20 @@ public class User{
     public int getPoison(){
         return this.cntPoison;
     }
+
+    public String toString(){
+        return String.format(
+            "%s:\n"+
+            "\tLong weapon: %s\n"+
+            "\tShort weapon: %s\n"+
+            "\tWeapon in hand: %s\n"+
+            "\tArmor: %s\n"+
+            "\tBlood: %d\n"+
+            "\tCount of poison: %d\n"+
+            "\tPosition: %s\n",
+            this.getDisplayName(),
+            longWeapon, shortWeapon, weaponInHand,
+            armor, blood, cntPoison, pos
+        );
+    }
 }
