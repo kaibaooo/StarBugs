@@ -68,8 +68,12 @@ public class GameScreen implements Screen {
     // blood
     private int blood;
     private TextureRegion bloodRegion;
+    //sound
+    Music music;
 
     public GameScreen(Game aGame,String Player, AssetManager mng) {
+
+
         game = aGame;
         stage = new Stage(new ScreenViewport());
         player = Player;
@@ -106,8 +110,9 @@ public class GameScreen implements Screen {
 
         // character
         character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
-
-
+        //sound
+        music = manager.get("assets/sound/LOL_inGame.mp3", Music.class);
+        music.play();
     }
 
     @Override
@@ -261,10 +266,10 @@ public class GameScreen implements Screen {
         double ang = Math.acos(dot/normalize);
         double deg = 0;
         if(deltaY<0){
-            deg = 360 - Math.toDegrees(ang);
+            deg = 360 - Math.toDegrees(ang) + 90;
         }
         else{
-            deg = Math.toDegrees(ang);
+            deg = Math.toDegrees(ang) + 90;
         }
 
 

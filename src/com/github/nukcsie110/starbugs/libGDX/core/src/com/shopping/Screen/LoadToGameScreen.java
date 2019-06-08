@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -40,6 +41,9 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/inventory/potion2.png", Texture.class);
         manager.load("assets/inventory/potion3.png", Texture.class);
         manager.load("assets/inventory/choose.png", Texture.class);
+
+        //sound
+        manager.load("assets/sound/LOL_inGame.mp3", Music.class);
         user_name = name;
     }
     @Override

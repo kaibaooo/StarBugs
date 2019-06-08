@@ -20,7 +20,7 @@ import com.shopping.Screen.LoadToGameScreen;
 
 
 public class TitleScreen implements Screen {
-    Music music = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/PUBG.mp3"));
+    Music music = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/PUBGremix.mp3"));
     private Stage stage;
     private Game game;
     private OrthographicCamera camera;
@@ -165,6 +165,7 @@ public class TitleScreen implements Screen {
                 //catch user name
                 String user_name = textField.getText();
                 System.out.println(user_name);
+                music.stop();
                 game.setScreen(new LoadToGameScreen(game, user_name));
             }
             @Override
