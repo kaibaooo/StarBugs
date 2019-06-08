@@ -18,6 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.assets.AssetManager;
+import java.util.TimerTask;
+import java.util.Timer;
+import java.util.Date;
 
 public class GameScreen implements Screen {
 
@@ -47,6 +50,8 @@ public class GameScreen implements Screen {
     private float currentY = startY;
     private float percentZ = Math.abs(percent - 0.5f)*2;
     private float currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ  ;
+    private float isAttackingState = 0;
+    private int armorType = 0; // 0 none 1 iron 2 gold 3 diamond
 
     // general attributes
     private float halfWindowWidth = Gdx.graphics.getWidth()/2;
@@ -107,11 +112,14 @@ public class GameScreen implements Screen {
 
         // blood
         blood = 50;
-
+        texture = new Texture(510, 40, Pixmap.Format.RGBA8888);
+        pixmap = new Pixmap(510, 40, Pixmap.Format.RGBA8888);
         // character
         character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
         //sound
         music = manager.get("assets/sound/LOL_inGame.mp3", Music.class);
+        music.setLooping(true);
+        music.setVolume(0.5f);
         music.play();
     }
 
@@ -126,8 +134,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        keyInProcess();
-        keyInProcessDebug();
+
         moveCamera();
         stage.act();
         stage.draw();
@@ -136,6 +143,8 @@ public class GameScreen implements Screen {
         inventory();
         drawItemsTest();
         drawMainPlayer();
+        keyInProcess();
+        keyInProcessDebug();
     }
 
     private void moveCamera(){
@@ -177,16 +186,16 @@ public class GameScreen implements Screen {
             blood -= 30;
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)){
-            character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
+            armorType = 0;
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)){
-            character = new Sprite(manager.get("assets/pic/IronArmor.png", Texture.class));
+            armorType = 1;
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)){
-            character = new Sprite(manager.get("assets/pic/GoldenArmor.png", Texture.class));
+            armorType = 2;
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)){
-            character = new Sprite(manager.get("assets/pic/DiamondArmor.png", Texture.class));
+            armorType = 3;
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
             if(inventory[3] < 3) {
@@ -197,6 +206,8 @@ public class GameScreen implements Screen {
             Gdx.app.log("LogStart", "=========================================");
             Gdx.app.log("UserPosition", currentX + ", " + currentY);
             Gdx.app.log("Blood", String.valueOf(blood));
+            Gdx.app.log("ArmorType", String.valueOf(armorType));
+            Gdx.app.log("inventoryChoose", String.valueOf(inventoryChoose));
             Gdx.app.log("LogEnd", "=========================================");
         }
     }
@@ -213,6 +224,9 @@ public class GameScreen implements Screen {
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
             currentY+=userSpeedY;
         }
+
+
+
         // 切換高倍鏡
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
             if(minAltitude==1.7f)
@@ -239,7 +253,75 @@ public class GameScreen implements Screen {
             blood = (100-blood)/2+blood;
         }
     }
+    private void attackReload(){
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && isAttackingState!=1){
+            if(armorType == 0){
+                character.setTexture(manager.get("assets/pic/attack(left).png", Texture.class));
+//                character = new Sprite(manager.get("assets/pic/attack(left).png", Texture.class));
+            }
+            else if(armorType == 1){
+                if(inventoryChoose == 0){
+                    character.setTexture(manager.get("assets/pic/Ironattack(left).png", Texture.class));
+//                    character = new Sprite(manager.get("assets/pic/Ironattack(left).png", Texture.class));
+                }
+                else if(inventoryChoose == 1){
+                    character.setTexture(manager.get("assets/pic/IronSwordattack.png", Texture.class));
+//                    character = new Sprite(manager.get("assets/pic/IronSwordattack.png", Texture.class));
+                }
+                else if(inventoryChoose == 2){
+                    character.setTexture(manager.get("assets/pic/IronBow.png", Texture.class));
+//                    character = new Sprite(manager.get("assets/pic/IronBow.png", Texture.class));
+                }
+            }
+            else if(armorType == 2){
+                if(inventoryChoose == 0){
+                    character.setTexture(manager.get("assets/pic/Goldenattack(left).png", Texture.class));
+//                    character = new Sprite(manager.get("assets/pic/Goldenattack(left).png", Texture.class));
+                }
+                else if(inventoryChoose == 1){
+                    character.setTexture(manager.get("assets/pic/GoldenSwordattack.png", Texture.class));
+//                    character = new Sprite(manager.get("assets/pic/GoldenSwordattack.png", Texture.class));
+                }
+                else if(inventoryChoose == 2){
+                    character.setTexture(manager.get("assets/pic/GoldenBow.png", Texture.class));
+//                    character = new Sprite(manager.get("assets/pic/GoldenBow.png", Texture.class));
+                }
+            }
+            else if(armorType == 3){
+                if(inventoryChoose == 0){
+                    Texture current = manager.get("assets/pic/Diamondattack(left).png", Texture.class);
+                    character.setSize(current.getWidth(), current.getHeight());
+                    character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                    character.setTexture(current);
 
+//                    character = new Sprite(manager.get("assets/pic/Diamondattack(left).png", Texture.class));
+                }
+                else if(inventoryChoose == 1){
+                    Texture current = manager.get("assets/pic/DiamondSwordattack.png", Texture.class);
+                    character.setSize(current.getWidth(), current.getHeight());
+                    character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                    character.setTexture(current);
+//                    character = new Sprite(manager.get("assets/pic/DiamondSwordattack.png", Texture.class));
+                }
+                else if(inventoryChoose == 2){
+                    Texture current = manager.get("assets/pic/DiamondBow.png", Texture.class);
+                    character.setSize(current.getWidth(), current.getHeight());
+                    character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                    character.setTexture(current);
+//                    character = new Sprite(manager.get("assets/pic/DiamondBow.png", Texture.class));
+                }
+            }
+            Music effect = manager.get("assets/sound/punch.mp3", Music.class);
+            effect.play();
+            isAttackingState = 1;
+            Timer timer = new Timer();
+            timer.schedule(new attackDelay(), 100);
+        }
+//        if(!Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+//            //character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
+//            isAttackingState = 0;
+//        }
+    }
     private void drawItemsTest(){
         batch.begin();
         //旋轉要除以縮放比例
@@ -277,11 +359,53 @@ public class GameScreen implements Screen {
         character.rotate((float)deg);
         batch.begin();
         BitmapFont font = new BitmapFont(Gdx.files.internal("assets/skin/craftacular/font-export.fnt"),Gdx.files.internal("assets/skin/craftacular/font-export.png"),false);
-        font.draw(batch,player,halfWindowWidth,halfWindowHeight+100);
         //旋轉要除以縮放比例
+        if(isAttackingState != 1) {
+            if (armorType == 0) {
+                character.setTexture(manager.get("assets/pic/CharacterCat.png", Texture.class));
+                //character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
+            } else if (armorType == 1) {
+                if (inventoryChoose == 0) {
+                    character.setTexture(manager.get("assets/pic/IronArmor.png", Texture.class));
+
+                } else if (inventoryChoose == 1) {
+                    character.setTexture(manager.get("assets/pic/IronSword.png", Texture.class));
+                    //character = new Sprite(manager.get("assets/pic/IronSword.png", Texture.class));
+                } else if (inventoryChoose == 2) {
+                    character.setTexture(manager.get("assets/pic/IronBow.png", Texture.class));
+                    //character = new Sprite(manager.get("assets/pic/IronBow.png", Texture.class));
+                }
+
+            } else if (armorType == 2) {
+                if (inventoryChoose == 0) {
+                    character.setTexture(manager.get("assets/pic/GoldenArmor.png", Texture.class));
+//                    character = new Sprite(manager.get("assets/pic/GoldenArmor.png", Texture.class));
+                } else if (inventoryChoose == 1) {
+                    character.setTexture(manager.get("assets/pic/GoldenSword.png", Texture.class));
+//                    character = new Sprite(manager.get("assets/pic/GoldenSword.png", Texture.class));
+                } else if (inventoryChoose == 2) {
+                    character.setTexture(manager.get("assets/pic/GoldenBow.png", Texture.class));
+//                    character = new Sprite(manager.get("assets/pic/GoldenBow.png", Texture.class));
+                }
+            } else if (armorType == 3) {
+                if (inventoryChoose == 0) {
+                    Texture current = manager.get("assets/pic/DiamondArmor.png", Texture.class);
+                    character.setSize(current.getWidth(), current.getHeight());
+                    character.setTexture(current);
+                } else if (inventoryChoose == 1) {
+                    Texture current = manager.get("assets/pic/DiamondSword.png", Texture.class);
+                    character.setSize(current.getWidth(), current.getHeight());
+                    character.setTexture(current);
+                } else if (inventoryChoose == 2) {
+                    Texture current = manager.get("assets/pic/DiamondBow.png", Texture.class);
+                    character.setSize(current.getWidth(), current.getHeight());
+                    character.setTexture(current);
+                }
+            }
+        }
+        attackReload();
         batch.draw(character,halfWindowWidth, halfWindowHeight,character.getOriginX()/minAltitude, character.getOriginY()/minAltitude, character.getWidth()/minAltitude, character.getHeight()/minAltitude,1,1,(float)deg);
-        //Gdx.app.log("pos", String.valueOf(sprite.getWidth()/minAltitude) + " " + String.valueOf(sprite.getHeight()));
-        //character.draw(batch);
+        font.draw(batch,player,halfWindowWidth,halfWindowHeight+100);
         batch.end();
     }
     private void inventory(){
@@ -371,6 +495,8 @@ public class GameScreen implements Screen {
         batch.begin();
         batch.draw(bloodRegion, 545, 50);
         batch.end();
+        texture.dispose();
+        pixmap.dispose();
     }
     class Item{
         public float posX;
@@ -379,6 +505,12 @@ public class GameScreen implements Screen {
         public Item(){
             posX = rnd.nextInt(10000)+500;
             posY = rnd.nextInt(10000)+500;
+        }
+    }
+    class attackDelay extends TimerTask {
+        public void run() {
+            isAttackingState = 0;
+
         }
     }
 }
