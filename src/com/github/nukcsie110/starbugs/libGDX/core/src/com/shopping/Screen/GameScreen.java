@@ -64,6 +64,7 @@ public class GameScreen implements Screen {
     Sprite potion2;
     Sprite potion3;
     Sprite choose;
+    Sprite character;
     // blood
     private int blood;
     private TextureRegion bloodRegion;
@@ -103,6 +104,10 @@ public class GameScreen implements Screen {
         // blood
         blood = 50;
 
+        // character
+        character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
+
+
     }
 
     @Override
@@ -117,6 +122,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         keyInProcess();
+        keyInProcessDebug();
         moveCamera();
         stage.act();
         stage.draw();
@@ -160,6 +166,35 @@ public class GameScreen implements Screen {
         stage.dispose();
     }
 
+
+    private void keyInProcessDebug(){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)){
+            blood -= 30;
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)){
+            character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)){
+            character = new Sprite(manager.get("assets/pic/IronArmor.png", Texture.class));
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)){
+            character = new Sprite(manager.get("assets/pic/GoldenArmor.png", Texture.class));
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)){
+            character = new Sprite(manager.get("assets/pic/DiamondArmor.png", Texture.class));
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
+            if(inventory[3] < 3) {
+                inventory[3]++;
+            }
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.L)){
+            Gdx.app.log("LogStart", "=========================================");
+            Gdx.app.log("UserPosition", currentX + ", " + currentY);
+            Gdx.app.log("Blood", String.valueOf(blood));
+            Gdx.app.log("LogEnd", "=========================================");
+        }
+    }
     private void keyInProcess(){
         if(Gdx.input.isKeyPressed(Input.Keys.A)){
             currentX-=userSpeedX;
@@ -232,16 +267,16 @@ public class GameScreen implements Screen {
             deg = Math.toDegrees(ang);
         }
 
-        sprite = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
+
         //sprite.setPosition(-10,100);
-        sprite.rotate((float)deg);
+        character.rotate((float)deg);
         batch.begin();
         BitmapFont font = new BitmapFont(Gdx.files.internal("assets/skin/craftacular/font-export.fnt"),Gdx.files.internal("assets/skin/craftacular/font-export.png"),false);
         font.draw(batch,player,halfWindowWidth,halfWindowHeight+100);
         //旋轉要除以縮放比例
-        batch.draw(sprite,halfWindowWidth, halfWindowHeight,sprite.getOriginX()/minAltitude, sprite.getOriginY()/minAltitude, sprite.getWidth()/minAltitude, sprite.getHeight()/minAltitude,1,1,(float)deg);
+        batch.draw(character,halfWindowWidth, halfWindowHeight,character.getOriginX()/minAltitude, character.getOriginY()/minAltitude, character.getWidth()/minAltitude, character.getHeight()/minAltitude,1,1,(float)deg);
         //Gdx.app.log("pos", String.valueOf(sprite.getWidth()/minAltitude) + " " + String.valueOf(sprite.getHeight()));
-        sprite.draw(batch);
+        //character.draw(batch);
         batch.end();
     }
     private void inventory(){
