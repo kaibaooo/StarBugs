@@ -4,6 +4,9 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.ArrayList;
 import com.github.nukcsie110.starbugs.basic.User;
+import com.github.nukcsie110.starbugs.basic.Item;
+import com.github.nukcsie110.starbugs.basic.Coordinate;
+import com.github.nukcsie110.starbugs.basic.Equipment;
 import java.io.UnsupportedEncodingException;
 
 public class Parser{
@@ -15,18 +18,25 @@ public class Parser{
 
     public static Union toUnion(byte[] x){
         Union rtVal = new Union();
-        if(x.length == 0){
+        if(x.length < 5){
             rtVal.pkID = -1;
             log("Invaild packet length");
+        }else if(x.length != (x[1]<<24)+(x[2]<<16)+(x[3]<<8)+x[4]+5){
+            rtVal.pkID = -1;
+            log("Invaild packet length");
+        }else{
+            rtVal.pkID = x[0];
         }
-        rtVal.pkID = x[0];
-        switch(x[0]){
+
+        //Get rid of header
+        x = Arrays.copyOfRange(x, 5, x.length);
+        switch(rtVal.pkID){
             case 0x00: _join(x, rtVal); break;
             case 0x01: _joinReply(x, rtVal); break;
             case 0x02: _updateNameTable(x, rtVal); break;
-            /*case 0x03: _updateGlobalItem(x, rtVal); break;
+            case 0x03: _updateGlobalItem(x, rtVal); break;
             case 0x04: _updateSinglePlayer(x, rtVal); break;
-            case 0x05: _updateYou(x, rtVal); break;
+            /*case 0x05: _updateYou(x, rtVal); break;
             case 0x06: _updateMap(x, rtVal); break;
             case 0x07: _keyDown(x, rtVal); break;
             case 0x08: _keyUp(x, rtVal); break;
@@ -41,53 +51,52 @@ public class Parser{
     }
 
     private static void _join(byte[] x, Union y){
-        int len = Math.min(x.length-1, 32);
+        int len = Math.min(x.length, 32);
         try{
-            y.name = new String(Arrays.copyOfRange(x, 1, len), "US-ASCII");
+            y.player = new User();
+            y.player.setName(new String(x, "US-ASCII"));
         }catch(UnsupportedEncodingException e){
             log("Error: UnsupportedEncodingException");
         }
     }
     public static byte[] join(String name){
         name = trimAndPadName(name);
-
-        ByteBuffer buf = ByteBuffer.allocate(33);
-        buf.put((byte)0x00);
-        buf.put(name.getBytes());
-        return byteBuffer2byte(buf);
+        return makePacket((byte)0x00, name.getBytes());
     }
 
     private static void _joinReply(byte[] x, Union y){
-        if(x.length != 4){
+        if(x.length != 3){
             log("Illigle joinReply packet size");
             y.pkID = -1;
             return;
         }
-        ByteBuffer buf = ByteBuffer.wrap(x, 1, 3);
+        ByteBuffer buf = ByteBuffer.wrap(x);
         y.state = buf.get();
 
+        y.player = new User();
         //Big-endian player id
-        y.playerID = buf.getShort();
+        y.player.setID(buf.getShort());
     }
 
     public static byte[] joinReply(byte state, short playerID){
-        ByteBuffer buf = ByteBuffer.allocate(4);
-        buf.put((byte)0x01);
-        buf.put(state);
+        byte[] buf = new byte[3];
+        buf[0] = state;
         //Big-endian player id
-        buf.putShort(playerID);
+        buf[1] = (byte)((playerID>>8)&0xFF);
+        buf[2] = (byte)(playerID&0xFF);
 
-        return byteBuffer2byte(buf);
+        return makePacket((byte)0x01, buf);
     }
 
     private static void _updateNameTable(byte[] x, Union y){
-        byte cnt = x[1];
-        if(x.length != cnt*34+2){
+        byte cnt = x[0];
+        int elementSize = 34;
+        if(x.length != 1+cnt*elementSize){
             log("Illigle updateNameTable packet length");
             y.pkID = -1;
             return;
         }
-        ByteBuffer buf = ByteBuffer.wrap(x, 2, x.length-2);
+        ByteBuffer buf = ByteBuffer.wrap(x, 1, x.length-1);
         y.nameTable = new ArrayList<User>();
         while(cnt-- != 0){
             User tmpUser = new User();
@@ -106,8 +115,7 @@ public class Parser{
     }
 
     public static byte[] updateNameTable(ArrayList<User> table){
-        ByteBuffer buf = ByteBuffer.allocate(2+table.size()*34);
-        buf.put((byte)0x02);
+        ByteBuffer buf = ByteBuffer.allocate(1+table.size()*34);
         buf.put((byte)table.size());
         for(User i:table){
             buf.putShort(i.getID());
@@ -115,7 +123,71 @@ public class Parser{
                 trimAndPadName(i.getName()).getBytes()
                 );
         }
-        return byteBuffer2byte(buf);
+        return makePacket((byte)0x02, buf);
+    }
+    
+    private static void _updateGlobalItem(byte[] x, Union y){
+        byte cnt = x[0];
+        int elementSize = 13;
+        if(x.length != 1+cnt*elementSize){
+            log("Illigle updateGlobalItem packet length");
+            y.pkID = -1;
+            return;
+        }
+        ByteBuffer buf = ByteBuffer.wrap(x, 1, x.length-1);
+        y.items = new ArrayList<Item>();
+        while(cnt-- != 0){
+            byte itemID = buf.get();
+            float posX = buf.getFloat();
+            float posY = buf.getFloat();
+            float dir = buf.getFloat();
+            Coordinate tmpPos = new Coordinate(posX, posY, dir);
+            Item tmpItem = new Item(itemID, tmpPos);
+            y.items.add(tmpItem);
+        }
+    }
+
+    public static byte[] updateGlobalItem(ArrayList<Item> items){
+        ByteBuffer buf = ByteBuffer.allocate(1+items.size()*13);
+        buf.put((byte)items.size());
+        for(Item i:items){
+            buf.put(i.getItemID());
+            buf.putFloat(i.getCoordinate().getPosX());
+            buf.putFloat(i.getCoordinate().getPosY());
+            buf.putFloat(i.getCoordinate().getDir());
+        }
+        return makePacket((byte)0x03, buf);
+    }
+
+    private static void _updateSinglePlayer(byte[] x, Union y){
+        ByteBuffer buf = ByteBuffer.wrap(x);
+        int playerID = (int)buf.getShort();
+        float posX = buf.getFloat();
+        float posY = buf.getFloat();
+        float dir = buf.getFloat();
+        Coordinate pos = new Coordinate(posX, posY, dir);
+        y.player = new User(playerID, "", pos);
+        byte equipment = buf.get();
+        Equipment weaponInHand = Equipment.getName((equipment>>4)&0xF);
+        Equipment armor = Equipment.getName((equipment)&0xF);
+        y.player.addEquip(weaponInHand);
+        y.player.addEquip(armor);
+        y.player.setWeaponInHand(weaponInHand);
+    }
+
+    public static byte[] updateSinglePlayer(User target){
+        ByteBuffer buf = ByteBuffer.allocate(15);
+        buf.putShort(target.getID());
+        buf.putFloat(target.getPos().getPosX());
+        buf.putFloat(target.getPos().getPosY());
+        buf.putFloat(target.getPos().getDir());
+
+        byte equipment = 0;
+        equipment |= (((target.getWeaponInHand().getID())&0xF)<<4);
+        equipment |= ((target.getArmor().getID())&0xF);
+        buf.put(equipment);
+
+        return makePacket((byte)0x04, buf);
     }
 
     private static String trimAndPadName(String name){
@@ -130,6 +202,21 @@ public class Parser{
         }
         return name;
     }
+    private static byte[] makePacket(byte pkID, ByteBuffer _data){
+        byte[] data = byteBuffer2byte(_data);
+        return makePacket(pkID, data);
+    }
+
+    //Encapsulate data segment with pkID and len
+    private static byte[] makePacket(byte pkID, byte[] data){
+        log("Length of data:"+data.length);
+        ByteBuffer packetFactory = ByteBuffer.allocate(5+data.length);
+        packetFactory.put(pkID);
+        packetFactory.putInt((int)(data.length));
+        packetFactory.put(data);
+        return byteBuffer2byte(packetFactory);
+    }
+    
     private static byte[] byteBuffer2byte(ByteBuffer x){
         x.rewind();
         byte[] rtVal = new byte[x.remaining()];

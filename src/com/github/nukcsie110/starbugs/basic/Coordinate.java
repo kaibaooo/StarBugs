@@ -114,4 +114,8 @@ public class Coordinate{
         dir = newDir;
     }
 
+    public String toString(){
+        return "("+posX+", "+posY+", "+dir+")";
+    }
+
 }

@@ -41,4 +41,8 @@ public class Item{
     public Coordinate getCoordinate(){
         return coordinate;
     }
+
+    public String toString(){
+        return "ItemID: "+itemID+" "+coordinate.toString();
+    }
 }
