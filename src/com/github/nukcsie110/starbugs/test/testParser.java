@@ -62,6 +62,23 @@ public class testParser{
         printBytes(updateSinglePlayerPacket);
         Union parsedUpdateSinglePlayer = Parser.toUnion(updateSinglePlayerPacket);
         println(parsedUpdateSinglePlayer.player);
+
+        println("---Testing updateYou parser---");
+        a = new User();
+        a.setID(0x8787);
+        a.getPos().moveTo(3.5f, 100.0001f);
+        a.getPos().turnDir(87.45f);
+        a.addEquip(Equipment.LONG_BOW);
+        a.addEquip(Equipment.SHORT_SWORD);
+        a.addEquip(Equipment.ARMOR_LV2);
+        a.setWeaponInHand(Equipment.LONG_BOW);
+        a.setBlood(87);
+        a.setPoison(3);
+        byte[] updateYouPacket = Parser.updateYou(a);
+        printBytes(updateYouPacket);
+        Union parsedUpdateYou = Parser.toUnion(updateYouPacket);
+        println(parsedUpdateYou.player);
+
     }
     private static void println(Object x){
         System.out.println(x);

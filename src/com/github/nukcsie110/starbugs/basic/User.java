@@ -117,6 +117,8 @@ public class User{
                 this.shortWeapon = newEquip;
             break;
             case ARMOR_LV1:
+            case ARMOR_LV2:
+            case ARMOR_LV3:
                 rtVal = this.armor;
                 this.armor = newEquip;
             break;

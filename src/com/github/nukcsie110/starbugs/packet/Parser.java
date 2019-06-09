@@ -36,8 +36,8 @@ public class Parser{
             case 0x02: _updateNameTable(x, rtVal); break;
             case 0x03: _updateGlobalItem(x, rtVal); break;
             case 0x04: _updateSinglePlayer(x, rtVal); break;
-            /*case 0x05: _updateYou(x, rtVal); break;
-            case 0x06: _updateMap(x, rtVal); break;
+            case 0x05: _updateYou(x, rtVal); break;
+            /*case 0x06: _updateMap(x, rtVal); break;
             case 0x07: _keyDown(x, rtVal); break;
             case 0x08: _keyUp(x, rtVal); break;
             case 0x09: _updateDirection(x, rtVal); break;
@@ -189,6 +189,40 @@ public class Parser{
 
         return makePacket((byte)0x04, buf);
     }
+
+    private static void _updateYou(byte[] x, Union y){
+        ByteBuffer buf = ByteBuffer.wrap(x);
+        float posX = buf.getFloat();
+        float posY = buf.getFloat();
+        float dir = buf.getFloat();
+        Coordinate pos = new Coordinate(posX, posY, dir);
+        short itemStatus = buf.getShort();
+        User newPlayer = new User(0, "You", pos);
+        newPlayer.addEquip(Equipment.getName(itemStatus>>13&0x07)); //Short weapon
+        newPlayer.addEquip(Equipment.getName(itemStatus>>10&0x07)); //Long weapon
+        newPlayer.addEquip(Equipment.getName(itemStatus>>7&0x07)); //Armor
+        newPlayer.setWeaponInHand(Equipment.getName(itemStatus>>4&0x07));
+        newPlayer.setPoison(itemStatus&0x0F);
+        newPlayer.setBlood(buf.getShort());
+        y.player = newPlayer;
+    }
+
+    public static byte[] updateYou(User target){
+        ByteBuffer buf = ByteBuffer.allocate(16);
+        buf.putFloat(target.getPos().getPosX());
+        buf.putFloat(target.getPos().getPosY());
+        buf.putFloat(target.getPos().getDir());
+        short itemStatus = (short)0;
+        itemStatus |= (target.getShortWeapon().getID()&0x07) << 13;
+        itemStatus |= (target.getLongWeapon().getID()&0x07) << 10;
+        itemStatus |= (target.getArmor().getID()&0x07) << 7;
+        itemStatus |= (target.getWeaponInHand().getID()&0x07) << 4;
+        itemStatus |= target.getPoison() & 0x0F;
+        buf.putShort(itemStatus);
+        buf.putShort((short)target.getBlood());
+        return makePacket((byte)0x05, buf);
+    }
+
 
     private static String trimAndPadName(String name){
         name = name.trim();
