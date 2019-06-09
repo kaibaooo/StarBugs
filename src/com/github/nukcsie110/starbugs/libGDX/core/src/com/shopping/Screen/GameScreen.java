@@ -68,7 +68,8 @@ public class GameScreen implements Screen, InputProcessor{
     private float currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ  ;
     private float isAttackingState = 0;
     private int armorType = 0; // 0 none 1 iron 2 gold 3 diamond
-    private BitmapFont lightGrayFont26;
+
+
     // general attributes
     private float halfWindowWidth = Gdx.graphics.getWidth()/2;
     private float halfWindowHeight = Gdx.graphics.getHeight()/2;
@@ -91,11 +92,18 @@ public class GameScreen implements Screen, InputProcessor{
     Sprite character;
     // blood
     private int blood;
+    private Pixmap bloodPix;
     private TextureRegion bloodRegion;
+    private Color bloodColor;
+    private Color bloodBlockFill;
+    private Color borderColor;
     //sound
     Music music;
-
+    //timer
+    Color timerBlockCover;
+    Color timerBlockMargin;
     BitmapFont font;
+    private BitmapFont lightGrayFont26;
     public GameScreen(Game aGame,String Player, AssetManager mng) {
 
         game = aGame;
@@ -149,7 +157,10 @@ public class GameScreen implements Screen, InputProcessor{
         // blood
         blood = 50;
         texture = new Texture(510, 40, Pixmap.Format.RGBA8888);
-        pixmap = new Pixmap(510, 40, Pixmap.Format.RGBA8888);
+        bloodPix = new Pixmap(510, 40, Pixmap.Format.RGBA8888);
+        bloodColor = new Color(61,0,0,0.8f);
+        bloodBlockFill = new Color(183,183,183,0.5f);
+        borderColor = new Color(255,255,255,0.8f);
         // character
         character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
         //sound
@@ -163,7 +174,8 @@ public class GameScreen implements Screen, InputProcessor{
         timerPixmap = new Pixmap(150, 50, Format.RGBA8888);
         lightGrayFont26 = new BitmapFont(Gdx.files.internal("assets/font/lightGrayFont26.fnt"), Gdx.files.internal("assets/font/lightGrayFont26.png"), false);
         region = new TextureRegion();
-
+        timerBlockCover = new Color(0,0,0,0.7f);
+        timerBlockMargin = new Color(255,255,255,0.85f);
         font = new BitmapFont(Gdx.files.internal("assets/skin/craftacular/font-export.fnt"),Gdx.files.internal("assets/skin/craftacular/font-export.png"),false);
 
     }
@@ -190,12 +202,13 @@ public class GameScreen implements Screen, InputProcessor{
         drawItemsTest();
         keyInProcess();
         keyInProcessDebug();
+        drawEnemy();
         drawMainPlayer();
+
         mapItem.draw();
-//        drawItemsTest();
         if(blood <= 0){
             stage.dispose();
-            game.setScreen(new EndScreen(game));
+            game.setScreen(new EndScreen(game, 0));
         }
 
         showTimer();
@@ -219,22 +232,18 @@ public class GameScreen implements Screen, InputProcessor{
     public void resize(int width, int height) {
 
     }
-
     @Override
     public void pause() {
 
     }
-
     @Override
     public void resume() {
 
     }
-
     @Override
     public void hide() {
 
     }
-
     @Override
     public void dispose() {
         stage.dispose();
@@ -458,6 +467,9 @@ public class GameScreen implements Screen, InputProcessor{
         font.draw(batch,player,halfWindowWidth,halfWindowHeight+100);
         batch.end();
     }
+    private void drawEnemy(){
+
+    }
     private void inventory(){
 
         inventory65.setSize(88, 260);
@@ -524,29 +536,25 @@ public class GameScreen implements Screen, InputProcessor{
 
     }
     private void drawBlood(){
-        texture = new Texture(510, 40, Pixmap.Format.RGBA8888);
-        pixmap = new Pixmap(510, 40, Pixmap.Format.RGBA8888);
-        Color bloodColor = new Color(61,0,0,0.8f);
-        Color bloodBlockFill = new Color(183,183,183,0.5f);
-        Color borderColor = new Color(255,255,255,0.8f);
-        pixmap.setColor(bloodBlockFill);
-        pixmap.fillRectangle(5, 5, 500, 30);
-        pixmap.setColor(borderColor);
-        pixmap.drawRectangle(0, 0, 510, 40);//画空心矩形.起点(x,y),(width,height)
-        pixmap.drawRectangle(1, 1, 508, 38);//画空心矩形.起点(x,y),(width,height)
-        pixmap.drawRectangle(2, 2, 506, 36);//画空心矩形.起点(x,y),(width,height)
-        pixmap.drawRectangle(3, 3, 504, 34);//画空心矩形.起点(x,y),(width,height)
-        pixmap.drawRectangle(4, 4, 502, 32);//画空心矩形.起点(x,y),(width,height)
-        pixmap.setColor(bloodColor);
-        pixmap.fillRectangle(5, 5, blood*5, 30);//画实心矩形.起点(x,y),(width,height)
-        texture.draw(pixmap, 0, 0);//在texture中套一个pixmap图层
+
+        bloodPix.setColor(bloodBlockFill);
+        bloodPix.fillRectangle(5, 5, 500, 30);
+        bloodPix.setColor(borderColor);
+        bloodPix.drawRectangle(0, 0, 510, 40);//画空心矩形.起点(x,y),(width,height)
+        bloodPix.drawRectangle(1, 1, 508, 38);//画空心矩形.起点(x,y),(width,height)
+        bloodPix.drawRectangle(2, 2, 506, 36);//画空心矩形.起点(x,y),(width,height)
+        bloodPix.drawRectangle(3, 3, 504, 34);//画空心矩形.起点(x,y),(width,height)
+        bloodPix.drawRectangle(4, 4, 502, 32);//画空心矩形.起点(x,y),(width,height)
+        bloodPix.setColor(bloodColor);
+        bloodPix.fillRectangle(5, 5, blood*5, 30);//画实心矩形.起点(x,y),(width,height)
+        texture.draw(bloodPix, 0, 0);//在texture中套一个pixmap图层
         bloodRegion = new TextureRegion(texture, 510, 40);
 
         batch.begin();
         batch.draw(bloodRegion, 545, 50);
         batch.end();
-        texture.dispose();
-        pixmap.dispose();
+//        texture.dispose();
+//        bloodPix.dispose();
     }
     private void choosePlayerTexture(){
         if(armorType == 0 && isAttackingState == 0){
@@ -715,10 +723,6 @@ public class GameScreen implements Screen, InputProcessor{
     }
 
     private void showTimer(){
-//        timerTexture = new Texture(150, 50, Format.RGBA8888);
-//        timerPixmap = new Pixmap(150, 50, Format.RGBA8888);
-        Color timerBlockCover = new Color(0,0,0,0.7f);
-        Color timerBlockMargin = new Color(255,255,255,0.85f);
         timerPixmap.setColor(timerBlockCover);
         timerPixmap.fillRectangle(4, 4, 141, 41);//画实心矩形.起点(x,y),(width,height)
         timerPixmap.setColor(timerBlockMargin);
