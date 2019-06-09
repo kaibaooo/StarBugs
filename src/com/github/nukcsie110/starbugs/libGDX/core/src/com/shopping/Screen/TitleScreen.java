@@ -12,19 +12,28 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.shopping.Actors.Background;
 import com.shopping.Screen.GameScreen;
 import com.shopping.Screen.LoadToGameScreen;
 
+import com.badlogic.gdx.controllers.*;
+import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector3;
 
-
-public class TitleScreen implements Screen {
+public class TitleScreen implements Screen, ControllerListener{
     Music music = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/PUBGremix.mp3"));
     private Stage stage;
     private Game game;
     private OrthographicCamera camera;
 
+    // controller
+    boolean hasControllers;
+    Sprite sprite;
 
     public TitleScreen(Game aGame) {
         music.setLooping(true);
@@ -99,6 +108,15 @@ public class TitleScreen implements Screen {
         stage.addActor(button1);
         stage.addActor(button2);
 
+
+        // controller
+        hasControllers = false;
+        Controllers.addListener(this);
+
+        if(Controllers.getControllers().size == 0)
+        {
+            hasControllers = false;
+        }
     }
 
     @Override
@@ -187,4 +205,129 @@ public class TitleScreen implements Screen {
         icon.setPosition(Gdx.graphics.getWidth()/3-195,Gdx.graphics.getHeight()/2+100);
         stage.addActor(icon);
     }
+
+
+    // connected and disconnect dont actually appear to work for XBox 360 controllers.
+
+    @Override
+    public void connected(Controller controller) {
+        hasControllers = true;
+    }
+
+    @Override
+    public void disconnected(Controller controller) {
+        hasControllers = false;
+    }
+
+    @Override
+    public boolean buttonDown(Controller controller, int buttonCode) {
+        if(buttonCode == XBox360Pad.BUTTON_Y)
+            Gdx.app.log("Controller", "Y");
+        if(buttonCode == XBox360Pad.BUTTON_A)
+            Gdx.app.log("Controller", "A");
+        if(buttonCode == XBox360Pad.BUTTON_X)
+            Gdx.app.log("Controller", "X");
+        if(buttonCode == XBox360Pad.BUTTON_B)
+            Gdx.app.log("Controller", "B");
+
+        if(buttonCode == XBox360Pad.BUTTON_LB)
+            Gdx.app.log("Controller", "LB");
+        if(buttonCode == XBox360Pad.BUTTON_RB)
+            Gdx.app.log("Controller", "RB");
+        return false;
+    }
+
+    @Override
+    public boolean buttonUp(Controller controller, int buttonCode) {
+        return false;
+    }
+
+    @Override
+    public boolean axisMoved(Controller controller, int axisCode, float value) {
+        // This is your analog stick
+        // Value will be from -1 to 1 depending how far left/right, up/down the stick is
+        // For the Y translation, I use a negative because I like inverted analog stick
+        // Like all normal people do! ;)
+
+        // Left Stick
+        if(axisCode == XBox360Pad.AXIS_LEFT_X)
+            Gdx.app.log("Controller", "AXIS LX");
+        if(axisCode == XBox360Pad.AXIS_LEFT_Y)
+            Gdx.app.log("Controller", "AXIX LY");
+
+        // Right stick
+        if(axisCode == XBox360Pad.AXIS_RIGHT_X)
+            Gdx.app.log("Controller", "AXIS RX");
+        return false;
+    }
+
+    @Override
+    public boolean povMoved(Controller controller, int povCode, PovDirection value) {
+        // This is the dpad
+        if(value == XBox360Pad.BUTTON_DPAD_LEFT)
+            Gdx.app.log("Controller", "LEFT");
+        if(value == XBox360Pad.BUTTON_DPAD_RIGHT)
+            Gdx.app.log("Controller", "RIGHT");
+        if(value == XBox360Pad.BUTTON_DPAD_UP)
+            Gdx.app.log("Controller", "UP");
+        if(value == XBox360Pad.BUTTON_DPAD_DOWN)
+            Gdx.app.log("Controller", "DOWN");
+        return false;
+    }
+
+    @Override
+    public boolean xSliderMoved(Controller controller, int sliderCode, boolean value) {
+        return false;
+    }
+
+    @Override
+    public boolean ySliderMoved(Controller controller, int sliderCode, boolean value) {
+        return false;
+    }
+
+    @Override
+    public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
+        return false;
+    }
+
+
+}
+class XBox360Pad
+{
+    /*
+     * It seems there are different versions of gamepads with different ID Strings.
+     * Therefore its IMO a better bet to check for:
+     * if (controller.getName().toLowerCase().contains("xbox") &&
+                   controller.getName().contains("360"))
+     *
+     * Controller (Gamepad for Xbox 360)
+       Controller (XBOX 360 For Windows)
+       Controller (Xbox 360 Wireless Receiver for Windows)
+       Controller (Xbox wireless receiver for windows)
+       XBOX 360 For Windows (Controller)
+       Xbox 360 Wireless Receiver
+       Xbox Receiver for Windows (Wireless Controller)
+       Xbox wireless receiver for windows (Controller)
+     */
+    //public static final String ID = "XBOX 360 For Windows (Controller)";
+    public static final int BUTTON_X = 2;
+    public static final int BUTTON_Y = 3;
+    public static final int BUTTON_A = 0;
+    public static final int BUTTON_B = 1;
+    public static final int BUTTON_BACK = 6;
+    public static final int BUTTON_START = 7;
+    public static final PovDirection BUTTON_DPAD_UP = PovDirection.north;
+    public static final PovDirection BUTTON_DPAD_DOWN = PovDirection.south;
+    public static final PovDirection BUTTON_DPAD_RIGHT = PovDirection.east;
+    public static final PovDirection BUTTON_DPAD_LEFT = PovDirection.west;
+    public static final int BUTTON_LB = 4;
+    public static final int BUTTON_L3 = 8;
+    public static final int BUTTON_RB = 5;
+    public static final int BUTTON_R3 = 9;
+    public static final int AXIS_LEFT_X = 1; //-1 is left | +1 is right
+    public static final int AXIS_LEFT_Y = 0; //-1 is up | +1 is down
+    public static final int AXIS_LEFT_TRIGGER = 4; //value 0 to 1f
+    public static final int AXIS_RIGHT_X = 3; //-1 is left | +1 is right
+    public static final int AXIS_RIGHT_Y = 2; //-1 is up | +1 is down
+    public static final int AXIS_RIGHT_TRIGGER = 4; //value 0 to -1f
 }
