@@ -784,7 +784,7 @@ public class GameScreen implements Screen, InputProcessor {
         if (button == Input.Buttons.LEFT ) {
             isAttackingState = 1;
             Timer timer = new Timer();
-            timer.schedule(new attackDelay(), 2000);
+            timer.schedule(new attackDelay(), 100);
             Music effect = manager.get("assets/sound/punch.mp3", Music.class);
             effect.play();
             if(inventory[2] == 1 && inventoryChoose == 2) {
