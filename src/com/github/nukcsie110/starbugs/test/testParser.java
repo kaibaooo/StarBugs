@@ -91,6 +91,16 @@ public class testParser{
         Union parsedUpdateMap = Parser.toUnion(updateMapPacket);
         println(parsedUpdateMap.map);
 
+        println("---Testing keyDown/keyUp parse---");
+        byte[] keyDownPacket = Parser.keyDown((byte)0x87);
+        byte[] keyUpPacket = Parser.keyUp((byte)0x87);
+        printBytes(keyDownPacket);
+        printBytes(keyUpPacket);
+        Union parsedKeyDown = Parser.toUnion(keyDownPacket);
+        Union parsedKeyUp = Parser.toUnion(keyUpPacket);
+        println(parsedKeyDown.keyCode);
+        println(parsedKeyUp.keyCode);
+
     }
     private static void println(Object x){
         System.out.println(x);

@@ -39,9 +39,9 @@ public class Parser{
             case 0x04: _updateSinglePlayer(x, rtVal); break;
             case 0x05: _updateYou(x, rtVal); break;
             case 0x06: _updateMap(x, rtVal); break;
-            /*case 0x07: _keyDown(x, rtVal); break;
-            case 0x08: _keyUp(x, rtVal); break;
-            case 0x09: _updateDirection(x, rtVal); break;
+            case 0x07: _keyPress(x, rtVal); break;
+            case 0x08: _keyPress(x, rtVal); break;
+            /*case 0x09: _updateDirection(x, rtVal); break;
             case 0x10: _gameOver(x, rtVal); break;
             */
             default:
@@ -189,6 +189,19 @@ public class Parser{
         buf.put(equipment);
 
         return makePacket((byte)0x04, buf);
+    }
+    private static void _keyPress(byte[] x, Union y){
+        y.keyCode = x[0];
+    }
+    public static byte[] keyUp(byte keyCode){
+        byte[] buf = new byte[1];
+        buf[0] = keyCode;
+        return makePacket((byte)0x07, buf);
+    }
+    public static byte[] keyDown(byte keyCode){
+        byte[] buf = new byte[1];
+        buf[0] = keyCode;
+        return makePacket((byte)0x08, buf);
     }
 
     private static void _updateYou(byte[] x, Union y){
