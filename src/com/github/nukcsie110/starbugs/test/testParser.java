@@ -6,6 +6,7 @@ import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
 import com.github.nukcsie110.starbugs.basic.Equipment;
+import com.github.nukcsie110.starbugs.basic.Map;
 import java.util.ArrayList;
 
 public class testParser{
@@ -78,6 +79,17 @@ public class testParser{
         printBytes(updateYouPacket);
         Union parsedUpdateYou = Parser.toUnion(updateYouPacket);
         println(parsedUpdateYou.player);
+        
+        println("---Testing updateMap parser---");
+        Map b = new Map();
+        b.setSaveZone(10f, new Coordinate(87f, 78.5f, 0));
+        b.setCurrentTime(20123);
+        b.setNextSaveZoneTime(40000);
+        b.setCurrentPlayers(10);
+        byte[] updateMapPacket = Parser.updateMap(b);
+        printBytes(updateMapPacket);
+        Union parsedUpdateMap = Parser.toUnion(updateMapPacket);
+        println(parsedUpdateMap.map);
 
     }
     private static void println(Object x){

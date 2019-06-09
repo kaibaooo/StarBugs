@@ -7,6 +7,7 @@ import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
 import com.github.nukcsie110.starbugs.basic.Equipment;
+import com.github.nukcsie110.starbugs.basic.Map;
 import java.io.UnsupportedEncodingException;
 
 public class Parser{
@@ -37,8 +38,8 @@ public class Parser{
             case 0x03: _updateGlobalItem(x, rtVal); break;
             case 0x04: _updateSinglePlayer(x, rtVal); break;
             case 0x05: _updateYou(x, rtVal); break;
-            /*case 0x06: _updateMap(x, rtVal); break;
-            case 0x07: _keyDown(x, rtVal); break;
+            case 0x06: _updateMap(x, rtVal); break;
+            /*case 0x07: _keyDown(x, rtVal); break;
             case 0x08: _keyUp(x, rtVal); break;
             case 0x09: _updateDirection(x, rtVal); break;
             case 0x10: _gameOver(x, rtVal); break;
@@ -223,6 +224,36 @@ public class Parser{
         return makePacket((byte)0x05, buf);
     }
 
+    private static void _updateMap(byte[] x, Union y){
+        ByteBuffer buf = ByteBuffer.wrap(x);
+        Map newMap = new Map();
+        byte currentLives = buf.get();
+        float posX = buf.getFloat();
+        float posY = buf.getFloat();
+        float radius = buf.getFloat();
+        int currentTime = buf.getInt();
+        int timeLeft = buf.getInt();
+
+        Coordinate tmpPos = new Coordinate(posX, posY, 0);
+        newMap.setSaveZone(radius, tmpPos);
+        newMap.setCurrentTime(currentTime);
+        newMap.setNextSaveZoneTime(timeLeft);
+        newMap.setCurrentPlayers(currentLives);
+
+        y.map = newMap;
+    }
+
+    public static byte[] updateMap(Map target){
+        ByteBuffer buf = ByteBuffer.allocate(21);
+        buf.put((byte)(target.getCurrentPlayers()&0xFF));
+        buf.putFloat(target.getSaveZoneCenterPos().getPosX());
+        buf.putFloat(target.getSaveZoneCenterPos().getPosY());
+        buf.putFloat(target.getSaveZoneRadius());
+        buf.putInt(target.getCurrentTime());
+        buf.putInt(target.getNextSaveZoneTime());
+
+        return makePacket((byte)0x06, buf);
+    }
 
     private static String trimAndPadName(String name){
         name = name.trim();

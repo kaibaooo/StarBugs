@@ -9,13 +9,10 @@ import com.github.nukcsie110.starbugs.basic.*;
 public class Game{
     private byte state;
     private byte maximumUser;
-    protected byte currentUser;
-    protected float saveZoneRadius;
-    protected float currentTime;
+    private Map map;
     protected final float maxTime = 6000;
     protected HashMap<String, User> userList = new HashMap<>();
     protected HashSet<Item> itemList = new HashSet<>();
-    protected Coordinate saveZoneCenterPos = new Coordinate(0,0,0);
     private Random randGenerater = new Random();
     Game(){
         state = 0;
