@@ -314,7 +314,7 @@ public class Parser{
     }
     
     private static byte[] byteBuffer2byte(ByteBuffer x){
-        x.rewind();
+        x.flip();
         byte[] rtVal = new byte[x.remaining()];
         x.get(rtVal, 0, rtVal.length);
         return rtVal;
