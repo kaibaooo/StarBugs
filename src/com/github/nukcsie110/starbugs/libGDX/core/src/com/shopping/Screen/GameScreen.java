@@ -224,7 +224,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         showTimer();
-        
+
         if(bulletManager.size()!=0)    drawBullet();
 
         timeSeconds += Gdx.graphics.getRawDeltaTime();
@@ -724,7 +724,7 @@ public class GameScreen implements Screen, InputProcessor {
                 bulletPicture.rotate(-(float) currentBullet.deg);
             }
         }
-        Gdx.app.log("place", "x :  " + currentBullet.TempBulletPositionX + " Y : " + currentBullet.TempBulletPositionY);
+        Gdx.app.log("place", "x :  " + currentX);
     }
 
     private void showTimer() {
@@ -782,45 +782,47 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (button == Input.Buttons.LEFT) {
+        if (button == Input.Buttons.LEFT ) {
             isAttackingState = 1;
             Timer timer = new Timer();
-            timer.schedule(new attackDelay(), 100);
+            timer.schedule(new attackDelay(), 2000);
             Music effect = manager.get("assets/sound/punch.mp3", Music.class);
             effect.play();
+            if(inventory[2] == 1 && inventoryChoose == 2) {
+                double deltaX = Gdx.input.getX()-800;
+                double deltaY = 450 - Gdx.input.getY();
+                float percentZ = Math.abs(percent - 0.5f)*2;
+                currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ;
+                // vector dot with (1,0)
+                double dot = deltaX;
+                double normalize = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+                double ang = Math.acos(dot/normalize);
+                double deg = 0;
+                if(deltaY<0){
+                    deg = -ang;
+                }
+                else{
+                    deg = ang;
+                }
+                bullet = new Bullet(800,450,deg);
+                bulletManager.add(bullet);
+                return true;
+            }
             return true;
         }
-        if(button == Input.Buttons.RIGHT) {
-            double deltaX = Gdx.input.getX()-800;
-            double deltaY = 450 - Gdx.input.getY();
-            float percentZ = Math.abs(percent - 0.5f)*2;
-            currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ;
-            // vector dot with (1,0)
-            double dot = deltaX;
-            double normalize = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-            double ang = Math.acos(dot/normalize);
-            double deg = 0;
-            if(deltaY<0){
-                deg = -ang;
-            }
-            else{
-                deg = ang;
-            }
-            bullet = new Bullet(800,450,deg);
-            bulletManager.add(bullet);
-            isAttackingState = 1;
-            Timer timer = new Timer();
-            timer.schedule(new attackDelay(), 100);
-            Music effect = manager.get("assets/sound/punch.mp3", Music.class);
-            effect.play();
-            return true;
+
+        if(button == Input.Buttons.RIGHT && inventory[2] == 1 && inventoryChoose == 2){
+            if(minAltitude == 1.7f)
+                minAltitude = 2.7f;
+            else
+                minAltitude = 1.7f;
         }
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (button == Input.Buttons.LEFT) {
+            if (button == Input.Buttons.LEFT) {
             isAttackingState = 0;
             return true;
         }
@@ -861,20 +863,36 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public class Bullet{
-        public int TempBulletPositionX,TempBulletPositionY;
-        public float TempBulletVelocityX,TempBulletVelocityY;
-        public double deg;
+        private int TempBulletPositionX,TempBulletPositionY;
+        private float TempBulletVelocityX,TempBulletVelocityY;
+        private double deg;
+        private float currentXPath ;
+        private float currentYPath;
 
         public Bullet(int bulletPositionX,int bulletPositionY,double degree){
             TempBulletPositionX = bulletPositionX;
             TempBulletPositionY = bulletPositionY;
-            TempBulletVelocityX = 8*(float)(Math.cos((float)degree));
-            TempBulletVelocityY = 8*(float)(Math.sin((float)degree));
+            TempBulletVelocityX = 18*(float)(Math.cos((float)degree));
+            TempBulletVelocityY = 18*(float)(Math.sin((float)degree));
+            currentXPath = currentX;
+            currentYPath = currentY;
             deg = Math.toDegrees(degree);
         }
         public void update(){
             TempBulletPositionX += (int)TempBulletVelocityX;
             TempBulletPositionY += (int)TempBulletVelocityY;
+            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                TempBulletPositionX += userSpeedX/minAltitude;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                TempBulletPositionX -= userSpeedX/minAltitude;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+                TempBulletPositionY += userSpeedY/minAltitude;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+                TempBulletPositionY -= userSpeedY/minAltitude;
+            }
         }
     }
 
