@@ -30,18 +30,27 @@ import java.util.Date;
 public class GameScreen implements Screen, InputProcessor{
 
     private Stage stage;
+    private Stage mapItem;
     private Game game;
     private String player;
+    private Image Basemap;
     private Image map;
+    private Image smallMap;
+    private Image mapOutline;
     private OrthographicCamera camera;
     private Sprite sprite;
     private SpriteBatch batch;
     private Sprite itemSprite;
     private Texture texture;
     private TextureRegion region;
+    private Pixmap maps;
     private Pixmap pixmap;
     private Music click;
-//    private InputProcessing inputProcessor;
+
+    private int R = 7000;
+    private final float TIME_SINCE_COLLISION = 30;
+    float timeSinceCollision = 0;
+
     // Player settings
     private final int userSpeedX = 15;
     private final int userSpeedY = 15;
@@ -82,15 +91,28 @@ public class GameScreen implements Screen, InputProcessor{
     Music music;
     public GameScreen(Game aGame,String Player, AssetManager mng) {
 
-
         game = aGame;
         stage = new Stage(new ScreenViewport());
         player = Player;
         batch = new SpriteBatch();
         manager = mng;
-        map = new Image(manager.get("assets/map/map.png", Texture.class));
+        Basemap = new Image(manager.get("assets/map/Lava_map.png",Texture.class));
+        map = new Image(manager.get("assets/map/map.png",Texture.class));
+        map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        Basemap.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
         System.out.println(map.getX()+" "+map.getY());
+        stage.addActor(Basemap);
         stage.addActor(map);
+        //change map
+        smallMap = new Image(manager.get("assets/map/map.png",Texture.class));
+        smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-254);
+        smallMap.setSize(253,253);
+        mapOutline = new Image(manager.get("assets/map/smallMap.png",Texture.class));
+        mapOutline.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-23,Gdx.graphics.getHeight()/3-266);
+        mapOutline.setSize(274,275);
+        mapItem.addActor(mapOutline);
+        mapItem.addActor(smallMap);
+        System.out.println(map.getX()+" "+map.getY());
         camera = (OrthographicCamera) stage.getViewport().getCamera();
         camera.translate(startX,startY);
         counter = 0;
@@ -142,6 +164,7 @@ public class GameScreen implements Screen, InputProcessor{
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         moveCamera();
+        mapItem.act();
         stage.act();
         stage.draw();
 
@@ -151,6 +174,7 @@ public class GameScreen implements Screen, InputProcessor{
         keyInProcess();
         keyInProcessDebug();
         drawMainPlayer();
+        mapItem.draw();
     }
 
     private void moveCamera(){
@@ -184,8 +208,55 @@ public class GameScreen implements Screen, InputProcessor{
     @Override
     public void dispose() {
         stage.dispose();
+        mapItem.dispose();
     }
 
+    public void update(float delta) {
+        timeSinceCollision += delta;
+        if (timeSinceCollision >= TIME_SINCE_COLLISION) {
+            for(int i=0;i<timeSinceCollision;i++){
+                R = R-2000;
+                map = new Image(new Texture(roundPixmap(maps,R)));
+                smallMap = new Image(new Texture(roundPixmap(maps,R)));
+                mapItem.addActor(mapOutline);
+                mapItem.addActor(smallMap);
+                System.out.println("Mappppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppps");
+            }
+            timeSinceCollision -= TIME_SINCE_COLLISION;
+        }
+    }
+
+    public static Pixmap roundPixmap(Pixmap pixmap,double r)
+    {
+        int width = pixmap.getWidth();
+        int height = pixmap.getHeight();
+        Pixmap round = new Pixmap(width,height,Pixmap.Format.RGBA8888);
+        if(width != height)
+        {
+            Gdx.app.log("error", "Cannot create round image if width != height");
+            round.dispose();
+            return pixmap;
+        }
+        double radius = width/2;
+        for(int y=0;y<height;y++)
+        {
+            for(int x=0;x<width;x++)
+            {
+                //check if pixel is outside circle. Set pixel to transparant;
+                double dist_x = x-radius;
+                double dist_y = y-radius;
+                double dist = Math.sqrt((dist_x*dist_x) + (dist_y*dist_y));
+                if (dist <= r) {
+                    round.drawPixel(x, y, pixmap.getPixel(x, y));
+                }
+                else {
+                    round.drawPixel(x, y, 0);
+                }
+            }
+        }
+        Gdx.app.log("info", "pixmal rounded!");
+        return round;
+    }
 
     private void keyInProcessDebug(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)){
