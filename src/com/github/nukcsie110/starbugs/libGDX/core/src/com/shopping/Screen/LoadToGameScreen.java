@@ -37,6 +37,7 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/map/smallMap.png", Texture.class);
         manager.load("assets/pic/icons8-center-of-gravity-64.png", Pixmap.class);
         manager.load("assets/map/navigation.png", Texture.class);
+        Gdx.app.log("manager", "section 1 finished");
         // character
         manager.load("assets/pic/CharacterCat.png", Texture.class);
         manager.load("assets/pic/Diamondattack(left).png", Texture.class);
@@ -59,6 +60,7 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/pic/WholeCat.png", Texture.class);
         manager.load("assets/pic/fistBow.png", Texture.class);
         manager.load("assets/pic/fistSwordattack.png", Texture.class);
+        Gdx.app.log("manager", "section 2 finished");
         //inventory
         manager.load("assets/inventory/inventory65.png", Texture.class);
         manager.load("assets/inventory/sword.png", Texture.class);
@@ -67,10 +69,11 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/inventory/potion2.png", Texture.class);
         manager.load("assets/inventory/potion3.png", Texture.class);
         manager.load("assets/inventory/choose.png", Texture.class);
-
+        Gdx.app.log("manager", "section 3 finished");
         //sound
         manager.load("assets/sound/LOL_inGame.mp3", Music.class);
         manager.load("assets/sound/punch.mp3", Music.class);
+        Gdx.app.log("manager", "section 4 finished");
         user_name = name;
 
     }
@@ -93,6 +96,7 @@ public class LoadToGameScreen implements Screen {
         cat.draw(batch);
         batch.end();
         if(manager.update()) {
+            Gdx.app.log("manager", "update");
             sound.stop();
             game.setScreen(new GameScreen(game,user_name,manager));
         }
