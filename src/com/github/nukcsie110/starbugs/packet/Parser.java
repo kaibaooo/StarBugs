@@ -41,11 +41,10 @@ public class Parser{
             case 0x06: _updateMap(x, rtVal); break;
             case 0x07: _keyPress(x, rtVal); break;
             case 0x08: _keyPress(x, rtVal); break;
-            /*case 0x09: _updateDirection(x, rtVal); break;
+            case 0x09: _updateDirection(x, rtVal); break;
             case 0x10: _gameOver(x, rtVal); break;
-            */
             default:
-                log("Invaild packet ID: "+ x[0]);
+                log("Invaild packet ID: "+ rtVal.pkID);
                 rtVal.pkID = -1;
         }
         return rtVal;
@@ -266,6 +265,25 @@ public class Parser{
         buf.putInt(target.getNextSaveZoneTime());
 
         return makePacket((byte)0x06, buf);
+    }
+    
+    private static void _updateDirection(byte[] x, Union y){
+        y.newDirection = ByteBuffer.wrap(x).getFloat();
+    }
+
+    public static byte[] updateDirection(float newDirection){
+        ByteBuffer buf = ByteBuffer.allocate(4);
+        buf.putFloat(newDirection);
+        return makePacket((byte)0x09, buf);
+    } 
+
+    private static void _gameOver(byte[] x, Union y){
+        y.rank = x[0];
+    }
+    public static byte[] gameOver(byte rank){
+        byte[] buf = new byte[1];
+        buf[0] = rank;
+        return makePacket((byte)0x10, buf);
     }
 
     private static String trimAndPadName(String name){

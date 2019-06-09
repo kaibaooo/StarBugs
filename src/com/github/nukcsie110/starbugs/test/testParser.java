@@ -91,7 +91,7 @@ public class testParser{
         Union parsedUpdateMap = Parser.toUnion(updateMapPacket);
         println(parsedUpdateMap.map);
 
-        println("---Testing keyDown/keyUp parse---");
+        println("---Testing keyDown/keyUp parser---");
         byte[] keyDownPacket = Parser.keyDown((byte)0x87);
         byte[] keyUpPacket = Parser.keyUp((byte)0x87);
         printBytes(keyDownPacket);
@@ -100,6 +100,20 @@ public class testParser{
         Union parsedKeyUp = Parser.toUnion(keyUpPacket);
         println(parsedKeyDown.keyCode);
         println(parsedKeyUp.keyCode);
+        
+        println("---Testing updateDirection parser---");
+        float newDirection = 0.000087f;
+        byte[] updateDirectionPacket = Parser.updateDirection(newDirection);
+        printBytes(updateDirectionPacket);
+        Union parsedUpdateDirection = Parser.toUnion(updateDirectionPacket);
+        println(parsedUpdateDirection.newDirection);
+
+        println("---Testing gameOver parser---");
+        byte rank = (byte)1;
+        byte[] gameOverPacket = Parser.gameOver(rank);
+        printBytes(gameOverPacket);
+        Union parsedGameOver = Parser.toUnion(gameOverPacket);
+        println(parsedGameOver.rank);
 
     }
     private static void println(Object x){
