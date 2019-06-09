@@ -107,7 +107,7 @@ public class GameScreen implements Screen, InputProcessor{
         //change map
         smallMap = new Image(new Texture(roundPixmap(maps,R)));
         mapOutline = new Image(manager.get("assets/map/smallMap.png",Texture.class));
-        smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-290);
+        smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-289);
         smallMap.setSize(253,253);
         mapOutline.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-23,Gdx.graphics.getHeight()/3-300);
         mapOutline.setSize(274,275);
