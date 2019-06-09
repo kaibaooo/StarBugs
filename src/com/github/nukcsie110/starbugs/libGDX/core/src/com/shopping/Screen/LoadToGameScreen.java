@@ -97,8 +97,8 @@ public class LoadToGameScreen implements Screen {
         batch.end();
         if(manager.update()) {
             Gdx.app.log("manager", "update");
-            sound.stop();
             game.setScreen(new GameScreen(game,user_name,manager));
+            sound.stop();
         }
 
 
