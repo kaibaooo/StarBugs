@@ -94,6 +94,8 @@ public class GameScreen implements Screen, InputProcessor{
     private TextureRegion bloodRegion;
     //sound
     Music music;
+
+    BitmapFont font;
     public GameScreen(Game aGame,String Player, AssetManager mng) {
 
         game = aGame;
@@ -155,11 +157,15 @@ public class GameScreen implements Screen, InputProcessor{
         music.setLooping(true);
         music.setVolume(0.5f);
         music.play();
+
         // timer
         timerTexture = new Texture(150, 50, Format.RGBA8888);
         timerPixmap = new Pixmap(150, 50, Format.RGBA8888);
         lightGrayFont26 = new BitmapFont(Gdx.files.internal("assets/font/lightGrayFont26.fnt"), Gdx.files.internal("assets/font/lightGrayFont26.png"), false);
         region = new TextureRegion();
+
+        font = new BitmapFont(Gdx.files.internal("assets/skin/craftacular/font-export.fnt"),Gdx.files.internal("assets/skin/craftacular/font-export.png"),false);
+
     }
 
     @Override
@@ -445,7 +451,6 @@ public class GameScreen implements Screen, InputProcessor{
         //sprite.setPosition(-10,100);
         character.rotate((float)deg);
         batch.begin();
-        BitmapFont font = new BitmapFont(Gdx.files.internal("assets/skin/craftacular/font-export.fnt"),Gdx.files.internal("assets/skin/craftacular/font-export.png"),false);
         //旋轉要除以縮放比例
         choosePlayerTexture();
         Gdx.app.log("SIZE", String.valueOf(character.getWidth()) + ", " +String.valueOf(character.getHeight()));
