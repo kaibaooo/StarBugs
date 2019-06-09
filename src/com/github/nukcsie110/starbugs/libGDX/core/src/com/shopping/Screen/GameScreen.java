@@ -41,7 +41,7 @@ public class GameScreen implements Screen {
     private Pixmap maps;
     private Pixmap pixmap;
     private Music click;
-    private int R = 7000;
+    private int R = 8000;
     private final float TIME_SINCE_COLLISION = 30;
     float timeSinceCollision = 0;
 
@@ -103,7 +103,7 @@ public class GameScreen implements Screen {
         //change map
         smallMap = new Image(new Texture(roundPixmap(maps,R)));
         mapOutline = new Image(manager.get("assets/map/smallMap.png",Texture.class));
-        smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-292);
+        smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-290);
         smallMap.setSize(253,253);
         mapOutline.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-23,Gdx.graphics.getHeight()/3-300);
         mapOutline.setSize(274,275);
