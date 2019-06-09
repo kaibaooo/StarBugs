@@ -103,7 +103,7 @@ public class GameScreen implements Screen, InputProcessor{
         map = new Image(new Texture(roundPixmap(maps,R)));
         map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
         Basemap.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
-        System.out.println(map.getX()+" "+map.getY());
+//        System.out.println(map.getX()+" "+map.getY());
         stage.addActor(Basemap);
         stage.addActor(map);
         //change map
@@ -180,6 +180,7 @@ public class GameScreen implements Screen, InputProcessor{
         keyInProcessDebug();
         drawMainPlayer();
         mapItem.draw();
+        drawItemsTest();
     }
 
     private void moveCamera(){
@@ -213,7 +214,7 @@ public class GameScreen implements Screen, InputProcessor{
     @Override
     public void dispose() {
         stage.dispose();
-        mapItem.dispose();
+
     }
 
     /*public void update(float delta) {
@@ -243,6 +244,7 @@ public class GameScreen implements Screen, InputProcessor{
             return pixmap;
         }
         double radius = width/2;
+        Gdx.app.log("S","SS");
         for(int y=0;y<height;y++)
         {
             for(int x=0;x<width;x++)
@@ -380,9 +382,6 @@ public class GameScreen implements Screen, InputProcessor{
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
             currentY+=userSpeedY;
         }
-
-
-
         // 切換高倍鏡
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
             if(minAltitude==1.7f)
