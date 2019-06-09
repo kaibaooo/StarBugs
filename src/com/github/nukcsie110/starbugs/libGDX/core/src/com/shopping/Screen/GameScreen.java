@@ -1,6 +1,6 @@
 package com.shopping.Screen;
 
-import java.time.Instant;
+//import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -30,8 +30,8 @@ public class GameScreen implements Screen {
     private String player;
     private Image Basemap;
     private Image map;
-    private Image smallMap;
     private Image mapOutline;
+    private Image smallMap;
     private OrthographicCamera camera;
     private Sprite sprite;
     private SpriteBatch batch;
@@ -88,22 +88,24 @@ public class GameScreen implements Screen {
 
         game = aGame;
         stage = new Stage(new ScreenViewport());
+        mapItem = new Stage(new ScreenViewport());
         player = Player;
         batch = new SpriteBatch();
         manager = mng;
+        maps = new Pixmap(Gdx.files.internal("assets/map/map.png"));
         Basemap = new Image(manager.get("assets/map/Lava_map.png",Texture.class));
-        map = new Image(manager.get("assets/map/map.png",Texture.class));
+        map = new Image(new Texture(roundPixmap(maps,R)));
         map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
         Basemap.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
         System.out.println(map.getX()+" "+map.getY());
         stage.addActor(Basemap);
         stage.addActor(map);
         //change map
-        smallMap = new Image(manager.get("assets/map/map.png",Texture.class));
-        smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-254);
-        smallMap.setSize(253,253);
+        smallMap = new Image(new Texture(roundPixmap(maps,R)));
         mapOutline = new Image(manager.get("assets/map/smallMap.png",Texture.class));
-        mapOutline.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-23,Gdx.graphics.getHeight()/3-266);
+        smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-292);
+        smallMap.setSize(253,253);
+        mapOutline.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-23,Gdx.graphics.getHeight()/3-300);
         mapOutline.setSize(274,275);
         mapItem.addActor(mapOutline);
         mapItem.addActor(smallMap);
@@ -204,7 +206,7 @@ public class GameScreen implements Screen {
         mapItem.dispose();
     }
 
-    public void update(float delta) {
+    /*public void update(float delta) {
         timeSinceCollision += delta;
         if (timeSinceCollision >= TIME_SINCE_COLLISION) {
             for(int i=0;i<timeSinceCollision;i++){
@@ -217,7 +219,7 @@ public class GameScreen implements Screen {
             }
             timeSinceCollision -= TIME_SINCE_COLLISION;
         }
-    }
+    }*/
 
     public static Pixmap roundPixmap(Pixmap pixmap,double r)
     {

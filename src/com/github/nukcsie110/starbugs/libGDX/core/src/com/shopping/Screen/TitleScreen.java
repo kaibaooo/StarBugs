@@ -42,6 +42,7 @@ public class TitleScreen implements Screen {
 
         Array<Texture> textures = new Array<Texture>();
         for(int i = 1; i <=6;i++){
+            if(i==2||i==3) continue;
             textures.add(new Texture(Gdx.files.internal("assets/pic/img"+i+".png")));
             textures.get(textures.size-1).setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
         }
@@ -54,17 +55,17 @@ public class TitleScreen implements Screen {
         final Skin fontSkin = new Skin(Gdx.files.internal("assets/skin/craftacular/craftacular-ui.json"));
 
         final Label label1 = new Label("S T = R B U G S",fontSkin,"title");
-        label1.setPosition(Gdx.graphics.getWidth()/3-140,Gdx.graphics.getHeight()/2+100);
+        label1.setPosition(Gdx.graphics.getWidth()/2-label1.getWidth()/2,Gdx.graphics.getHeight()/2+100);
         stage.addActor(label1);
 
         final Skin mySkin = new Skin(Gdx.files.internal("assets/skin/Igdx/lgdxs-ui.json"));
         final Button button1 = new TextButton("Play",mySkin,"oval2");
         button1.setSize(200,50);
-        button1.setPosition(Gdx.graphics.getWidth()/3+130,Gdx.graphics.getHeight()/2-70);
+        button1.setPosition(Gdx.graphics.getWidth()/2-button1.getWidth()/2,Gdx.graphics.getHeight()/2-100);
 
         final Button button2 = new TextButton("Score board",mySkin,"oval2");
         button2.setSize(200,50);
-        button2.setPosition(Gdx.graphics.getWidth()/3+130,Gdx.graphics.getHeight()/2-140);
+        button2.setPosition(Gdx.graphics.getWidth()/2-button2.getWidth()/2,Gdx.graphics.getHeight()/2-180);
 
         button1.addListener(new InputListener()
         {
