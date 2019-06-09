@@ -724,7 +724,6 @@ public class GameScreen implements Screen, InputProcessor {
                 bulletPicture.rotate(-(float) currentBullet.deg);
             }
         }
-        Gdx.app.log("place", "x :  " + currentX);
     }
 
     private void showTimer() {
@@ -806,17 +805,17 @@ public class GameScreen implements Screen, InputProcessor {
                 }
                 bullet = new Bullet(800,450,deg);
                 bulletManager.add(bullet);
-                return true;
             }
+
             return true;
         }
-
         if(button == Input.Buttons.RIGHT && inventory[2] == 1 && inventoryChoose == 2){
             if(minAltitude == 1.7f)
                 minAltitude = 2.7f;
             else
                 minAltitude = 1.7f;
         }
+
         return false;
     }
 
