@@ -26,9 +26,10 @@ import com.shopping.Base.InputProcessing;
 import java.util.TimerTask;
 import java.util.Timer;
 import java.util.Date;
+import java.util.ArrayList;
 //import com.shopping.Base.InputProcessing;
 
-public class GameScreen implements Screen, InputProcessor{
+public class GameScreen implements Screen, InputProcessor {
 
     private Stage stage;
     private Stage mapItem;
@@ -56,31 +57,30 @@ public class GameScreen implements Screen, InputProcessor{
     // Player settings
     private final int userSpeedX = 15;
     private final int userSpeedY = 15;
-    private final int startX = Gdx.graphics.getWidth()/2;// -Gdx.graphics.getWidth()/2;
-    private final int startY = Gdx.graphics.getHeight()/2;
+    private final int startX = Gdx.graphics.getWidth() / 2;// -Gdx.graphics.getWidth()/2;
+    private final int startY = Gdx.graphics.getHeight() / 2;
     private float minAltitude = 1.7f;
     private float maxAltitude = 10.5f;
     private float percent;
     private float counter;
     private float currentX = startX;
     private float currentY = startY;
-    private float percentZ = Math.abs(percent - 0.5f)*2;
-    private float currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ  ;
+    private float percentZ = Math.abs(percent - 0.5f) * 2;
+    private float currentZ = maxAltitude - (maxAltitude - minAltitude) * percentZ;
     private float isAttackingState = 0;
     private int armorType = 0; // 0 none 1 iron 2 gold 3 diamond
 
-
     // general attributes
-    private float halfWindowWidth = Gdx.graphics.getWidth()/2;
-    private float halfWindowHeight = Gdx.graphics.getHeight()/2;
+    private float halfWindowWidth = Gdx.graphics.getWidth() / 2;
+    private float halfWindowHeight = Gdx.graphics.getHeight() / 2;
     private ArrayList<Item> lst = new ArrayList<Item>();
     private AssetManager manager = new AssetManager();
     private float timeSeconds = 0f;
     private float period = 1f;
     private int passTime = 0;
 
-    //inventory
-    private int[] inventory = {1,1,1,3};
+    // inventory
+    private int[] inventory = { 1, 1, 1, 3 };
     private int inventoryChoose = 0;
     Sprite inventory65;
     Sprite sword;
@@ -90,6 +90,7 @@ public class GameScreen implements Screen, InputProcessor{
     Sprite potion3;
     Sprite choose;
     Sprite character;
+    Sprite bulletPicture;
     // blood
     private int blood;
     private Pixmap bloodPix;
@@ -97,14 +98,18 @@ public class GameScreen implements Screen, InputProcessor{
     private Color bloodColor;
     private Color bloodBlockFill;
     private Color borderColor;
-    //sound
+    // bullet
+    Bullet bullet, currentBullet;
+    ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
+    // sound
     Music music;
-    //timer
+    // timer
     Color timerBlockCover;
     Color timerBlockMargin;
     BitmapFont font;
     private BitmapFont lightGrayFont26;
-    public GameScreen(Game aGame,String Player, AssetManager mng) {
+
+    public GameScreen(Game aGame, String Player, AssetManager mng) {
 
         game = aGame;
         stage = new Stage(new ScreenViewport());
@@ -113,28 +118,29 @@ public class GameScreen implements Screen, InputProcessor{
         batch = new SpriteBatch();
         manager = mng;
         maps = new Pixmap(Gdx.files.internal("assets/map/map.png"));
-        Basemap = new Image(manager.get("assets/map/map.png",Texture.class));
-//        map = new Image(new Texture(roundPixmap(maps,R)));
-//        map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
-        Basemap.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
-//        System.out.println(map.getX()+" "+map.getY());
+        Basemap = new Image(manager.get("assets/map/map.png", Texture.class));
+        // map = new Image(new Texture(roundPixmap(maps,R)));
+        // map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        Basemap.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        // System.out.println(map.getX()+" "+map.getY());
         stage.addActor(Basemap);
-//        stage.addActor(map);
-        //change map
-//        smallMap = new Image(new Texture(roundPixmap(maps,R)));
-        mapOutline = new Image(manager.get("assets/map/smallMap.png",Texture.class));
-//        smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-289);
-//        smallMap.setSize(253,253);
-        mapOutline.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-23,Gdx.graphics.getHeight()/3-300);
-        mapOutline.setSize(274,275);
-//        mapItem.addActor(mapOutline);
-//        mapItem.addActor(smallMap);
-//        System.out.println(map.getX()+" "+map.getY());
+        // stage.addActor(map);
+        // change map
+        // smallMap = new Image(new Texture(roundPixmap(maps,R)));
+        mapOutline = new Image(manager.get("assets/map/smallMap.png", Texture.class));
+        // smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-289);
+        // smallMap.setSize(253,253);
+        mapOutline.setPosition(Gdx.graphics.getWidth() - mapOutline.getWidth() / 2 - 23,
+                Gdx.graphics.getHeight() / 3 - 300);
+        mapOutline.setSize(274, 275);
+        // mapItem.addActor(mapOutline);
+        // mapItem.addActor(smallMap);
+        // System.out.println(map.getX()+" "+map.getY());
         camera = (OrthographicCamera) stage.getViewport().getCamera();
-        camera.translate(startX,startY);
+        camera.translate(startX, startY);
         counter = 0;
-//        inputProcessor = new InputProcessing();
-        //startTime = Instant.now().toEpochMilli();
+        // inputProcessor = new InputProcessing();
+        // startTime = Instant.now().toEpochMilli();
         click = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/ButtonSoundEffects.mp3"));
 
         itemSprite = new Sprite(manager.get("assets/pic/iron_chestplate.png", Texture.class));
@@ -158,12 +164,16 @@ public class GameScreen implements Screen, InputProcessor{
         blood = 50;
         texture = new Texture(510, 40, Pixmap.Format.RGBA8888);
         bloodPix = new Pixmap(510, 40, Pixmap.Format.RGBA8888);
-        bloodColor = new Color(61,0,0,0.8f);
-        bloodBlockFill = new Color(183,183,183,0.5f);
-        borderColor = new Color(255,255,255,0.8f);
+        bloodColor = new Color(61, 0, 0, 0.8f);
+        bloodBlockFill = new Color(183, 183, 183, 0.5f);
+        borderColor = new Color(255, 255, 255, 0.8f);
         // character
         character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
-        //sound
+        //bullet
+        bulletPicture = new Sprite(manager.get("assets/inventory/arrow.png", Texture.class));
+        bulletPicture.setSize(50,50);
+        bulletPicture.setOrigin(25,25);
+        // sound
         music = manager.get("assets/sound/LOL_inGame.mp3", Music.class);
         music.setLooping(true);
         music.setVolume(0.5f);
@@ -172,18 +182,20 @@ public class GameScreen implements Screen, InputProcessor{
         // timer
         timerTexture = new Texture(150, 50, Format.RGBA8888);
         timerPixmap = new Pixmap(150, 50, Format.RGBA8888);
-        lightGrayFont26 = new BitmapFont(Gdx.files.internal("assets/font/lightGrayFont26.fnt"), Gdx.files.internal("assets/font/lightGrayFont26.png"), false);
+        lightGrayFont26 = new BitmapFont(Gdx.files.internal("assets/font/lightGrayFont26.fnt"),
+                Gdx.files.internal("assets/font/lightGrayFont26.png"), false);
         region = new TextureRegion();
-        timerBlockCover = new Color(0,0,0,0.7f);
-        timerBlockMargin = new Color(255,255,255,0.85f);
-        font = new BitmapFont(Gdx.files.internal("assets/skin/craftacular/font-export.fnt"),Gdx.files.internal("assets/skin/craftacular/font-export.png"),false);
+        timerBlockCover = new Color(0, 0, 0, 0.7f);
+        timerBlockMargin = new Color(255, 255, 255, 0.85f);
+        font = new BitmapFont(Gdx.files.internal("assets/skin/craftacular/font-export.fnt"),
+                Gdx.files.internal("assets/skin/craftacular/font-export.png"), false);
 
     }
 
     @Override
     public void show() {
-        Gdx.app.log("MainScreen","show");
-//        Gdx.input.setInputProcessor(stage);
+        Gdx.app.log("MainScreen", "show");
+        // Gdx.input.setInputProcessor(stage);
         Gdx.input.setInputProcessor(this);
     }
 
@@ -206,90 +218,86 @@ public class GameScreen implements Screen, InputProcessor{
         drawMainPlayer();
 
         mapItem.draw();
-        if(blood <= 0){
+        if (blood <= 0) {
             stage.dispose();
             game.setScreen(new EndScreen(game, 0));
         }
 
         showTimer();
+        
+        if(bulletManager.size()!=0)    drawBullet();
 
-        timeSeconds +=Gdx.graphics.getRawDeltaTime();
-        if(timeSeconds > period){
-            timeSeconds-=period;
+        timeSeconds += Gdx.graphics.getRawDeltaTime();
+        if (timeSeconds > period) {
+            timeSeconds -= period;
             passTime++;
         }
     }
 
-    private void moveCamera(){
+    private void moveCamera() {
         camera.position.x = currentX;
         camera.position.y = currentY;
         camera.zoom = currentZ;
         camera.update();
     }
 
-
     @Override
     public void resize(int width, int height) {
 
     }
+
     @Override
     public void pause() {
 
     }
+
     @Override
     public void resume() {
 
     }
+
     @Override
     public void hide() {
 
     }
+
     @Override
     public void dispose() {
         stage.dispose();
 
     }
 
-    /*public void update(float delta) {
-        timeSinceCollision += delta;
-        if (timeSinceCollision >= TIME_SINCE_COLLISION) {
-            for(int i=0;i<timeSinceCollision;i++){
-                R = R-2000;
-                map = new Image(new Texture(roundPixmap(maps,R)));
-                smallMap = new Image(new Texture(roundPixmap(maps,R)));
-                mapItem.addActor(mapOutline);
-                mapItem.addActor(smallMap);
-                System.out.println("Mappppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppps");
-            }
-            timeSinceCollision -= TIME_SINCE_COLLISION;
-        }
-    }*/
+    /*
+     * public void update(float delta) { timeSinceCollision += delta; if
+     * (timeSinceCollision >= TIME_SINCE_COLLISION) { for(int
+     * i=0;i<timeSinceCollision;i++){ R = R-2000; map = new Image(new
+     * Texture(roundPixmap(maps,R))); smallMap = new Image(new
+     * Texture(roundPixmap(maps,R))); mapItem.addActor(mapOutline);
+     * mapItem.addActor(smallMap); System.out.println(
+     * "Mappppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppps"
+     * ); } timeSinceCollision -= TIME_SINCE_COLLISION; } }
+     */
 
-    public static Pixmap roundPixmap(Pixmap pixmap,double r)
-    {
+    public static Pixmap roundPixmap(Pixmap pixmap, double r) {
         int width = pixmap.getWidth();
         int height = pixmap.getHeight();
-        Pixmap round = new Pixmap(width,height,Pixmap.Format.RGBA8888);
-        if(width != height)
-        {
+        Pixmap round = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        if (width != height) {
             Gdx.app.log("error", "Cannot create round image if width != height");
             round.dispose();
             return pixmap;
         }
-        double radius = width/2;
-        Gdx.app.log("S","SS");
-        for(int y=0;y<height;y++)
-        {
-            for(int x=0;x<width;x++)
-            {
-                //check if pixel is outside circle. Set pixel to transparant;
-                double dist_x = x-radius;
-                double dist_y = y-radius;
-                double dist = Math.sqrt((dist_x*dist_x) + (dist_y*dist_y));
+        double radius = width / 2;
+        Gdx.app.log("S", "SS");
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                // check if pixel is outside circle. Set pixel to transparant;
+                double dist_x = x - radius;
+                double dist_y = y - radius;
+                double dist = Math.sqrt((dist_x * dist_x) + (dist_y * dist_y));
                 if (dist <= r) {
                     round.drawPixel(x, y, pixmap.getPixel(x, y));
-                }
-                else {
+                } else {
                     round.drawPixel(x, y, 0);
                 }
             }
@@ -298,101 +306,93 @@ public class GameScreen implements Screen, InputProcessor{
         return round;
     }
 
-    private void keyInProcessDebug(){
-        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)){
+    private void keyInProcessDebug() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
             blood -= 30;
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
             armorType = 0;
-            if(inventoryChoose == 0){
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/CharacterCat.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/Sword.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/fistBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) {
             armorType = 1;
-            if(inventoryChoose == 0){
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/IronArmor.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/IronSwordattack.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/IronBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
             armorType = 2;
-            if(inventoryChoose == 0){
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/GoldenArmor.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/GoldenSwordattack.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
 
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/GoldenBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
             armorType = 3;
-            if(inventoryChoose == 0){
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/DiamondArmor.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/DiamondSwordattack.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/DiamondBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
-            if(inventory[3] < 3) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            if (inventory[3] < 3) {
                 inventory[3]++;
             }
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.L)){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             Gdx.app.log("LogStart", "=========================================");
             Gdx.app.log("UserPosition", currentX + ", " + currentY);
             Gdx.app.log("Blood", String.valueOf(blood));
@@ -401,23 +401,24 @@ public class GameScreen implements Screen, InputProcessor{
             Gdx.app.log("LogEnd", "=========================================");
         }
     }
-    private void keyInProcess(){
 
-        if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            currentX-=userSpeedX;
+    private void keyInProcess() {
+
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            currentX -= userSpeedX;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            currentX+=userSpeedX;
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            currentX += userSpeedX;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.S)){
-            currentY-=userSpeedY;
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            currentY -= userSpeedY;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.W)){
-            currentY+=userSpeedY;
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            currentY += userSpeedY;
         }
         // 切換高倍鏡
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
-            if(minAltitude==1.7f)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (minAltitude == 1.7f)
                 minAltitude = 2.5f;
             else
                 minAltitude = 1.7f;
@@ -425,306 +426,310 @@ public class GameScreen implements Screen, InputProcessor{
 
     }
 
-    private void drawItemsTest(){
+    private void drawItemsTest() {
         batch.begin();
-        //旋轉要除以縮放比例
+        // 旋轉要除以縮放比例
         // 物品放置
-        for(Item ele : lst) {
+        for (Item ele : lst) {
             float deltaItemX = (ele.posX - currentX) / minAltitude;
             float deltaItemY = (ele.posY - currentY) / minAltitude;
-            if (ele.posX < currentX + halfWindowWidth * minAltitude && ele.posX > currentX - halfWindowWidth * minAltitude) {
-                if (ele.posY < currentY + halfWindowHeight * minAltitude && ele.posY > currentY - halfWindowHeight * minAltitude) {
-                    batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude, itemSprite.getOriginY() / minAltitude, itemSprite.getHeight() / minAltitude, itemSprite.getWidth() / minAltitude, 1, 1, 0);
+            if (ele.posX < currentX + halfWindowWidth * minAltitude
+                    && ele.posX > currentX - halfWindowWidth * minAltitude) {
+                if (ele.posY < currentY + halfWindowHeight * minAltitude
+                        && ele.posY > currentY - halfWindowHeight * minAltitude) {
+                    batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude,
+                            itemSprite.getOriginY() / minAltitude, itemSprite.getHeight() / minAltitude,
+                            itemSprite.getWidth() / minAltitude, 1, 1, 0);
                 }
             }
         }
         batch.end();
     }
-    private void drawMainPlayer(){
-        double deltaX = Gdx.input.getX()-800;
+
+    private void drawMainPlayer() {
+        double deltaX = Gdx.input.getX() - 800;
         double deltaY = 450 - Gdx.input.getY();
-        float percentZ = Math.abs(percent - 0.5f)*2;
-        currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ  ;
+        float percentZ = Math.abs(percent - 0.5f) * 2;
+        currentZ = maxAltitude - (maxAltitude - minAltitude) * percentZ;
         // vector dot with (1,0)
         double dot = deltaX;
-        double normalize = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-        double ang = Math.acos(dot/normalize);
+        double normalize = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        double ang = Math.acos(dot / normalize);
         double deg = 0;
-        if(deltaY<0){
+        if (deltaY < 0) {
             deg = 360 - Math.toDegrees(ang) + 90;
-        }
-        else{
+        } else {
             deg = Math.toDegrees(ang) + 90;
         }
 
-        //sprite.setPosition(-10,100);
-        character.rotate((float)deg);
+        // sprite.setPosition(-10,100);
+        character.rotate((float) deg);
         batch.begin();
-        //旋轉要除以縮放比例
+        // 旋轉要除以縮放比例
         choosePlayerTexture();
-        Gdx.app.log("SIZE", String.valueOf(character.getWidth()) + ", " +String.valueOf(character.getHeight()));
-        batch.draw(character,halfWindowWidth, halfWindowHeight,character.getOriginX()/minAltitude, character.getOriginY()/minAltitude, character.getWidth()/minAltitude, character.getHeight()/minAltitude,1,1,(float)deg);
-        font.draw(batch,player,halfWindowWidth,halfWindowHeight+100);
+        Gdx.app.log("SIZE", String.valueOf(character.getWidth()) + ", " + String.valueOf(character.getHeight()));
+        batch.draw(character, halfWindowWidth, halfWindowHeight, character.getOriginX() / minAltitude,
+                character.getOriginY() / minAltitude, character.getWidth() / minAltitude,
+                character.getHeight() / minAltitude, 1, 1, (float) deg);
+        font.draw(batch, player, halfWindowWidth, halfWindowHeight + 100);
         batch.end();
     }
-    private void drawEnemy(){
+
+    private void drawEnemy() {
 
     }
-    private void inventory(){
+
+    private void inventory() {
 
         inventory65.setSize(88, 260);
         batch.begin();
-        inventory65.setPosition(Gdx.graphics.getWidth()-120, Gdx.graphics.getHeight()/3);
+        inventory65.setPosition(Gdx.graphics.getWidth() - 120, Gdx.graphics.getHeight() / 3);
         inventory65.draw(batch);
         batch.end();
-        if(inventory[1]==1){
+        if (inventory[1] == 1) {
             sword.setSize(43, 44);
-            sword.setPosition(Gdx.graphics.getWidth()-95, 436);
+            sword.setPosition(Gdx.graphics.getWidth() - 95, 436);
             batch.begin();
             sword.draw(batch);
             batch.end();
         }
-        if(inventory[2]==1){
+        if (inventory[2] == 1) {
             bow.setSize(44, 45);
-            bow.setPosition(Gdx.graphics.getWidth()-96, 382);
+            bow.setPosition(Gdx.graphics.getWidth() - 96, 382);
             batch.begin();
             bow.draw(batch);
             batch.end();
         }
-        if(inventory[3]==1){
+        if (inventory[3] == 1) {
             potion.setSize(54, 54);
             batch.begin();
-            potion.setPosition(Gdx.graphics.getWidth()-100, Gdx.graphics.getHeight()/3+23);
+            potion.setPosition(Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() / 3 + 23);
             potion.draw(batch);
             batch.end();
-        }
-        else if(inventory[3]==2){
+        } else if (inventory[3] == 2) {
             potion2.setSize(54, 54);
             batch.begin();
-            potion2.setPosition(Gdx.graphics.getWidth()-101, Gdx.graphics.getHeight()/3+23);
+            potion2.setPosition(Gdx.graphics.getWidth() - 101, Gdx.graphics.getHeight() / 3 + 23);
             potion2.draw(batch);
             batch.end();
-        }
-        else if(inventory[3]==3){
+        } else if (inventory[3] == 3) {
             potion3.setSize(48, 52);
             batch.begin();
-            potion3.setPosition(Gdx.graphics.getWidth()-100, Gdx.graphics.getHeight()/3+23);
+            potion3.setPosition(Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() / 3 + 23);
             potion3.draw(batch);
             batch.end();
         }
-        if(inventoryChoose==0){
+        if (inventoryChoose == 0) {
             choose.setSize(46, 47);
-            choose.setPosition(Gdx.graphics.getWidth()-98, 490);
+            choose.setPosition(Gdx.graphics.getWidth() - 98, 490);
             batch.begin();
             choose.draw(batch);
             batch.end();
-        }
-        else if(inventoryChoose==1){
+        } else if (inventoryChoose == 1) {
             choose.setSize(46, 47);
-            choose.setPosition(Gdx.graphics.getWidth()-98, 436);
+            choose.setPosition(Gdx.graphics.getWidth() - 98, 436);
             batch.begin();
             choose.draw(batch);
             batch.end();
-        }
-        else if(inventoryChoose==2){
+        } else if (inventoryChoose == 2) {
             choose.setSize(46, 47);
-            choose.setPosition(Gdx.graphics.getWidth()-98, 381);
+            choose.setPosition(Gdx.graphics.getWidth() - 98, 381);
             batch.begin();
             choose.draw(batch);
             batch.end();
         }
 
     }
-    private void drawBlood(){
+
+    private void drawBlood() {
 
         bloodPix.setColor(bloodBlockFill);
         bloodPix.fillRectangle(5, 5, 500, 30);
         bloodPix.setColor(borderColor);
-        bloodPix.drawRectangle(0, 0, 510, 40);//画空心矩形.起点(x,y),(width,height)
-        bloodPix.drawRectangle(1, 1, 508, 38);//画空心矩形.起点(x,y),(width,height)
-        bloodPix.drawRectangle(2, 2, 506, 36);//画空心矩形.起点(x,y),(width,height)
-        bloodPix.drawRectangle(3, 3, 504, 34);//画空心矩形.起点(x,y),(width,height)
-        bloodPix.drawRectangle(4, 4, 502, 32);//画空心矩形.起点(x,y),(width,height)
+        bloodPix.drawRectangle(0, 0, 510, 40);// 画空心矩形.起点(x,y),(width,height)
+        bloodPix.drawRectangle(1, 1, 508, 38);// 画空心矩形.起点(x,y),(width,height)
+        bloodPix.drawRectangle(2, 2, 506, 36);// 画空心矩形.起点(x,y),(width,height)
+        bloodPix.drawRectangle(3, 3, 504, 34);// 画空心矩形.起点(x,y),(width,height)
+        bloodPix.drawRectangle(4, 4, 502, 32);// 画空心矩形.起点(x,y),(width,height)
         bloodPix.setColor(bloodColor);
-        bloodPix.fillRectangle(5, 5, blood*5, 30);//画实心矩形.起点(x,y),(width,height)
-        texture.draw(bloodPix, 0, 0);//在texture中套一个pixmap图层
+        bloodPix.fillRectangle(5, 5, blood * 5, 30);// 画实心矩形.起点(x,y),(width,height)
+        texture.draw(bloodPix, 0, 0);// 在texture中套一个pixmap图层
         bloodRegion = new TextureRegion(texture, 510, 40);
 
         batch.begin();
         batch.draw(bloodRegion, 545, 50);
         batch.end();
-//        texture.dispose();
-//        bloodPix.dispose();
+        // texture.dispose();
+        // bloodPix.dispose();
     }
-    private void choosePlayerTexture(){
-        if(armorType == 0 && isAttackingState == 0){
-            if(inventoryChoose == 0){
+
+    private void choosePlayerTexture() {
+        if (armorType == 0 && isAttackingState == 0) {
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/CharacterCat.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/Sword.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/fistBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
-        }
-        else if(armorType == 1 && isAttackingState == 0){
-            if(inventoryChoose == 0){
+        } else if (armorType == 1 && isAttackingState == 0) {
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/IronArmor.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/IronSword.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/IronBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
-        }
-        else if(armorType == 2 && isAttackingState == 0){
-            if(inventoryChoose == 0){
+        } else if (armorType == 2 && isAttackingState == 0) {
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/GoldenArmor.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/GoldenSword.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
 
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/GoldenBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
-        }
-        else if(armorType == 3 && isAttackingState == 0){
-            if(inventoryChoose == 0){
+        } else if (armorType == 3 && isAttackingState == 0) {
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/DiamondArmor.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/DiamondSword.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/DiamondBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
         }
 
-        if(armorType == 0 && isAttackingState == 1){
-            if(inventoryChoose == 0){
+        if (armorType == 0 && isAttackingState == 1) {
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/attack(left).png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/fistSwordattack.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/fistBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
-        }
-        else if(armorType == 1 && isAttackingState == 1){
-            if(inventoryChoose == 0){
+        } else if (armorType == 1 && isAttackingState == 1) {
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/Ironattack(left).png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/IronSwordattack.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/IronBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
-        }
-        else if(armorType == 2 && isAttackingState == 1){
-            if(inventoryChoose == 0){
+        } else if (armorType == 2 && isAttackingState == 1) {
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/Goldenattack(left).png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/GoldenSwordattack.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
 
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/GoldenBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
-        }
-        else if(armorType == 3 && isAttackingState == 1){
-            if(inventoryChoose == 0){
+        } else if (armorType == 3 && isAttackingState == 1) {
+            if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/Diamondattack(left).png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 1){
+            } else if (inventoryChoose == 1) {
                 Texture current = manager.get("assets/pic/DiamondSwordattack.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
-            }
-            else if(inventoryChoose == 2){
+            } else if (inventoryChoose == 2) {
                 Texture current = manager.get("assets/pic/DiamondBow.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
-                character.setCenter(current.getWidth()/2, current.getHeight()/2);
+                character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
             }
         }
     }
 
-    private void showTimer(){
+    private void drawBullet() {
+        for (int i = 0; i < bulletManager.size(); i++) {
+            currentBullet = bulletManager.get(i);
+            // bulletPicture.rotate((float)currentBullet.deg);
+            currentBullet.update();
+            if (currentBullet.TempBulletPositionX > 1600 || currentBullet.TempBulletPositionY > 900
+                    || currentBullet.TempBulletPositionX < 0 || currentBullet.TempBulletPositionY < 0) {
+                bulletManager.remove(i);
+            } else {
+                bulletPicture.rotate((float) currentBullet.deg);
+                batch.begin();
+                bulletPicture.setPosition(currentBullet.TempBulletPositionX, currentBullet.TempBulletPositionY);
+                bulletPicture.draw(batch);
+                batch.end();
+                bulletPicture.rotate(-(float) currentBullet.deg);
+            }
+        }
+        Gdx.app.log("place", "x :  " + currentBullet.TempBulletPositionX + " Y : " + currentBullet.TempBulletPositionY);
+    }
+
+    private void showTimer() {
         timerPixmap.setColor(timerBlockCover);
-        timerPixmap.fillRectangle(4, 4, 141, 41);//画实心矩形.起点(x,y),(width,height)
+        timerPixmap.fillRectangle(4, 4, 141, 41);// 画实心矩形.起点(x,y),(width,height)
         timerPixmap.setColor(timerBlockMargin);
         timerPixmap.drawRectangle(3, 3, 143, 43);
         timerPixmap.drawRectangle(2, 2, 145, 45);
@@ -738,28 +743,29 @@ public class GameScreen implements Screen, InputProcessor{
         batch.begin();
         batch.draw(region, 1440, 840);
 
-        lightGrayFont26.draw(batch, passTime/60+" m "+passTime%60+" s", 1470, 878);
+        lightGrayFont26.draw(batch, passTime / 60 + " m " + passTime % 60 + " s", 1470, 878);
 
         batch.end();
     }
+
     @Override
     public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.NUM_1 && inventory[1] > 0){
+        if (keycode == Input.Keys.NUM_1 && inventory[1] > 0) {
             inventoryChoose = 0;
             click.play();
         }
-        if(keycode == Input.Keys.NUM_2 && inventory[1] > 0){
+        if (keycode == Input.Keys.NUM_2 && inventory[1] > 0) {
             inventoryChoose = 1;
             click.play();
         }
-        if(keycode == Input.Keys.NUM_3 && inventory[2] > 0){
+        if (keycode == Input.Keys.NUM_3 && inventory[2] > 0) {
             inventoryChoose = 2;
             click.play();
         }
-        if(keycode == Input.Keys.NUM_4 && inventory[3] > 0){
+        if (keycode == Input.Keys.NUM_4 && inventory[3] > 0) {
             click.play();
             inventory[3]--;
-            blood = (100-blood)/2+blood;
+            blood = (100 - blood) / 2 + blood;
         }
         return false;
     }
@@ -776,7 +782,32 @@ public class GameScreen implements Screen, InputProcessor{
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(button == Input.Buttons.LEFT) {
+        if (button == Input.Buttons.LEFT) {
+            isAttackingState = 1;
+            Timer timer = new Timer();
+            timer.schedule(new attackDelay(), 100);
+            Music effect = manager.get("assets/sound/punch.mp3", Music.class);
+            effect.play();
+            return true;
+        }
+        if(button == Input.Buttons.RIGHT) {
+            double deltaX = Gdx.input.getX()-800;
+            double deltaY = 450 - Gdx.input.getY();
+            float percentZ = Math.abs(percent - 0.5f)*2;
+            currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ;
+            // vector dot with (1,0)
+            double dot = deltaX;
+            double normalize = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+            double ang = Math.acos(dot/normalize);
+            double deg = 0;
+            if(deltaY<0){
+                deg = -ang;
+            }
+            else{
+                deg = ang;
+            }
+            bullet = new Bullet(800,450,deg);
+            bulletManager.add(bullet);
             isAttackingState = 1;
             Timer timer = new Timer();
             timer.schedule(new attackDelay(), 100);
@@ -789,7 +820,7 @@ public class GameScreen implements Screen, InputProcessor{
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(button == Input.Buttons.LEFT) {
+        if (button == Input.Buttons.LEFT) {
             isAttackingState = 0;
             return true;
         }
@@ -810,19 +841,40 @@ public class GameScreen implements Screen, InputProcessor{
     public boolean scrolled(int amount) {
         return false;
     }
-    class Item{
+
+    class Item {
         public float posX;
         public float posY;
         Random rnd = new Random();
-        public Item(){
-            posX = rnd.nextInt(10000)+500;
-            posY = rnd.nextInt(10000)+500;
+
+        public Item() {
+            posX = rnd.nextInt(10000) + 500;
+            posY = rnd.nextInt(10000) + 500;
         }
     }
+
     class attackDelay extends TimerTask {
         public void run() {
             isAttackingState = 0;
 
+        }
+    }
+
+    public class Bullet{
+        public int TempBulletPositionX,TempBulletPositionY;
+        public float TempBulletVelocityX,TempBulletVelocityY;
+        public double deg;
+
+        public Bullet(int bulletPositionX,int bulletPositionY,double degree){
+            TempBulletPositionX = bulletPositionX;
+            TempBulletPositionY = bulletPositionY;
+            TempBulletVelocityX = 8*(float)(Math.cos((float)degree));
+            TempBulletVelocityY = 8*(float)(Math.sin((float)degree));
+            deg = Math.toDegrees(degree);
+        }
+        public void update(){
+            TempBulletPositionX += (int)TempBulletVelocityX;
+            TempBulletPositionY += (int)TempBulletVelocityY;
         }
     }
 

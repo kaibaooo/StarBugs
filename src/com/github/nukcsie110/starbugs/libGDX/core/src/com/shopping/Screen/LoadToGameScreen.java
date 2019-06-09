@@ -70,6 +70,8 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/inventory/potion3.png", Texture.class);
         manager.load("assets/inventory/choose.png", Texture.class);
         Gdx.app.log("manager", "section 3 finished");
+        //bullet
+        manager.load("assets/inventory/arrow.png", Texture.class);
         //sound
         manager.load("assets/sound/LOL_inGame.mp3", Music.class);
         manager.load("assets/sound/punch.mp3", Music.class);
