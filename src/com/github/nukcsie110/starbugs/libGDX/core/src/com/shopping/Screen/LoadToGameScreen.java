@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.w3c.dom.Text;
 
 public class LoadToGameScreen implements Screen {
     private Stage stage;
@@ -31,7 +32,9 @@ public class LoadToGameScreen implements Screen {
         stage = new Stage(new ScreenViewport());
 
         manager.load("assets/pic/iron_chestplate.png", Texture.class);
+        manager.load("assets/map/Lava_map.png",Texture.class);
         manager.load("assets/map/map.png", Texture.class);
+        manager.load("assets/map/smallMap.png", Texture.class);
         manager.load("assets/pic/icons8-center-of-gravity-64.png", Pixmap.class);
         manager.load("assets/map/navigation.png", Texture.class);
         // character
