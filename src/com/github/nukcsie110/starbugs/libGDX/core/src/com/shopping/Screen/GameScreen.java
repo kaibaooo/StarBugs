@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -46,6 +47,8 @@ public class GameScreen implements Screen, InputProcessor{
     private Pixmap maps;
     private Pixmap pixmap;
     private Music click;
+    private Texture timerTexture;
+    private Pixmap timerPixmap;
     private int R = 8000;
     private final float TIME_SINCE_COLLISION = 30;
     float timeSinceCollision = 0;
@@ -65,12 +68,15 @@ public class GameScreen implements Screen, InputProcessor{
     private float currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ  ;
     private float isAttackingState = 0;
     private int armorType = 0; // 0 none 1 iron 2 gold 3 diamond
-
+    private BitmapFont lightGrayFont26;
     // general attributes
     private float halfWindowWidth = Gdx.graphics.getWidth()/2;
     private float halfWindowHeight = Gdx.graphics.getHeight()/2;
     private ArrayList<Item> lst = new ArrayList<Item>();
     private AssetManager manager = new AssetManager();
+    private float timeSeconds = 0f;
+    private float period = 1f;
+    private int passTime = 0;
 
     //inventory
     private int[] inventory = {1,1,1,3};
@@ -97,23 +103,23 @@ public class GameScreen implements Screen, InputProcessor{
         batch = new SpriteBatch();
         manager = mng;
         maps = new Pixmap(Gdx.files.internal("assets/map/map.png"));
-        Basemap = new Image(manager.get("assets/map/Lava_map.png",Texture.class));
-        map = new Image(new Texture(roundPixmap(maps,R)));
-        map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        Basemap = new Image(manager.get("assets/map/map.png",Texture.class));
+//        map = new Image(new Texture(roundPixmap(maps,R)));
+//        map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
         Basemap.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
 //        System.out.println(map.getX()+" "+map.getY());
         stage.addActor(Basemap);
-        stage.addActor(map);
+//        stage.addActor(map);
         //change map
-        smallMap = new Image(new Texture(roundPixmap(maps,R)));
+//        smallMap = new Image(new Texture(roundPixmap(maps,R)));
         mapOutline = new Image(manager.get("assets/map/smallMap.png",Texture.class));
-        smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-289);
-        smallMap.setSize(253,253);
+//        smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-289);
+//        smallMap.setSize(253,253);
         mapOutline.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-23,Gdx.graphics.getHeight()/3-300);
         mapOutline.setSize(274,275);
-        mapItem.addActor(mapOutline);
-        mapItem.addActor(smallMap);
-        System.out.println(map.getX()+" "+map.getY());
+//        mapItem.addActor(mapOutline);
+//        mapItem.addActor(smallMap);
+//        System.out.println(map.getX()+" "+map.getY());
         camera = (OrthographicCamera) stage.getViewport().getCamera();
         camera.translate(startX,startY);
         counter = 0;
@@ -149,7 +155,11 @@ public class GameScreen implements Screen, InputProcessor{
         music.setLooping(true);
         music.setVolume(0.5f);
         music.play();
-
+        // timer
+        timerTexture = new Texture(150, 50, Format.RGBA8888);
+        timerPixmap = new Pixmap(150, 50, Format.RGBA8888);
+        lightGrayFont26 = new BitmapFont(Gdx.files.internal("assets/font/lightGrayFont26.fnt"), Gdx.files.internal("assets/font/lightGrayFont26.png"), false);
+        region = new TextureRegion();
     }
 
     @Override
@@ -176,7 +186,19 @@ public class GameScreen implements Screen, InputProcessor{
         keyInProcessDebug();
         drawMainPlayer();
         mapItem.draw();
-        drawItemsTest();
+//        drawItemsTest();
+        if(blood <= 0){
+            stage.dispose();
+            game.setScreen(new EndScreen(game));
+        }
+
+        showTimer();
+
+        timeSeconds +=Gdx.graphics.getRawDeltaTime();
+        if(timeSeconds > period){
+            timeSeconds-=period;
+            passTime++;
+        }
     }
 
     private void moveCamera(){
@@ -686,6 +708,31 @@ public class GameScreen implements Screen, InputProcessor{
             }
         }
     }
+
+    private void showTimer(){
+//        timerTexture = new Texture(150, 50, Format.RGBA8888);
+//        timerPixmap = new Pixmap(150, 50, Format.RGBA8888);
+        Color timerBlockCover = new Color(0,0,0,0.7f);
+        Color timerBlockMargin = new Color(255,255,255,0.85f);
+        timerPixmap.setColor(timerBlockCover);
+        timerPixmap.fillRectangle(4, 4, 141, 41);//画实心矩形.起点(x,y),(width,height)
+        timerPixmap.setColor(timerBlockMargin);
+        timerPixmap.drawRectangle(3, 3, 143, 43);
+        timerPixmap.drawRectangle(2, 2, 145, 45);
+        timerPixmap.drawRectangle(1, 1, 147, 47);
+        timerPixmap.drawRectangle(0, 0, 149, 49);
+        timerTexture.draw(timerPixmap, 0, 0);
+        region.setRegion(timerTexture);
+        region.setRegionWidth(150);
+        region.setRegionHeight(50);
+
+        batch.begin();
+        batch.draw(region, 1440, 840);
+
+        lightGrayFont26.draw(batch, passTime/60+" m "+passTime%60+" s", 1470, 878);
+
+        batch.end();
+    }
     @Override
     public boolean keyDown(int keycode) {
         if(keycode == Input.Keys.NUM_1 && inventory[1] > 0){
@@ -721,7 +768,6 @@ public class GameScreen implements Screen, InputProcessor{
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if(button == Input.Buttons.LEFT) {
-
             isAttackingState = 1;
             Timer timer = new Timer();
             timer.schedule(new attackDelay(), 100);
