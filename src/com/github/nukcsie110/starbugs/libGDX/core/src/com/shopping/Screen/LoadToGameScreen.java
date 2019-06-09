@@ -41,21 +41,25 @@ public class LoadToGameScreen implements Screen {
         // character
         manager.load("assets/pic/CharacterCat.png", Texture.class);
         manager.load("assets/pic/Diamondattack(left).png", Texture.class);
+        manager.load("assets/pic/Diamondattack(right).png", Texture.class);
         manager.load("assets/pic/DiamondArmor.png", Texture.class);
         manager.load("assets/pic/DiamondSword.png", Texture.class);
         manager.load("assets/pic/DiamondSwordattack.png", Texture.class);
         manager.load("assets/pic/DiamondBow.png", Texture.class);
         manager.load("assets/pic/Goldenattack(left).png", Texture.class);
+        manager.load("assets/pic/Goldenattack(right).png", Texture.class);
         manager.load("assets/pic/GoldenArmor.png", Texture.class);
         manager.load("assets/pic/GoldenSword.png", Texture.class);
         manager.load("assets/pic/GoldenSwordattack.png", Texture.class);
         manager.load("assets/pic/GoldenBow.png", Texture.class);
         manager.load("assets/pic/Ironattack(left).png", Texture.class);
+        manager.load("assets/pic/Ironattack(right).png", Texture.class);
         manager.load("assets/pic/IronArmor.png", Texture.class);
         manager.load("assets/pic/IronSword.png", Texture.class);
         manager.load("assets/pic/IronSwordattack.png", Texture.class);
         manager.load("assets/pic/IronBow.png", Texture.class);
         manager.load("assets/pic/attack(left).png", Texture.class);
+        manager.load("assets/pic/attack(right).png", Texture.class);
         manager.load("assets/pic/Sword.png", Texture.class);
         manager.load("assets/pic/WholeCat.png", Texture.class);
         manager.load("assets/pic/fistBow.png", Texture.class);

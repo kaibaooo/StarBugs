@@ -38,9 +38,13 @@ public class EndScreen implements Screen, InputProcessor {
     private int showScreenType;
     private Stage stage;
     private OrthographicCamera camera;
-//以下三個為測試值
-
+    private int deg = 0;
+    Music sad;
+    Music hot;
+    Sprite pepe;
+    Sprite nyan;
     public EndScreen(Game aGame, int type){
+        batch = new SpriteBatch();
         showScreenType = type;
         lastPlayerNumber=4;
         allPlayerNumber=5;
@@ -48,7 +52,8 @@ public class EndScreen implements Screen, InputProcessor {
 
         stage = new Stage(new ScreenViewport());
         camera = (OrthographicCamera) stage.getViewport().getCamera();
-
+        sad = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/lose.mp3"));
+        hot = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/win.mp3"));
         Pixmap pixmap = new Pixmap(Gdx.files.internal("assets/pic/icons8-center-of-gravity-64.png"));
         int xHotspot = pixmap.getWidth()/2;
         int yHotspot = pixmap.getHeight()/2;
@@ -71,7 +76,8 @@ public class EndScreen implements Screen, InputProcessor {
         final Skin fontSkin = new Skin(Gdx.files.internal("assets/skin/craftacular/craftacular-ui.json"));
 
 
-
+        pepe = new Sprite(new Texture(Gdx.files.internal("assets/pic/sadpepe.png")));
+        nyan = new Sprite(new Texture(Gdx.files.internal("assets/pic/nyan.png")));
 
         winDeadFont = new BitmapFont(Gdx.files.internal("assets/font/winDeadFont.fnt"), Gdx.files.internal("assets/font/winDeadFont.png"), false);
         whiteFont = new BitmapFont(Gdx.files.internal("assets/font/whiteFont.fnt"), Gdx.files.internal("assets/font/whiteFont.png"), false);
@@ -89,6 +95,7 @@ public class EndScreen implements Screen, InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();
+
         if(showScreenType == 0){
             deadPrint();
         }
@@ -119,7 +126,7 @@ public class EndScreen implements Screen, InputProcessor {
 
     }
     private void deadPrint(){
-        batch = new SpriteBatch();
+        sad.play();
         texture = new Texture(1600, 900, Format.RGBA8888);
         pixmap = new Pixmap(1600, 900, Format.RGBA8888);
 
@@ -140,12 +147,14 @@ public class EndScreen implements Screen, InputProcessor {
         whiteFont.draw(batch, "/   "+allPlayerNumber, 1490, 850);
 
         whiteFont.draw(batch, "kills : "+kills, 30, 650);
-        lightGrayFont26.draw(batch, "Press Esc to end the game!", 450, 250);
-
+        lightGrayFont26.draw(batch, "Press Esc to end the game!", 600, 200);
+        batch.draw(pepe, 700, 300);
         batch.end();
+        texture.dispose();
+        pixmap.dispose();
     }
     private void winPrint(){
-        batch = new SpriteBatch();
+        hot.play();
         texture = new Texture(1600, 900, Format.RGBA8888);
         pixmap = new Pixmap(1600, 900, Format.RGBA8888);
 
@@ -166,9 +175,13 @@ public class EndScreen implements Screen, InputProcessor {
         whiteFont.draw(batch, "/   "+allPlayerNumber, 1490, 850);
 
         whiteFont.draw(batch, "kills : "+kills, 30, 650);
-        lightGrayFont26.draw(batch, "Press Esc to end the game! ", 450, 250);
+        lightGrayFont26.draw(batch, "Press Esc to end the game!", 600, 200);
 
+        batch.draw(nyan,700,300,nyan.getOriginX(),nyan.getOriginY(),nyan.getWidth(),nyan.getHeight(),1,1,(float)deg);
         batch.end();
+        texture.dispose();
+        pixmap.dispose();
+        deg+=7;
     }
 
     @Override

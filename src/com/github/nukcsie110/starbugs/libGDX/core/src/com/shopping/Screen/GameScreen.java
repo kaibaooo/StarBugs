@@ -69,7 +69,7 @@ public class GameScreen implements Screen, InputProcessor {
     private float currentZ = maxAltitude - (maxAltitude - minAltitude) * percentZ;
     private float isAttackingState = 0;
     private int armorType = 0; // 0 none 1 iron 2 gold 3 diamond
-
+    private int attackHand;
     // general attributes
     private float halfWindowWidth = Gdx.graphics.getWidth() / 2;
     private float halfWindowHeight = Gdx.graphics.getHeight() / 2;
@@ -162,13 +162,12 @@ public class GameScreen implements Screen, InputProcessor {
 
         // blood
         blood = 50;
-        texture = new Texture(510, 40, Pixmap.Format.RGBA8888);
-        bloodPix = new Pixmap(510, 40, Pixmap.Format.RGBA8888);
         bloodColor = new Color(61, 0, 0, 0.8f);
         bloodBlockFill = new Color(183, 183, 183, 0.5f);
         borderColor = new Color(255, 255, 255, 0.8f);
         // character
         character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
+        attackHand = 0;
         //bullet
         bulletPicture = new Sprite(manager.get("assets/inventory/arrow.png", Texture.class));
         bulletPicture.setSize(50,50);
@@ -220,7 +219,8 @@ public class GameScreen implements Screen, InputProcessor {
         mapItem.draw();
         if (blood <= 0) {
             stage.dispose();
-            game.setScreen(new EndScreen(game, 0));
+            game.setScreen(new EndScreen(game, 1));
+            music.stop();
         }
 
         showTimer();
@@ -467,7 +467,7 @@ public class GameScreen implements Screen, InputProcessor {
         batch.begin();
         // 旋轉要除以縮放比例
         choosePlayerTexture();
-        Gdx.app.log("SIZE", String.valueOf(character.getWidth()) + ", " + String.valueOf(character.getHeight()));
+//        Gdx.app.log("SIZE", String.valueOf(character.getWidth()) + ", " + String.valueOf(character.getHeight()));
         batch.draw(character, halfWindowWidth, halfWindowHeight, character.getOriginX() / minAltitude,
                 character.getOriginY() / minAltitude, character.getWidth() / minAltitude,
                 character.getHeight() / minAltitude, 1, 1, (float) deg);
@@ -542,7 +542,8 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     private void drawBlood() {
-
+        texture = new Texture(510, 40, Pixmap.Format.RGBA8888);
+        bloodPix = new Pixmap(510, 40, Pixmap.Format.RGBA8888);
         bloodPix.setColor(bloodBlockFill);
         bloodPix.fillRectangle(5, 5, 500, 30);
         bloodPix.setColor(borderColor);
@@ -559,8 +560,8 @@ public class GameScreen implements Screen, InputProcessor {
         batch.begin();
         batch.draw(bloodRegion, 545, 50);
         batch.end();
-        // texture.dispose();
-        // bloodPix.dispose();
+        texture.dispose();
+        bloodPix.dispose();
     }
 
     private void choosePlayerTexture() {
@@ -637,7 +638,13 @@ public class GameScreen implements Screen, InputProcessor {
 
         if (armorType == 0 && isAttackingState == 1) {
             if (inventoryChoose == 0) {
-                Texture current = manager.get("assets/pic/attack(left).png", Texture.class);
+                Texture current;
+                if(attackHand == 1){
+                    current = manager.get("assets/pic/attack(left).png", Texture.class);
+                }
+                else{
+                    current = manager.get("assets/pic/attack(right).png", Texture.class);
+                }
                 character.setSize(current.getWidth(), current.getHeight());
                 character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
@@ -654,7 +661,13 @@ public class GameScreen implements Screen, InputProcessor {
             }
         } else if (armorType == 1 && isAttackingState == 1) {
             if (inventoryChoose == 0) {
-                Texture current = manager.get("assets/pic/Ironattack(left).png", Texture.class);
+                Texture current;
+                if(attackHand == 1){
+                    current = manager.get("assets/pic/Ironattack(left).png", Texture.class);
+                }
+                else{
+                    current = manager.get("assets/pic/Ironattack(right).png", Texture.class);
+                }
                 character.setSize(current.getWidth(), current.getHeight());
                 character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
@@ -671,7 +684,13 @@ public class GameScreen implements Screen, InputProcessor {
             }
         } else if (armorType == 2 && isAttackingState == 1) {
             if (inventoryChoose == 0) {
-                Texture current = manager.get("assets/pic/Goldenattack(left).png", Texture.class);
+                Texture current;
+                if(attackHand == 1){
+                    current = manager.get("assets/pic/Goldenattack(left).png", Texture.class);
+                }
+                else{
+                    current = manager.get("assets/pic/Goldenattack(right).png", Texture.class);
+                }
                 character.setSize(current.getWidth(), current.getHeight());
                 character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
@@ -689,7 +708,13 @@ public class GameScreen implements Screen, InputProcessor {
             }
         } else if (armorType == 3 && isAttackingState == 1) {
             if (inventoryChoose == 0) {
-                Texture current = manager.get("assets/pic/Diamondattack(left).png", Texture.class);
+                Texture current;
+                if(attackHand == 1){
+                    current = manager.get("assets/pic/Diamondattack(left).png", Texture.class);
+                }
+                else{
+                    current = manager.get("assets/pic/Diamondattack(right).png", Texture.class);
+                }
                 character.setSize(current.getWidth(), current.getHeight());
                 character.setCenter(current.getWidth() / 2, current.getHeight() / 2);
                 character.setTexture(current);
@@ -782,11 +807,6 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT ) {
-            isAttackingState = 1;
-            Timer timer = new Timer();
-            timer.schedule(new attackDelay(), 100);
-            Music effect = manager.get("assets/sound/punch.mp3", Music.class);
-            effect.play();
             if(inventory[2] == 1 && inventoryChoose == 2) {
                 double deltaX = Gdx.input.getX()-800;
                 double deltaY = 450 - Gdx.input.getY();
@@ -805,8 +825,15 @@ public class GameScreen implements Screen, InputProcessor {
                 }
                 bullet = new Bullet(800,450,deg);
                 bulletManager.add(bullet);
+                Timer timer = new Timer();
+                timer.schedule(new attackDelay(), 150);
+                return true;
             }
-
+            isAttackingState = 1;
+            Music effect = manager.get("assets/sound/punch.mp3", Music.class);
+            effect.play();
+            Timer timer = new Timer();
+            timer.schedule(new attackDelay(), 150);
             return true;
         }
         if(button == Input.Buttons.RIGHT && inventory[2] == 1 && inventoryChoose == 2){
@@ -821,10 +848,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-            if (button == Input.Buttons.LEFT) {
-            isAttackingState = 0;
-            return true;
-        }
         return false;
     }
 
@@ -857,7 +880,12 @@ public class GameScreen implements Screen, InputProcessor {
     class attackDelay extends TimerTask {
         public void run() {
             isAttackingState = 0;
-
+            if(attackHand == 1){
+                attackHand = 2;
+            }
+            else{
+                attackHand = 1;
+            }
         }
     }
 
