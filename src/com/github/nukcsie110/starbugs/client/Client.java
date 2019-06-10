@@ -11,54 +11,101 @@ import java.nio.channels.*;
 import java.util.*;
 
 
-public class Client{
+public class Client extends Thread{
     private static final int BUFFER_LEN = 65536;
+    private static final int SELECTOR_TIMEOUT = 1;
     private InetSocketAddress serverAddr; 
     private RecvBuffer recvBuf;
     private ByteBuffer writeBuf;
-    private boolean writeBusy;
+    private Boolean writeEnable; //Lock for writing
     private int tailOfLastPacket;
     private SocketChannel client;
     private Selector selector;
     private SelectionKey key;
+    private Boolean gameEnded;
+    private Boolean ready;
     
     public Client(){
         this.recvBuf = new RecvBuffer(BUFFER_LEN);
         this.writeBuf = ByteBuffer.allocate(BUFFER_LEN);
         this.serverAddr = new InetSocketAddress("127.0.0.1", 8787);
-        this.writeBusy = false;
         this.tailOfLastPacket = 0;
+        this.ready = false;
+        this.writeEnable = false;
+        this.gameEnded = false;
     }
 
-    public void initConnection(){
-        try{
-            this.selector = Selector.open();
-            this.client = SocketChannel.open(serverAddr);
-            this.client.configureBlocking(false);  
+    private void initConnection() throws IOException{
+        this.selector = Selector.open();
+        this.client = SocketChannel.open();
+        this.client.configureBlocking(false);
+        boolean connected = this.client.connect(this.serverAddr);
+        if(!connected){
+            this.key = this.client.register(this.selector, SelectionKey.OP_CONNECT);
+            Logger.log("Connection pending...");
+        }else{
             this.key = this.client.register(this.selector, SelectionKey.OP_READ);
-        }catch(IOException e){
-            e.printStackTrace();
+            synchronized(this.ready){
+                this.ready = true;
+            }
+            Logger.log("Connected to "+this.serverAddr);
         }
     }
 
-    public void select(int timeout){
+    private void closeConnection() throws IOException{
+        Logger.log("Close connection from: "+this.client.getRemoteAddress());
+        this.client.close();
+        this.client.keyFor(selector).cancel();
+        this.selector.selectNow();
+    }
+
+    public synchronized void close(){
+        this.gameEnded = true;
+    }
+
+    public boolean isReady(){
+        synchronized(this.ready){
+            return this.ready;
+        }
+    }
+
+    public void run(){
         try{
-            this.selector.select(timeout);  
-            if(this.key.isReadable()){
-                if(!recvBuf.read(this.client)){
-                    Logger.log("Close connection from: "+this.client.getRemoteAddress());
-                    this.client.close();
-                    this.client.keyFor(selector).cancel();
+            this.initConnection();
+
+            while(gameEnded!=true){
+                this.selector.select(this.SELECTOR_TIMEOUT);
+                if(this.key.isConnectable()){ //Not connect yet
+                    if(this.client.isConnectionPending()){
+                        this.client.finishConnect();
+                        this.key = this.client.register(this.selector, SelectionKey.OP_READ);
+                        synchronized(this.ready){
+                            this.ready = true;
+                        }
+                        Logger.log("Connected to "+this.serverAddr);
+                    }
+                }else if(this.key.isReadable()){
+                    synchronized(recvBuf){
+                        if(!recvBuf.read(this.client)){
+                            this.gameEnded = true;
+                        }
+                    }
+                }else if(this.key.isWritable()){
+                    synchronized(writeEnable){
+                        if(writeEnable){
+                            client.write(writeBuf);
+                        }
+                        if(!writeEnable | writeBuf.remaining() == 0) {  // write finished, switch to OP_READ  
+                            writeBuf.clear(); 
+                            //this.tailOfLastPacket = 0;
+                            this.writeEnable = false;
+                            this.key.interestOps(SelectionKey.OP_READ);
+                        }  
+                    }
                 }
-            }else if(this.key.isWritable()){
-                client.write(writeBuf);  
-                if (writeBuf.remaining() == 0) {  // write finished, switch to OP_READ  
-                    writeBuf.clear(); 
-                    this.tailOfLastPacket = 0;
-                    key.interestOps(SelectionKey.OP_READ);
-                    this.writeBusy = false;
-                }  
             }
+
+            this.closeConnection();
         
         } catch (IOException e) {  
             key.cancel();  
@@ -67,11 +114,15 @@ public class Client{
     }  
 
     public boolean isReadable(){
-        return this.recvBuf.hasPacket();
+        synchronized(recvBuf){
+            return this.recvBuf.hasPacket();
+        }
     }
 
     public Union read(){
-        return Parser.toUnion(this.recvBuf.getPacket());
+        synchronized(recvBuf){
+            return Parser.toUnion(this.recvBuf.getPacket());
+        }
     }
 
     public void join(String name){
@@ -90,25 +141,28 @@ public class Client{
         this.write(Parser.updateDirection(newDir));
     }
 
-    public boolean isWritable(){
-        return !this.writeBusy;
-    }
     public void write(byte[] packet){
-        int oldPos = this.writeBuf.position();
-        this.writeBuf.limit(this.writeBuf.capacity());
-        this.writeBuf.position(tailOfLastPacket); //Restore tail of data
-        this.writeBuf.put(packet); //Append packet to tail
-        this.tailOfLastPacket = this.writeBuf.position(); //Mark tail of data
-        if(this.writeBusy){
+        //int oldPos = this.writeBuf.position();
+        //this.writeBuf.limit(this.writeBuf.capacity());
+        //this.writeBuf.position(tailOfLastPacket); //Restore tail of data
+        synchronized(this.writeEnable){
+            this.writeBuf.put(packet); //Append packet to tail
+        //this.tailOfLastPacket = this.writeBuf.position(); //Mark tail of data
+        /*if(this.writeBusy){
             //Restore writing state
             this.writeBuf.limit(this.writeBuf.position());
             this.writeBuf.position(oldPos);
+        }*/
+            this.writeBuf.flip();
+            this.writeEnable = true;
+            this.key.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
         }
+        //this.flush();
     }
-    public void flush(){
-        this.writeBuf.limit(this.writeBuf.position());
-        this.writeBuf.position(0);
+    private void flush(){
+        this.writeBuf.flip();
+        //this.writeBuf.limit(this.writeBuf.position());
+        //this.writeBuf.position(0);
         this.key.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
-        this.writeBusy = true;
     }
 }

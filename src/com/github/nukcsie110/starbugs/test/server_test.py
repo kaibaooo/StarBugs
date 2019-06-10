@@ -9,7 +9,7 @@ def makePacket(pkID, data):
     length = p32(len(data), endian='big')
     return pkID+length+data
 
-conn.send(makePacket(0x00, b'0123456789012345678901234567890\x00')*100)
+conn.send(makePacket(0x00, b'0123456789012345678901234567890\x00'))
 print(conn.recv())
 
 conn.close()
