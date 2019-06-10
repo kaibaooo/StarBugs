@@ -1,6 +1,7 @@
 package com.github.nukcsie110.starbugs.client;
 
 import com.github.nukcsie110.starbugs.packet.RecvBuffer;
+import com.github.nukcsie110.starbugs.packet.WriteBuffer;
 import com.github.nukcsie110.starbugs.packet.Union;
 import com.github.nukcsie110.starbugs.util.Logger;
 import com.github.nukcsie110.starbugs.packet.Parser;
@@ -16,9 +17,7 @@ public class Client extends Thread{
     private static final int SELECTOR_TIMEOUT = 1;
     private InetSocketAddress serverAddr; 
     private RecvBuffer recvBuf;
-    private ByteBuffer writeBuf;
-    private Boolean writeEnable; //Lock for writing
-    private int tailOfLastPacket;
+    private WriteBuffer writeBuf;
     private SocketChannel client;
     private Selector selector;
     private SelectionKey key;
@@ -27,11 +26,9 @@ public class Client extends Thread{
     
     public Client(){
         this.recvBuf = new RecvBuffer(BUFFER_LEN);
-        this.writeBuf = ByteBuffer.allocate(BUFFER_LEN);
+        this.writeBuf = new WriteBuffer(BUFFER_LEN);
         this.serverAddr = new InetSocketAddress("127.0.0.1", 8787);
-        this.tailOfLastPacket = 0;
         this.ready = false;
-        this.writeEnable = false;
         this.gameEnded = false;
     }
 
@@ -74,6 +71,15 @@ public class Client extends Thread{
             this.initConnection();
 
             while(gameEnded!=true){
+                //Determine write mode or read mode
+                if(this.ready){
+                    if(this.writeBuf.isEmpty()){
+                        this.key.interestOps(SelectionKey.OP_READ);
+                    }else{
+                        this.key.interestOps(SelectionKey.OP_WRITE);
+                    }
+                }
+
                 this.selector.select(this.SELECTOR_TIMEOUT);
                 if(this.key.isConnectable()){ //Not connect yet
                     if(this.client.isConnectionPending()){
@@ -89,17 +95,7 @@ public class Client extends Thread{
                         this.gameEnded = true;
                     }
                 }else if(this.key.isWritable()){
-                    synchronized(writeEnable){
-                        if(writeEnable){
-                            client.write(writeBuf);
-                        }
-                        if(!writeEnable | writeBuf.remaining() == 0) {  // write finished, switch to OP_READ  
-                            writeBuf.clear(); 
-                            //this.tailOfLastPacket = 0;
-                            this.writeEnable = false;
-                            this.key.interestOps(SelectionKey.OP_READ);
-                        }  
-                    }
+                    this.writeBuf.write(this.client);
                 }
             }
 
@@ -136,27 +132,6 @@ public class Client extends Thread{
     }
 
     public void write(byte[] packet){
-        //int oldPos = this.writeBuf.position();
-        //this.writeBuf.limit(this.writeBuf.capacity());
-        //this.writeBuf.position(tailOfLastPacket); //Restore tail of data
-        synchronized(this.writeEnable){
-            this.writeBuf.put(packet); //Append packet to tail
-        //this.tailOfLastPacket = this.writeBuf.position(); //Mark tail of data
-        /*if(this.writeBusy){
-            //Restore writing state
-            this.writeBuf.limit(this.writeBuf.position());
-            this.writeBuf.position(oldPos);
-        }*/
-            this.writeBuf.flip();
-            this.writeEnable = true;
-            this.key.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
-        }
-        //this.flush();
-    }
-    private void flush(){
-        this.writeBuf.flip();
-        //this.writeBuf.limit(this.writeBuf.position());
-        //this.writeBuf.position(0);
-        this.key.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
+        this.writeBuf.put(packet);
     }
 }

@@ -10,10 +10,13 @@ public class ClientTest{
         client.start();
         while(!client.isReady());
         client.join("ifTNT");
-        //client.keyDown((byte)0x87);
-        //client.updateDirection(0.5f);
         boolean gameOver = false;
         while(!gameOver){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {}
+            client.keyDown((byte)0x87);
+            client.updateDirection(0.5f);
             if(client.isReadable()){
                 Union ops = client.read();
                 switch(ops.pkID){
