@@ -2,6 +2,7 @@ package com.github.nukcsie110.starbugs.server;
 
 import com.github.nukcsie110.starbugs.packet.Handler;
 import com.github.nukcsie110.starbugs.server.ClientHandler;
+import com.github.nukcsie110.starbugs.util.Logger;
 import java.nio.channels.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class ServerHandler implements Handler {
         SocketChannel client = null;  
         try {  
             client = server.accept();  
-            System.out.println("Accepted connection from " + client.getRemoteAddress());  
+            Logger.log("Accepted connection from " + client.getRemoteAddress());  
         } catch (IOException e) {  
             e.printStackTrace();  
             return;  
@@ -32,7 +33,7 @@ public class ServerHandler implements Handler {
             newPlayer.setSelKey(clientKey);
             newPlayer.setID((int)(Math.random()*0x10000));
             onlineCnt+=1;
-            System.out.println("Connections: "+onlineCnt);
+            Logger.log("Connections: "+onlineCnt);
             clientKey.attach(new ClientHandler(newPlayer));
             //clientKey.attach(new ClientHandler());  
         } catch (IOException e) {  

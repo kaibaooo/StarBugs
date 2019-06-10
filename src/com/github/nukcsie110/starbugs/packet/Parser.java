@@ -8,6 +8,7 @@ import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
 import com.github.nukcsie110.starbugs.basic.Equipment;
 import com.github.nukcsie110.starbugs.basic.Map;
+import com.github.nukcsie110.starbugs.util.Logger;
 import java.io.UnsupportedEncodingException;
 
 public class Parser{
@@ -21,10 +22,10 @@ public class Parser{
         Union rtVal = new Union();
         if(x.length < 5){
             rtVal.pkID = -1;
-            log("Invaild packet length");
+            Logger.log("Invaild packet length");
         }else if(x.length != (x[1]<<24)+(x[2]<<16)+(x[3]<<8)+x[4]+5){
             rtVal.pkID = -1;
-            log("Invaild packet length");
+            Logger.log("Invaild packet length");
         }else{
             rtVal.pkID = x[0];
         }
@@ -44,7 +45,7 @@ public class Parser{
             case 0x09: _updateDirection(x, rtVal); break;
             case 0x10: _gameOver(x, rtVal); break;
             default:
-                log("Invaild packet ID: "+ rtVal.pkID);
+                Logger.log("Invaild packet ID: "+ rtVal.pkID);
                 rtVal.pkID = -1;
         }
         return rtVal;
@@ -56,7 +57,7 @@ public class Parser{
             y.player = new User();
             y.player.setName(new String(x, "US-ASCII"));
         }catch(UnsupportedEncodingException e){
-            log("Error: UnsupportedEncodingException");
+            Logger.log("Error: UnsupportedEncodingException");
         }
     }
     public static byte[] join(String name){
@@ -66,7 +67,7 @@ public class Parser{
 
     private static void _joinReply(byte[] x, Union y){
         if(x.length != 3){
-            log("Illigle joinReply packet size");
+            Logger.log("Illigle joinReply packet size");
             y.pkID = -1;
             return;
         }
@@ -92,7 +93,7 @@ public class Parser{
         byte cnt = x[0];
         int elementSize = 34;
         if(x.length != 1+cnt*elementSize){
-            log("Illigle updateNameTable packet length");
+            Logger.log("Illigle updateNameTable packet length");
             y.pkID = -1;
             return;
         }
@@ -108,7 +109,7 @@ public class Parser{
                    new String(tmpName, "US-ASCII")
                );
             }catch(UnsupportedEncodingException e){
-                log("Error: UnsupportedEncodingException");
+                Logger.log("Error: UnsupportedEncodingException");
             }
             y.nameTable.add(tmpUser);
         }
@@ -130,7 +131,7 @@ public class Parser{
         byte cnt = x[0];
         int elementSize = 13;
         if(x.length != 1+cnt*elementSize){
-            log("Illigle updateGlobalItem packet length");
+            Logger.log("Illigle updateGlobalItem packet length");
             y.pkID = -1;
             return;
         }
@@ -305,7 +306,7 @@ public class Parser{
 
     //Encapsulate data segment with pkID and len
     private static byte[] makePacket(byte pkID, byte[] data){
-        log("Length of data:"+data.length);
+        Logger.log("Length of data:"+data.length);
         ByteBuffer packetFactory = ByteBuffer.allocate(5+data.length);
         packetFactory.put(pkID);
         packetFactory.putInt((int)(data.length));
@@ -318,8 +319,5 @@ public class Parser{
         byte[] rtVal = new byte[x.remaining()];
         x.get(rtVal, 0, rtVal.length);
         return rtVal;
-    }
-    private static void log(Object x){
-        System.out.println(x);
     }
 }

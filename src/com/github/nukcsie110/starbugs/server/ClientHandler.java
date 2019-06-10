@@ -3,6 +3,7 @@ package com.github.nukcsie110.starbugs.server;
 import com.github.nukcsie110.starbugs.packet.Handler;
 import com.github.nukcsie110.starbugs.server.ServerUser;
 import com.github.nukcsie110.starbugs.server.RecvBuffer;
+import com.github.nukcsie110.starbugs.util.Logger;
 import java.nio.channels.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -10,10 +11,6 @@ import java.nio.ByteBuffer;
 public class ClientHandler implements Handler {  
     private final static int BUF_SIZE=1024;
     private RecvBuffer recvBuf;
-    //private int readCnt;
-    //private int exceptedPacketLength;
-    //private int headOfPacket;
-    //private ByteBuffer packetBuf;
     private ByteBuffer writeBuf;
     private ServerUser player;  
       
@@ -21,11 +18,7 @@ public class ClientHandler implements Handler {
     //public ClientHandler() {  
         this.recvBuf = new RecvBuffer(BUF_SIZE);
         this.writeBuf = ByteBuffer.allocate(BUF_SIZE);
-        //this.player = _player;
-        //this.readCnt = 0;
-        //this.exceptedPacketLength = -1;
-        //this.recvBuf.mark();
-        //this.headOfPacket = 0;
+        this.player = _player;
     }  
       
     public void execute(Selector selector, SelectionKey key) {  
@@ -44,7 +37,7 @@ public class ClientHandler implements Handler {
     private void readPacket(Selector selector, SelectionKey key) throws IOException {  
         SocketChannel client = (SocketChannel) key.channel();  
         if(!recvBuf.read(client)){
-            log("Close connection from: "+client.getRemoteAddress());
+            Logger.log("Close connection from: "+client.getRemoteAddress());
             client.close();
             client.keyFor(selector).cancel();
         }
@@ -54,7 +47,7 @@ public class ClientHandler implements Handler {
     }
 
     private void packetHandle(byte[] packet){
-        printBytes(packet);
+        Logger.printBytes(packet);
     }
       
     private void flushBuf(Selector selector, SelectionKey key) throws IOException {  
@@ -65,28 +58,5 @@ public class ClientHandler implements Handler {
             writeBuf.clear(); 
             key.interestOps(SelectionKey.OP_READ);  
         }  
-    }
-    private void log(Object x){
-        System.out.println(x);
-    }
-    private static void printBytes(byte[] x){
-        for(byte i:x){
-            System.out.printf("0x%02X ", i);
-        }
-        System.out.println(" "+x.length+" bytes");
-    }
-    private void printByteBuffer(ByteBuffer x){
-        int oldPos = x.position();
-        int oldLim = x.limit();
-
-        x.rewind();
-        
-        while(x.hasRemaining()){
-            System.out.printf("%02X ", x.get());
-        }
-        System.out.println("");
-
-        x.position(oldPos);
-        x.limit(oldLim);
     }
 }  

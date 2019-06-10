@@ -2,6 +2,7 @@ package com.github.nukcsie110.starbugs.server;
 
 import com.github.nukcsie110.starbugs.Game;
 import com.github.nukcsie110.starbugs.packet.Handler;
+import com.github.nukcsie110.starbugs.util.Logger;
 import java.nio.channels.*;
 import java.io.IOException;
 import java.util.Iterator;
@@ -31,7 +32,7 @@ public class Server{
     }  
   
     private static void initServer(Selector selector) throws IOException,ClosedChannelException {  
-        log("Listening for connection on port " + LISTEN_PORT);  
+        Logger.log("Listening for connection on port " + LISTEN_PORT);  
         ServerSocketChannel serverChannel = ServerSocketChannel.open();  
         ServerSocket ss = serverChannel.socket();  
         ss.bind(new InetSocketAddress(LISTEN_PORT));  
@@ -39,9 +40,4 @@ public class Server{
         SelectionKey serverKey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);  
         serverKey.attach(new ServerHandler());  
     }
-
-    private static void log(Object x){
-        System.out.println(x);
-    } 
-
 }

@@ -2,65 +2,63 @@ package com.github.nukcsie110.starbugs.test;
 import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.basic.Equipment;
 import com.github.nukcsie110.starbugs.basic.EquipmentSlot;
+import com.github.nukcsie110.starbugs.util.Logger;
 
 public class basic_User{
     public static void main(String[] argv){
         User a = new User();
-        println("===============Testing name and id===================");
-        println(a);
+        Logger.log("===============Testing name and id===================");
+        Logger.log(a);
         a.setID(0xbeef);
         a.setName("test");
-        println(a);
+        Logger.log(a);
         a.setID(0x100000);
         a.setName("dadasdasddasdasdsadsadsadasdsadsadasdasddsadasdsadasdasdsadsadsadsadasd");
-        println(a);
-        println("=============Testing weapon and armor=================");
+        Logger.log(a);
+        Logger.log("=============Testing weapon and armor=================");
         a = new User();
-        println(a);
+        Logger.log(a);
 
         Equipment rt = a.assEquip(Equipment.LONG_GUN);
-        println(a);
-        println("\tReturn value: "+rt);
+        Logger.log(a);
+        Logger.log("\tReturn value: "+rt);
         
         rt = a.assEquip(Equipment.LONG_BOW);
-        println(a);
-        println("\tReturn value: "+rt);
+        Logger.log(a);
+        Logger.log("\tReturn value: "+rt);
         
         rt = a.assEquip(Equipment.SHORT_SWORD);
-        println(a);
-        println("\tReturn value: "+rt);
+        Logger.log(a);
+        Logger.log("\tReturn value: "+rt);
         
         rt = a.assEquip(Equipment.ARMOR_LV1);
-        println(a);
-        println("\tReturn value: "+rt);
+        Logger.log(a);
+        Logger.log("\tReturn value: "+rt);
         
         rt = a.assEquip(Equipment.LONG_GUN);
-        println(a);
-        println("\tReturn value: "+rt);
+        Logger.log(a);
+        Logger.log("\tReturn value: "+rt);
         
         rt = a.assEquip(Equipment.NONE);
-        println(a);
-        println("\tReturn value: "+rt);
+        Logger.log(a);
+        Logger.log("\tReturn value: "+rt);
 
         rt = a.clearSlot(EquipmentSlot.LONG);
-        println(a);
-        println("\tReturn value: "+rt);
+        Logger.log(a);
+        Logger.log("\tReturn value: "+rt);
 
         rt = a.clearSlot(EquipmentSlot.SHORT);
-        println(a);
-        println("\tReturn value: "+rt);
+        Logger.log(a);
+        Logger.log("\tReturn value: "+rt);
 
         rt = a.clearSlot(EquipmentSlot.ARMOR);
-        println(a);
-        println("\tReturn value: "+rt);
+        Logger.log(a);
+        Logger.log("\tReturn value: "+rt);
 
-        println("=============Testing pos=================");
-        println(a);
+        Logger.log("=============Testing pos=================");
+        Logger.log(a);
         a.getPos().moveTo(100, 100);
-        println(a);
+        Logger.log(a);
 
-    }
-    private static void println(Object x){
-        System.out.println(x);
     }
 }
