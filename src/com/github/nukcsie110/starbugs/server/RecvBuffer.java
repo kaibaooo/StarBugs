@@ -86,8 +86,4 @@ public class RecvBuffer{
         }
         return rtVal;
     }
-    
-    private void log(Object x){
-        System.out.println(x);
-    }
 }

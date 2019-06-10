@@ -1,6 +1,8 @@
 package com.github.nukcsie110.starbugs.server;
 
 import com.github.nukcsie110.starbugs.packet.Handler;
+import com.github.nukcsie110.starbugs.packet.Parser;
+import com.github.nukcsie110.starbugs.packet.Union;
 import com.github.nukcsie110.starbugs.server.ServerUser;
 import com.github.nukcsie110.starbugs.server.RecvBuffer;
 import com.github.nukcsie110.starbugs.util.Logger;
@@ -9,7 +11,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class ClientHandler implements Handler {  
-    private final static int BUF_SIZE=1024;
+    private final static int BUF_SIZE=65536;
     private RecvBuffer recvBuf;
     private ByteBuffer writeBuf;
     private ServerUser player;  
@@ -42,12 +44,25 @@ public class ClientHandler implements Handler {
             client.keyFor(selector).cancel();
         }
         while(recvBuf.hasPacket()){
-            packetHandle(recvBuf.getPacket());
+            packetHandle(recvBuf.getPacket(), key);
         }
     }
 
-    private void packetHandle(byte[] packet){
+    private void packetHandle(byte[] packet, SelectionKey key){
         Logger.printBytes(packet);
+        Union parsedPacket = Parser.toUnion(packet);
+        switch(parsedPacket.pkID){
+            case 0x00:
+                this.player.setName(parsedPacket.player.getName());
+                Logger.log("New player joined");
+                Logger.log(this.player);
+                byte[] joinReplyPacket = Parser.joinReply((byte)0x00, this.player.getID());
+                this.writeBuf.put(joinReplyPacket);
+                this.writeBuf.flip();
+                key.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
+            break;
+            default:
+        }
     }
       
     private void flushBuf(Selector selector, SelectionKey key) throws IOException {  
