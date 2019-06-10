@@ -24,7 +24,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.assets.AssetManager;
 import com.shopping.Base.InputProcessing;
 import com.badlogic.gdx.controllers.*;
-
+import com.shopping.Base.GameJudger;
 import java.util.TimerTask;
 import java.util.Timer;
 import java.util.Date;
@@ -52,6 +52,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private Music click;
     private Texture timerTexture;
     private Pixmap timerPixmap;
+    private GameJudger judge;
     // controller
     boolean hasControllers;
     private int R = 8000;
@@ -122,7 +123,13 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         game = aGame;
         stage = new Stage(new ScreenViewport());
         mapItem = new Stage(new ScreenViewport());
-        player = Player;
+        judge = new GameJudger();
+        if(!Player.equals("")){
+            player = Player;
+        }
+        else{
+            player = "NullPointerException";
+        }
         batch = new SpriteBatch();
         manager = mng;
         maps = new Pixmap(Gdx.files.internal("assets/map/map.png"));
@@ -230,6 +237,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         keyInProcess();
         keyInProcessDebug();
         drawEnemy();
+        showTimer();
         drawMainPlayer();
 
         mapItem.draw();
@@ -239,7 +247,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             music.stop();
         }
 
-        showTimer();
+
 
         if(bulletManager.size()!=0)    drawBullet();
 
@@ -436,16 +444,26 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private void keyInProcess() {
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            currentX -= userSpeedX;
+            if(judge.judgeUserMoveIllegal(currentX-userSpeedX, currentY)){
+
+                currentX -= userSpeedX;
+            }
+
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            currentX += userSpeedX;
+            if(judge.judgeUserMoveIllegal(currentX+userSpeedX, currentY)){
+                currentX += userSpeedX;
+            }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            currentY -= userSpeedY;
+            if(judge.judgeUserMoveIllegal(currentX, currentY-userSpeedY)){
+                currentY -= userSpeedY;
+            }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            currentY += userSpeedY;
+            if(judge.judgeUserMoveIllegal(currentX, currentY+userSpeedY)){
+                currentY += userSpeedY;
+            }
         }
 
 
@@ -497,14 +515,15 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
         // sprite.setPosition(-10,100);
         character.rotate((float) deg);
+        int nameOffset = 0;
+        if(player.length() > 8) nameOffset=100;
         batch.begin();
         // 旋轉要除以縮放比例
         choosePlayerTexture();
-//        Gdx.app.log("SIZE", String.valueOf(character.getWidth()) + ", " + String.valueOf(character.getHeight()));
         batch.draw(character, halfWindowWidth, halfWindowHeight, character.getOriginX() / minAltitude,
                 character.getOriginY() / minAltitude, character.getWidth() / minAltitude,
                 character.getHeight() / minAltitude, 1, 1, (float) deg);
-        font.draw(batch, player, halfWindowWidth, halfWindowHeight + 100);
+        font.draw(batch, player, halfWindowWidth-nameOffset, halfWindowHeight + 100);
         batch.end();
     }
 
@@ -553,12 +572,14 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             batch.end();
         }
         if (inventoryChoose == 0) {
+            minAltitude = 1.7f;
             choose.setSize(46, 47);
             choose.setPosition(Gdx.graphics.getWidth() - 98, 490);
             batch.begin();
             choose.draw(batch);
             batch.end();
         } else if (inventoryChoose == 1) {
+            minAltitude = 1.7f;
             choose.setSize(46, 47);
             choose.setPosition(Gdx.graphics.getWidth() - 98, 436);
             batch.begin();
@@ -805,6 +826,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         batch.end();
     }
 
+
+    // ==================================
+    // |         Keyboard event         |
+    // ==================================
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.NUM_1 && inventory[1] > 0) {
@@ -899,8 +924,9 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         return false;
     }
 
-    // connected and disconnect dont actually appear to work for XBox 360 controllers.
-
+    // ==================================
+    // |      XBOX controller event     |
+    // ==================================
     @Override
     public void connected(Controller controller) {
         hasControllers = true;
@@ -1027,6 +1053,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         return false;
     }
 
+
+    // ==================================
+    // |             Others             |
+    // ==================================
     class Item {
         public float posX;
         public float posY;
