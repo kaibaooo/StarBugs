@@ -27,7 +27,7 @@ public class RecvBuffer{
      * @param target Target channel
      * @return Whether read successful
      */
-    public boolean read(SocketChannel target) throws IOException{
+    public synchronized boolean read(SocketChannel target) throws IOException{
         int n = target.read(recvBuf);  
         if(n!=-1 && n!=0){ //not reach End-Of-Stream
             Logger.log("Recived: "+n+" bytes");
@@ -39,7 +39,7 @@ public class RecvBuffer{
     /**
      * @return Whether there are complete packet in buffer
      */
-    public boolean hasPacket(){
+    public synchronized boolean hasPacket(){
         boolean rtVal = false;
         //Read packet length
         if(this.expectPacketLength == -1 && this.recvCnt>=5){
@@ -64,7 +64,7 @@ public class RecvBuffer{
      * and move pointer to next packet
      * @return The first most complete packet in buffer
      */
-    public byte[] getPacket(){
+    public synchronized byte[] getPacket(){
         byte[] rtVal;
         if(!this.hasPacket()){
             rtVal = null;

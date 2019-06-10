@@ -85,10 +85,8 @@ public class Client extends Thread{
                         Logger.log("Connected to "+this.serverAddr);
                     }
                 }else if(this.key.isReadable()){
-                    synchronized(recvBuf){
-                        if(!recvBuf.read(this.client)){
-                            this.gameEnded = true;
-                        }
+                    if(!recvBuf.read(this.client)){
+                        this.gameEnded = true;
                     }
                 }else if(this.key.isWritable()){
                     synchronized(writeEnable){
@@ -114,15 +112,11 @@ public class Client extends Thread{
     }  
 
     public boolean isReadable(){
-        synchronized(recvBuf){
-            return this.recvBuf.hasPacket();
-        }
+        return this.recvBuf.hasPacket();
     }
 
     public Union read(){
-        synchronized(recvBuf){
-            return Parser.toUnion(this.recvBuf.getPacket());
-        }
+        return Parser.toUnion(this.recvBuf.getPacket());
     }
 
     public void join(String name){
