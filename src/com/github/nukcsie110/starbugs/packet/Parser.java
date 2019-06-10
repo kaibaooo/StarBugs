@@ -306,7 +306,7 @@ public class Parser{
 
     //Encapsulate data segment with pkID and len
     private static byte[] makePacket(byte pkID, byte[] data){
-        Logger.log("Length of data:"+data.length);
+        //Logger.log("Length of data:"+data.length);
         ByteBuffer packetFactory = ByteBuffer.allocate(5+data.length);
         packetFactory.put(pkID);
         packetFactory.putInt((int)(data.length));

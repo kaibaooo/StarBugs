@@ -4,7 +4,7 @@ import com.github.nukcsie110.starbugs.packet.Handler;
 import com.github.nukcsie110.starbugs.packet.Parser;
 import com.github.nukcsie110.starbugs.packet.Union;
 import com.github.nukcsie110.starbugs.server.ServerUser;
-import com.github.nukcsie110.starbugs.server.RecvBuffer;
+import com.github.nukcsie110.starbugs.packet.RecvBuffer;
 import com.github.nukcsie110.starbugs.util.Logger;
 import java.nio.channels.*;
 import java.io.IOException;
@@ -54,10 +54,13 @@ public class ClientHandler implements Handler {
         switch(parsedPacket.pkID){
             case 0x00:
                 this.player.setName(parsedPacket.player.getName());
-                Logger.log("New player joined");
-                Logger.log(this.player);
+                Logger.log("New player joined: "+this.player.getDisplayName());
+                
                 byte[] joinReplyPacket = Parser.joinReply((byte)0x00, this.player.getID());
                 this.writeBuf.put(joinReplyPacket);
+                byte[] gameOverPacket = Parser.gameOver((byte)0);
+                this.writeBuf.put(gameOverPacket);
+
                 this.writeBuf.flip();
                 key.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
             break;

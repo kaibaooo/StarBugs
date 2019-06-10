@@ -1,4 +1,4 @@
-package com.github.nukcsie110.starbugs.server;
+package com.github.nukcsie110.starbugs.packet;
 
 import java.nio.channels.*;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class RecvBuffer{
      */
     public boolean read(SocketChannel target) throws IOException{
         int n = target.read(recvBuf);  
-        if(n!=-1){ //not reach End-Of-Stream
+        if(n!=-1 && n!=0){ //not reach End-Of-Stream
             Logger.log("Recived: "+n+" bytes");
             this.recvCnt += n;
         }
@@ -72,7 +72,7 @@ public class RecvBuffer{
             this.recvBuf.position(headOfPacket); //Restore starting point of this packet
             //Read only expected length
             rtVal = new byte[this.expectPacketLength];
-            Logger.log("Packet size: "+ this.expectPacketLength);
+            //Logger.log("Packet size: "+ this.expectPacketLength);
             this.recvBuf.get(rtVal);
             this.headOfPacket = this.recvBuf.position(); //Mark the starting point of next packet
             this.recvCnt -= this.expectPacketLength;
