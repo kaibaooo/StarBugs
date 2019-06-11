@@ -51,13 +51,14 @@ public class ClientHandler implements Handler {
         }
     }
 
-    private void packetHandle(byte[] packet, SelectionKey key){
+    private void packetHandle(byte[] packet, SelectionKey key)throws IOException{
         //Logger.printBytes(packet);
         Union parsedPacket = Parser.toUnion(packet);
+        String logPrefix = "["+((SocketChannel)(key.channel())).getRemoteAddress()+"] ";
         switch(parsedPacket.pkID){
             case 0x00:
                 this.player.setName(parsedPacket.player.getName());
-                //Logger.log("New player joined: "+this.player.getDisplayName());
+                Logger.log(logPrefix+"New player joined: "+this.player.getDisplayName());
                 
                 byte[] joinReplyPacket = Parser.joinReply((byte)0x00, this.player.getID());
                 this.writeBuf.put(joinReplyPacket);
@@ -65,7 +66,7 @@ public class ClientHandler implements Handler {
                 key.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
             break;
             case 0x07:
-                Logger.log("Recived keyDown: "+parsedPacket.keyCode);
+                Logger.log(logPrefix+"Recived keyDown: "+parsedPacket.keyCode);
                 
                 byte[] gameOverPacket = Parser.gameOver((byte)0);
                 this.writeBuf.put(gameOverPacket);
@@ -74,10 +75,10 @@ public class ClientHandler implements Handler {
                 key.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
             break;
             case 0x08:
-                Logger.log("Recived keyUp: "+parsedPacket.keyCode);
+                Logger.log(logPrefix+"Recived keyUp: "+parsedPacket.keyCode);
             break;
             case 0x09:
-                Logger.log("Recived updateDirection: "+parsedPacket.newDirection);
+                Logger.log(logPrefix+"Recived updateDirection: "+parsedPacket.newDirection);
             break;
             default:
         }
@@ -88,7 +89,6 @@ public class ClientHandler implements Handler {
         SocketChannel client = (SocketChannel) key.channel();
         writeBuf.write(client);
         if (writeBuf.isEmpty()) {  // write finished, switch to OP_READ  
-            Logger.log("Write complete");
             if(this.kill){
                 //Wait flush data then close connection
                 Logger.log("Disconnect with "+client.getRemoteAddress());
