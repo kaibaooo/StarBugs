@@ -114,7 +114,9 @@ public class Client extends Thread{
     }
 
     public Union read(){
-        return Parser.toUnion(this.recvBuf.getPacket());
+        byte[] packet = this.recvBuf.getPacket();
+        //Logger.printBytes(packet);
+        return Parser.toUnion(packet);
     }
 
     public void join(String name){

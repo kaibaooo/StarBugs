@@ -5,7 +5,7 @@ import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
 import com.github.nukcsie110.starbugs.basic.Equipment;
-import com.github.nukcsie110.starbugs.basic.Map;
+import com.github.nukcsie110.starbugs.basic.GameMap;
 
 /**
  * @version 0.1
@@ -30,7 +30,7 @@ public final class Union{
     //public int posionCnt;
     //public Coordinate coordinate;
     //public int blood;
-    public Map map;
+    public GameMap map;
     public byte rank;
     public byte keyCode;
     public float newDirection;

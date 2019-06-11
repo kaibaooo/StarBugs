@@ -30,7 +30,7 @@ public class RecvBuffer{
     public synchronized boolean read(SocketChannel target) throws IOException{
         int n = target.read(recvBuf);  
         if(n!=-1 && n!=0){ //not reach End-Of-Stream
-            //Logger.log("Recived: "+n+" bytes");
+            Logger.log("Recived: "+n+" bytes");
             this.recvCnt += n;
         }
         return n!=-1;

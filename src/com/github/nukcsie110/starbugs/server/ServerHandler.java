@@ -1,18 +1,17 @@
 package com.github.nukcsie110.starbugs.server;
 
 import com.github.nukcsie110.starbugs.packet.Handler;
+import com.github.nukcsie110.starbugs.packet.Parser;
 import com.github.nukcsie110.starbugs.server.ClientHandler;
 import com.github.nukcsie110.starbugs.util.Logger;
+import com.github.nukcsie110.starbugs.server.Game;
 import java.nio.channels.*;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class ServerHandler implements Handler {  
-    private ArrayList<ServerUser> playerQueue;
-    private int onlineCnt;
-    public ServerHandler(){
-        playerQueue = new ArrayList<>();
-        onlineCnt = 0;
+    private Game game;
+    public ServerHandler(Game _game){
+        game = _game;
     }
     public void execute(Selector selector, SelectionKey key) {  
         ServerSocketChannel server = (ServerSocketChannel) key.channel();  
@@ -30,12 +29,13 @@ public class ServerHandler implements Handler {
             client.configureBlocking(false);  
             clientKey = client.register(selector, SelectionKey.OP_READ);
             ServerUser newPlayer  = new ServerUser();
-            newPlayer.setSelKey(clientKey);
+            ClientHandler handler = new ClientHandler(newPlayer, game, clientKey);
+            newPlayer.setHandler(handler);
+
+            //Generate new id
             newPlayer.setID((int)(Math.random()*0x10000));
-            onlineCnt+=1;
-            Logger.log("Connections: "+onlineCnt);
-            clientKey.attach(new ClientHandler(newPlayer));
-            //clientKey.attach(new ClientHandler());  
+            clientKey.attach(newPlayer.getHandler());  
+
         } catch (IOException e) {  
             if (clientKey != null)  
                 clientKey.cancel();  

@@ -10,22 +10,27 @@ import com.github.nukcsie110.starbugs.util.Logger;
 import java.nio.channels.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.*;
 
 public class ClientHandler implements Handler {  
     private final static int BUF_SIZE=655360;
     private RecvBuffer recvBuf;
     private WriteBuffer writeBuf;
     private ServerUser player;
+    private Game game;
     private boolean kill;
+    private SelectionKey myKey;
       
-    public ClientHandler(ServerUser _player) {  
+    public ClientHandler(ServerUser _player, Game _game, SelectionKey _myKey) {  
     //public ClientHandler() {  
         this.recvBuf = new RecvBuffer(BUF_SIZE);
         this.writeBuf = new WriteBuffer(BUF_SIZE);
         this.player = _player;
+        this.game = _game;
         this.kill = false;
+        this.myKey = _myKey;
     }  
-      
+
     public void execute(Selector selector, SelectionKey key) {  
         try {  
             if (key.isReadable()) {  
@@ -57,22 +62,43 @@ public class ClientHandler implements Handler {
         String logPrefix = "["+((SocketChannel)(key.channel())).getRemoteAddress()+"] ";
         switch(parsedPacket.pkID){
             case 0x00:
+
+                //If cannot join (Game started or queue is full)
+                if(!game.addPlayer(this.player)){
+                    Logger.log(logPrefix+"Reject join");
+                    byte[] joinReplyPacket = Parser.joinReply((byte)0x01, (short)0);
+                    this.send(joinReplyPacket);
+                    this.kill = true;
+                    break;
+                }
+
+                //Set basic information
                 this.player.setName(parsedPacket.player.getName());
                 Logger.log(logPrefix+"New player joined: "+this.player.getDisplayName());
                 
+                //Send join reply
                 byte[] joinReplyPacket = Parser.joinReply((byte)0x00, this.player.getID());
-                this.writeBuf.put(joinReplyPacket);
+                this.send(joinReplyPacket);
 
-                key.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
+                Logger.log("Online players: "+game.getOnlinePlayerCount());
+                
+                //Sent name table of online players
+                HashMap<Integer, ServerUser> onlinePlayer = game.getOnlinePlayers();
+                ArrayList<ServerUser> playerList = new ArrayList<>(onlinePlayer.values());
+                for(ServerUser i:playerList){
+                    Logger.log("\t"+i.getDisplayName());
+                }
+                byte[] nameTablePacket = Parser.updateNameTable(playerList);
+                game.broadcast(nameTablePacket);
+
             break;
             case 0x07:
                 Logger.log(logPrefix+"Recived keyDown: "+parsedPacket.keyCode);
                 
-                byte[] gameOverPacket = Parser.gameOver((byte)0);
-                this.writeBuf.put(gameOverPacket);
-                this.kill = true;
+                //byte[] gameOverPacket = Parser.gameOver((byte)0);
+                //this.send(gameOverPacket);
+                //this.kill = true;
                 
-                key.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
             break;
             case 0x08:
                 Logger.log(logPrefix+"Recived keyUp: "+parsedPacket.keyCode);
@@ -97,5 +123,12 @@ public class ClientHandler implements Handler {
                 key.interestOps(SelectionKey.OP_READ);
             }  
         }  
+    }
+
+    public void send(byte[] x){
+        if(this.myKey.isValid()){
+            this.writeBuf.put(x);
+            this.myKey.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
+        }
     }
 }  

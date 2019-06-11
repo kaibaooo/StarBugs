@@ -5,11 +5,11 @@ import com.github.nukcsie110.starbugs.basic.User;
 import java.nio.channels.*;
 
 public class ServerUser extends User{
-    private SelectionKey selKey;
-    public void setSelKey(SelectionKey newSelKey){
-        this.selKey = newSelKey;
+    private ClientHandler handler;
+    public void setHandler(ClientHandler newHandler){
+        this.handler = newHandler;
     }
-    public SelectionKey getSelKey(){
-        return this.selKey;
+    public ClientHandler getHandler(){
+        return this.handler;
     }
 }

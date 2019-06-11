@@ -1,6 +1,6 @@
 package com.github.nukcsie110.starbugs.basic;
 
-public class Map{
+public class GameMap{
     protected float saveZoneRadius = 0;
     protected Coordinate saveZoneCenterPos = new Coordinate(0,0,0);
     protected int currentTime = 0;

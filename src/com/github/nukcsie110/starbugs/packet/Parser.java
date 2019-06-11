@@ -7,8 +7,9 @@ import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
 import com.github.nukcsie110.starbugs.basic.Equipment;
-import com.github.nukcsie110.starbugs.basic.Map;
+import com.github.nukcsie110.starbugs.basic.GameMap;
 import com.github.nukcsie110.starbugs.util.Logger;
+import com.github.nukcsie110.starbugs.server.ServerUser;
 import java.io.UnsupportedEncodingException;
 
 public class Parser{
@@ -23,11 +24,14 @@ public class Parser{
         if(x.length < 5){
             rtVal.pkID = -1;
             Logger.log("Invaild packet length");
-        }else if(x.length != (x[1]<<24)+(x[2]<<16)+(x[3]<<8)+x[4]+5){
-            rtVal.pkID = -1;
-            Logger.log("Invaild packet length");
         }else{
-            rtVal.pkID = x[0];
+            ByteBuffer header = ByteBuffer.wrap(x);
+            rtVal.pkID = header.get();
+            int len = header.getInt()+5;
+            if(x.length != len){
+                rtVal.pkID = -1;
+                Logger.log("Invaild packet length "+x.length+".Expect "+len);
+            }
         }
 
         //Get rid of header
@@ -115,7 +119,7 @@ public class Parser{
         }
     }
 
-    public static byte[] updateNameTable(ArrayList<User> table){
+    public static byte[] updateNameTable(ArrayList<ServerUser> table){
         ByteBuffer buf = ByteBuffer.allocate(1+table.size()*34);
         buf.put((byte)table.size());
         for(User i:table){
@@ -239,7 +243,7 @@ public class Parser{
 
     private static void _updateMap(byte[] x, Union y){
         ByteBuffer buf = ByteBuffer.wrap(x);
-        Map newMap = new Map();
+        GameMap newMap = new GameMap();
         byte currentLives = buf.get();
         float posX = buf.getFloat();
         float posY = buf.getFloat();
@@ -256,7 +260,7 @@ public class Parser{
         y.map = newMap;
     }
 
-    public static byte[] updateMap(Map target){
+    public static byte[] updateMap(GameMap target){
         ByteBuffer buf = ByteBuffer.allocate(21);
         buf.put((byte)(target.getCurrentPlayers()&0xFF));
         buf.putFloat(target.getSaveZoneCenterPos().getPosX());

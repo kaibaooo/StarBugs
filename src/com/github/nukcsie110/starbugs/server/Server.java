@@ -1,6 +1,6 @@
 package com.github.nukcsie110.starbugs.server;
 
-import com.github.nukcsie110.starbugs.Game;
+import com.github.nukcsie110.starbugs.server.Game;
 import com.github.nukcsie110.starbugs.packet.Handler;
 import com.github.nukcsie110.starbugs.util.Logger;
 import java.nio.channels.*;
@@ -17,6 +17,7 @@ public class Server{
     public static void main(String[] args) throws IOException {  
   
         selector = Selector.open();  
+        game = new Game();
         initServer(selector);  
   
         while (true) {  
@@ -38,6 +39,6 @@ public class Server{
         ss.bind(new InetSocketAddress(LISTEN_PORT));  
         serverChannel.configureBlocking(false);  
         SelectionKey serverKey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);  
-        serverKey.attach(new ServerHandler());  
+        serverKey.attach(new ServerHandler(game));  
     }
 }
