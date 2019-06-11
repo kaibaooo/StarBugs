@@ -196,12 +196,12 @@ public class Parser{
     public static byte[] keyUp(byte keyCode){
         byte[] buf = new byte[1];
         buf[0] = keyCode;
-        return makePacket((byte)0x07, buf);
+        return makePacket((byte)0x08, buf);
     }
     public static byte[] keyDown(byte keyCode){
         byte[] buf = new byte[1];
         buf[0] = keyCode;
-        return makePacket((byte)0x08, buf);
+        return makePacket((byte)0x07, buf);
     }
 
     private static void _updateYou(byte[] x, Union y){

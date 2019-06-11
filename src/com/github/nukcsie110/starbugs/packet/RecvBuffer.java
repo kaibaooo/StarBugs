@@ -48,7 +48,7 @@ public class RecvBuffer{
             this.recvBuf.get(); //Skip 1 byte (pkID)
             this.expectPacketLength = HEADER_LEN+this.recvBuf.getInt();
             recvBuf.position(oldPos); //Restore position
-            Logger.log("Got header; expected length:"+ this.expectPacketLength);
+            //Logger.log("Got header; expected length:"+ this.expectPacketLength);
         }
 
         if(this.expectPacketLength != -1 && this.recvCnt>=this.expectPacketLength){

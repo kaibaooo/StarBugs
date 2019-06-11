@@ -50,10 +50,10 @@ public class Client extends Thread{
     }
 
     private void closeConnection() throws IOException{
-        Logger.log("Close connection from: "+this.client.getRemoteAddress());
+        Logger.log("Disconnect with "+this.client.getRemoteAddress());
         this.client.close();
         this.client.keyFor(selector).cancel();
-        this.selector.selectNow();
+        this.selector.selectNow(); //Update selector keys
     }
 
     public synchronized void close(){
@@ -71,6 +71,7 @@ public class Client extends Thread{
             this.initConnection();
 
             while(gameEnded!=true){
+                
                 //Determine write mode or read mode
                 if(this.ready){
                     if(this.writeBuf.isEmpty()){
@@ -91,7 +92,8 @@ public class Client extends Thread{
                         Logger.log("Connected to "+this.serverAddr);
                     }
                 }else if(this.key.isReadable()){
-                    if(!recvBuf.read(this.client)){
+                    if(!this.recvBuf.read(this.client)){
+                        Logger.log("Connection reset by peer "+this.client.getRemoteAddress());
                         this.gameEnded = true;
                     }
                 }else if(this.key.isWritable()){
@@ -102,8 +104,8 @@ public class Client extends Thread{
             this.closeConnection();
         
         } catch (IOException e) {  
-            key.cancel();  
-            try { key.channel().close(); } catch (IOException ioe) { }  
+            this.key.cancel();  
+            try { this.key.channel().close(); } catch (IOException ioe) { }  
         }
     }  
 
