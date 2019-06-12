@@ -23,7 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.assets.AssetManager;
 import com.shopping.Base.InputProcessing;
-import com.badlogic.gdx.controllers.*;
+//import com.badlogic.gdx.controllers.*;
 import com.shopping.Base.GameJudger;
 import java.util.TimerTask;
 import java.util.Timer;
@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.ArrayList;
 //import com.shopping.Base.InputProcessing;
 
-public class GameScreen implements Screen, InputProcessor, ControllerListener {
+public class GameScreen implements Screen, InputProcessor{
 
     private Stage stage;
     private Stage mapItem;
@@ -211,12 +211,12 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                 Gdx.files.internal("assets/skin/craftacular/font-export.png"), false);
         //controller
         hasControllers = false;
-        Controllers.addListener(this);
-
-        if(Controllers.getControllers().size == 0)
-        {
-            hasControllers = false;
-        }
+//        Controllers.addListener(this);
+//
+//        if(Controllers.getControllers().size == 0)
+//        {
+//            hasControllers = false;
+//        }
 
     }
 
@@ -314,27 +314,27 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         mapItem.dispose();
     }
 
-    public void update(float delta) {
-        timeSinceCollision += delta;
-        Image fuck = new Image();
-        if (timeSinceCollision == TIME_SINCE_COLLISION) {
-            for(int i=0;i<3;i++){
-                region1.setRegion(x,y,X,Y);
-                map.remove();
-                fuck = new Image(region1);
-                fuck.setSize(X,Y);
-                fuck.setPosition(800,450);
-                stage.addActor(fuck);
-                x+=10;
-                y+=10;
-                X-=240;
-                Y-=240;
-                System.out.println("Mappppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppps");
-           }
-            timeSinceCollision -= TIME_SINCE_COLLISION;
-        }
-
-    }
+//    public void update(float delta) {
+//        timeSinceCollision += delta;
+//        Image fuck = new Image();
+//        if (timeSinceCollision == TIME_SINCE_COLLISION) {
+//            for(int i=0;i<3;i++){
+//                region1.setRegion(x,y,X,Y);
+//                map.remove();
+//                fuck = new Image(region1);
+//                fuck.setSize(X,Y);
+//                fuck.setPosition(800,450);
+//                stage.addActor(fuck);
+//                x+=10;
+//                y+=10;
+//                X-=240;
+//                Y-=240;
+//                System.out.println("Mappppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppps");
+//           }
+//            timeSinceCollision -= TIME_SINCE_COLLISION;
+//        }
+//
+//    }
 
     private void keyInProcessDebug() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
@@ -918,131 +918,131 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     // ==================================
     // |      XBOX controller event     |
     // ==================================
-    @Override
-    public void connected(Controller controller) {
-        hasControllers = true;
-    }
-
-    @Override
-    public void disconnected(Controller controller) {
-        hasControllers = false;
-    }
-
-    @Override
-    public boolean buttonDown(Controller controller, int buttonCode) {
-        if(buttonCode == XBox360Pad.BUTTON_Y)
-            Gdx.app.log("Controller", "Y");
-        if(buttonCode == XBox360Pad.BUTTON_A){
-            if(inventory[2] == 1 && inventoryChoose == 2) {
-                double deltaX = Gdx.input.getX()-800;
-                double deltaY = 450 - Gdx.input.getY();
-                float percentZ = Math.abs(percent - 0.5f)*2;
-                currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ;
-                // vector dot with (1,0)
-                double dot = deltaX;
-                double normalize = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-                double ang = Math.acos(dot/normalize);
-                double deg = 0;
-                if(deltaY<0){
-                    deg = -ang;
-                }
-                else{
-                    deg = ang;
-                }
-                bullet = new Bullet(800,450,deg);
-                bulletManager.add(bullet);
-                Timer timer = new Timer();
-                timer.schedule(new attackDelay(), 150);
-                return true;
-            }
-            isAttackingState = 1;
-            Music effect = manager.get("assets/sound/punch.mp3", Music.class);
-            effect.play();
-            Timer timer = new Timer();
-            timer.schedule(new attackDelay(), 150);
-        }
-        if(buttonCode == XBox360Pad.BUTTON_X)
-            Gdx.app.log("Controller", "X");
-        if(buttonCode == XBox360Pad.BUTTON_B)
-            Gdx.app.log("Controller", "B");
-
-        if(buttonCode == XBox360Pad.BUTTON_LB)
-            Gdx.app.log("Controller", "LB");
-        if(buttonCode == XBox360Pad.BUTTON_RB)
-            Gdx.app.log("Controller", "RB");
-        return false;
-    }
-
-    @Override
-    public boolean buttonUp(Controller controller, int buttonCode) {
-        return false;
-    }
-
-    @Override
-    public boolean axisMoved(Controller controller, int axisCode, float value) {
-        // This is your analog stick
-        // Value will be from -1 to 1 depending how far left/right, up/down the stick is
-        // For the Y translation, I use a negative because I like inverted analog stick
-        // Like all normal people do! ;)
-
-        // Left Stick
-
-//         Right stick
-        if(axisCode == XBox360Pad.AXIS_RIGHT_X) {
-            Gdx.app.log("Controller X", String.valueOf(value));
-            deg = value*180;
-        }
-        if(axisCode == XBox360Pad.AXIS_RIGHT_Y){
-            Gdx.app.log("Controller Y", String.valueOf(value));
-            deg = value*180;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean povMoved(Controller controller, int povCode, PovDirection value) {
-        // This is the dpad
-
-        if(value == XBox360Pad.BUTTON_DPAD_LEFT) {
-            Gdx.app.log("Controller", "LEFT");
-            tmpX = -15;
-            return true;
-        }
-        if(value == XBox360Pad.BUTTON_DPAD_RIGHT) {
-            Gdx.app.log("Controller", "RIGHT");
-            tmpX = 15;
-            return true;
-        }
-        if(value == XBox360Pad.BUTTON_DPAD_UP) {
-            Gdx.app.log("Controller", "UP");
-            tmpY = 15;
-            return true;
-        }
-        if(value == XBox360Pad.BUTTON_DPAD_DOWN) {
-            Gdx.app.log("Controller", "DOWN");
-            tmpY = -15;
-            return true;
-        }
-        tmpX = 0;
-        tmpY = 0;
-        return false;
-    }
-
-    @Override
-    public boolean xSliderMoved(Controller controller, int sliderCode, boolean value) {
-        return false;
-    }
-
-    @Override
-    public boolean ySliderMoved(Controller controller, int sliderCode, boolean value) {
-        return false;
-    }
-
-    @Override
-    public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
-        return false;
-    }
+//    @Override
+//    public void connected(Controller controller) {
+//        hasControllers = true;
+//    }
+//
+//    @Override
+//    public void disconnected(Controller controller) {
+//        hasControllers = false;
+//    }
+//
+//    @Override
+//    public boolean buttonDown(Controller controller, int buttonCode) {
+//        if(buttonCode == XBox360Pad.BUTTON_Y)
+//            Gdx.app.log("Controller", "Y");
+//        if(buttonCode == XBox360Pad.BUTTON_A){
+//            if(inventory[2] == 1 && inventoryChoose == 2) {
+//                double deltaX = Gdx.input.getX()-800;
+//                double deltaY = 450 - Gdx.input.getY();
+//                float percentZ = Math.abs(percent - 0.5f)*2;
+//                currentZ = maxAltitude - (maxAltitude-minAltitude)*percentZ;
+//                // vector dot with (1,0)
+//                double dot = deltaX;
+//                double normalize = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+//                double ang = Math.acos(dot/normalize);
+//                double deg = 0;
+//                if(deltaY<0){
+//                    deg = -ang;
+//                }
+//                else{
+//                    deg = ang;
+//                }
+//                bullet = new Bullet(800,450,deg);
+//                bulletManager.add(bullet);
+//                Timer timer = new Timer();
+//                timer.schedule(new attackDelay(), 150);
+//                return true;
+//            }
+//            isAttackingState = 1;
+//            Music effect = manager.get("assets/sound/punch.mp3", Music.class);
+//            effect.play();
+//            Timer timer = new Timer();
+//            timer.schedule(new attackDelay(), 150);
+//        }
+//        if(buttonCode == XBox360Pad.BUTTON_X)
+//            Gdx.app.log("Controller", "X");
+//        if(buttonCode == XBox360Pad.BUTTON_B)
+//            Gdx.app.log("Controller", "B");
+//
+//        if(buttonCode == XBox360Pad.BUTTON_LB)
+//            Gdx.app.log("Controller", "LB");
+//        if(buttonCode == XBox360Pad.BUTTON_RB)
+//            Gdx.app.log("Controller", "RB");
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean buttonUp(Controller controller, int buttonCode) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean axisMoved(Controller controller, int axisCode, float value) {
+//        // This is your analog stick
+//        // Value will be from -1 to 1 depending how far left/right, up/down the stick is
+//        // For the Y translation, I use a negative because I like inverted analog stick
+//        // Like all normal people do! ;)
+//
+//        // Left Stick
+//
+////         Right stick
+//        if(axisCode == XBox360Pad.AXIS_RIGHT_X) {
+//            Gdx.app.log("Controller X", String.valueOf(value));
+//            deg = value*180;
+//        }
+//        if(axisCode == XBox360Pad.AXIS_RIGHT_Y){
+//            Gdx.app.log("Controller Y", String.valueOf(value));
+//            deg = value*180;
+//        }
+//
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean povMoved(Controller controller, int povCode, PovDirection value) {
+//        // This is the dpad
+//
+//        if(value == XBox360Pad.BUTTON_DPAD_LEFT) {
+//            Gdx.app.log("Controller", "LEFT");
+//            tmpX = -15;
+//            return true;
+//        }
+//        if(value == XBox360Pad.BUTTON_DPAD_RIGHT) {
+//            Gdx.app.log("Controller", "RIGHT");
+//            tmpX = 15;
+//            return true;
+//        }
+//        if(value == XBox360Pad.BUTTON_DPAD_UP) {
+//            Gdx.app.log("Controller", "UP");
+//            tmpY = 15;
+//            return true;
+//        }
+//        if(value == XBox360Pad.BUTTON_DPAD_DOWN) {
+//            Gdx.app.log("Controller", "DOWN");
+//            tmpY = -15;
+//            return true;
+//        }
+//        tmpX = 0;
+//        tmpY = 0;
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean xSliderMoved(Controller controller, int sliderCode, boolean value) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean ySliderMoved(Controller controller, int sliderCode, boolean value) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
+//        return false;
+//    }
 
 
     // ==================================
