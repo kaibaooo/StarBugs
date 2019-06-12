@@ -779,12 +779,12 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     if(ele.getItemID().getID() == 2){
                         batch.draw(bow, 800 + deltaItemX, 450 + deltaItemY, bow.getOriginX() / minAltitude,
                                 bow.getOriginY() / minAltitude, bow.getHeight() / minAltitude,
-                                bow.getWidth() / minAltitude, 1, 1, 0);
+                                bow.getWidth() / minAltitude, 2, 2, 0);
                     }
                     else if(ele.getItemID().getID() == 3){
                         batch.draw(sword, 800 + deltaItemX, 450 + deltaItemY, sword.getOriginX() / minAltitude,
                                 sword.getOriginY() / minAltitude, sword.getHeight() / minAltitude,
-                                sword.getWidth() / minAltitude, 1, 1, 0);
+                                sword.getWidth() / minAltitude, 2, 2, 0);
                     }
                     else if(ele.getItemID().getID() == 4){
                         batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude,
