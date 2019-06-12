@@ -35,6 +35,7 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/map/Lava_map.png",Texture.class);
         manager.load("assets/map/map.png", Texture.class);
         manager.load("assets/map/smallMap.png", Texture.class);
+        manager.load("assets/map/Big_map.png", Texture.class);
         manager.load("assets/pic/icons8-center-of-gravity-64.png", Pixmap.class);
         manager.load("assets/map/navigation.png", Texture.class);
         // character
