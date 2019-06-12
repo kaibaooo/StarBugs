@@ -57,14 +57,14 @@ public class Game{
         }
     }
     
-    public synchronized void asyncBroadcast(byte[] msg){
+    /*public synchronized void asyncBroadcast(byte[] msg){
         Iterator<Map.Entry<Integer, ServerUser>> iter
             = this.playerList.entrySet().iterator();
         while(iter.hasNext()){
             Map.Entry<Integer, ServerUser> enrty = iter.next();
             enrty.getValue().getHandler().write(msg);
         }
-    }
+    }*/
 
     public void startGame(){
         this.state=ServerState.GAMMING;
@@ -121,7 +121,7 @@ class MapUpdater extends TimerTask{
         //Update map(1 TPS)
         if(map.getCurrentTick()%map.TICK_PER_SECOND == 0){
             byte[] updateMapPacket = Parser.updateMap(map);
-            this.game.asyncBroadcast(updateMapPacket);
+            this.game.broadcast(updateMapPacket);
         }
         this.map.incTick();
         Logger.log(this.map.getCurrentTick());
@@ -133,22 +133,22 @@ class MapUpdater extends TimerTask{
             ServerUser me = iter.next().getValue();
             //Logger.log(me);
             byte[] updateYouPacket = Parser.updateYou(me);
-            me.getHandler().write(updateYouPacket);
+            me.getHandler().send(updateYouPacket);
             Iterator<Map.Entry<Integer, ServerUser>> iter_other
                 = game.getOnlinePlayers().entrySet().iterator();
             while(iter_other.hasNext()){
                 ServerUser other = iter_other.next().getValue();
                 byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(other);
-                me.getHandler().write(updateSinglePlayerPacket);
+                me.getHandler().send(updateSinglePlayerPacket);
             }
         }
 
         //Flush buffer
-        iter = game.getOnlinePlayers().entrySet().iterator();
+        /*iter = game.getOnlinePlayers().entrySet().iterator();
         while(iter.hasNext()){
             ServerUser player = iter.next().getValue();
             player.getHandler().flush();
-        }
+        }*/
     }
 
 }

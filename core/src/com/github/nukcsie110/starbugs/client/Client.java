@@ -97,6 +97,7 @@ public class Client extends Thread{
                         this.gameEnded = true;
                     }
                 }else if(this.key.isWritable()){
+                    //Logger.log("is writable");
                     this.writeBuf.write(this.client);
                 }
             }

@@ -11,7 +11,7 @@ import java.net.InetSocketAddress;
 
 public class Server{
     private final static int LISTEN_PORT = 8787;
-    private final static int SELECTOR_TIMEOUT = 1;
+    private final static int SELECTOR_TIMEOUT = 30;
     private static Selector selector;
     private static Game game;
 
@@ -22,7 +22,7 @@ public class Server{
         initServer(selector);  
   
         while (true) {  
-            selector.select(SELECTOR_TIMEOUT);  
+            while(selector.select(SELECTOR_TIMEOUT)==0);  
     
             for (Iterator<SelectionKey> itor = selector.selectedKeys().iterator(); itor.hasNext();) {  
                 SelectionKey key = (SelectionKey) itor.next();  
