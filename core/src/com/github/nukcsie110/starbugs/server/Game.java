@@ -47,6 +47,9 @@ public class Game{
     public GameMap getMap(){
         return this.map;
     }
+    public ArrayList<Item> getItemList(){
+        return this.itemList;
+    }
 
     public synchronized void broadcast(byte[] msg){
         Iterator<Map.Entry<Integer, ServerUser>> iter
@@ -57,19 +60,28 @@ public class Game{
         }
     }
     
-    /*public synchronized void asyncBroadcast(byte[] msg){
-        Iterator<Map.Entry<Integer, ServerUser>> iter
-            = this.playerList.entrySet().iterator();
-        while(iter.hasNext()){
-            Map.Entry<Integer, ServerUser> enrty = iter.next();
-            enrty.getValue().getHandler().write(msg);
-        }
-    }*/
-
     public void startGame(){
         this.state=ServerState.GAMMING;
         
         //Prepare map, items;
+        for(int i=0; i<10; i++){
+            this.itemList.add(new Item(ItemID.SWORD, Coordinate.genRandomPos()));
+        }
+        for(int i=0; i<10; i++){
+            this.itemList.add(new Item(ItemID.BOW, Coordinate.genRandomPos()));
+        }
+        for(int i=0; i<10; i++){
+            this.itemList.add(new Item(ItemID.ARMOR_LV1, Coordinate.genRandomPos()));
+        }
+        for(int i=0; i<10; i++){
+            this.itemList.add(new Item(ItemID.ARMOR_LV2, Coordinate.genRandomPos()));
+        }
+        for(int i=0; i<10; i++){
+            this.itemList.add(new Item(ItemID.ARMOR_LV3, Coordinate.genRandomPos()));
+        }
+        for(int i=0; i<10; i++){
+            this.itemList.add(new Item(ItemID.POISON, Coordinate.genRandomPos()));
+        }
         
         //Broadcast game start
         byte[] startGamePacket = Parser.gameOver((byte)0xFF);
@@ -91,7 +103,7 @@ public class Game{
         //Inform every client and close connection
         Iterator<Map.Entry<Integer, ServerUser>> iter
             = this.playerList.entrySet().iterator();
-        byte[] gameOverPacket = Parser.gameOver((byte)0);
+        byte[] gameOverPacket = Parser.gameOver((byte)1);
         while(iter.hasNext()){
             Map.Entry<Integer, ServerUser> enrty = iter.next();
             enrty.getValue().getHandler().send(gameOverPacket);
@@ -214,7 +226,9 @@ class MapUpdater extends TimerTask{
             byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(online);
             myHandler.send(updateSinglePlayerPacket);
 
-            //TODO: updateGlobalItems
+            //updateGlobalItems
+            byte[] updateGlobalItemsPacket = Parser.updateGlobalItem(game.getItemList());
+            myHandler.send(updateGlobalItemsPacket);
 
             //Update map(1 TPS)
             if(map.getCurrentTick()%map.TICK_PER_SECOND == 0){
@@ -224,6 +238,11 @@ class MapUpdater extends TimerTask{
         }
         
         this.map.incTick();
+
+        //End condition
+        if(game.getOnlinePlayerCount()<=1){
+            game.resetGame();
+        }
 
         //Flush buffer
         /*iter = game.getOnlinePlayers().entrySet().iterator();
