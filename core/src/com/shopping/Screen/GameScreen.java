@@ -70,10 +70,11 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
     // Player settings
     private User mainPlayer;
+    private User enemy;
     private final int userSpeedX = 15;
     private final int userSpeedY = 15;
-    private final int startX = Gdx.graphics.getWidth() / 2;// -Gdx.graphics.getWidth()/2;
-    private final int startY = Gdx.graphics.getHeight() / 2;
+    private final int startX = 1000;// -Gdx.graphics.getWidth()/2;
+    private final int startY = 1000;
     private float minAltitude = 1.7f;
     private float maxAltitude = 10.5f;
     private float percent;
@@ -109,6 +110,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     Sprite choose;
     Sprite character;
     Sprite bulletPicture;
+    Sprite creeper;
     // blood
     private int blood;
     private Pixmap bloodPix;
@@ -198,6 +200,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
         // Character
         character = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
+        creeper = new Sprite(manager.get("assets/pic/big-creeper-face.png", Texture.class));
         attackHand = 0;
 
         //Bullet
@@ -259,6 +262,9 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                         Logger.log(i.getDisplayName());
                     }
                     break;
+                case 0x04:
+                    enemy = ops.player;
+                    break;
                 case 0x05:
 //                  Logger.log("Recived updateNameTable");
                     mainPlayer = ops.player;
@@ -302,7 +308,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         drawItemsTest();
         keyInProcess();
         keyInProcessDebug();
-//        drawEnemy();
+        drawEnemy();
         showTimer();
         drawMainPlayer();
 
@@ -578,20 +584,23 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
     private void drawEnemy() {
         batch.begin();
-        // 物品放置
-        for (Item ele : lst) {
-            float deltaItemX = (ele.coordinate.getPosX() - currentX) / minAltitude;
-            float deltaItemY = (ele.coordinate.getPosY() - currentY) / minAltitude;
-            if (ele.coordinate.getPosX() < currentX + halfWindowWidth * minAltitude
-                    && ele.coordinate.getPosX() > currentX - halfWindowWidth * minAltitude) {
-                if (ele.coordinate.getPosY() < currentY + halfWindowHeight * minAltitude
-                        && ele.coordinate.getPosY() > currentY - halfWindowHeight * minAltitude) {
-                    batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude,
-                            itemSprite.getOriginY() / minAltitude, itemSprite.getHeight() / minAltitude,
-                            itemSprite.getWidth() / minAltitude, 1, 1, 0);
-                }
+        choosePlayerTexture();
+
+        float deltaItemX = (enemy.getPos().getPosX() - currentX) / minAltitude;
+        float deltaItemY = (enemy.getPos().getPosY() - currentY) / minAltitude;
+        if (enemy.getPos().getPosX()-100 < currentX + halfWindowWidth * minAltitude
+                && enemy.getPos().getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
+            if (enemy.getPos().getPosY() - 100 < currentY + halfWindowHeight * minAltitude
+                    && enemy.getPos().getPosY() + 100 > currentY - halfWindowHeight * minAltitude) {
+                batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude,
+                        itemSprite.getOriginY() / minAltitude, itemSprite.getHeight() / minAltitude,
+                        itemSprite.getWidth() / minAltitude, 1, 1, 0);
             }
         }
+
+//        batch.draw(creeper, halfWindowWidth, halfWindowHeight, character.getOriginX() / minAltitude,
+//                character.getOriginY() / minAltitude, character.getWidth() / minAltitude,
+//                character.getHeight() / minAltitude, 1, 1, (float) deg);
         batch.end();
     }
 

@@ -11,7 +11,7 @@ public class GameJudger {
     }
     public boolean judgeUserMoveIllegal(float targetX, float targetY){
         // Map size check
-        if(targetX < mapMinX || targetY < mapMinY || targetX > mapMaxX || targetY > mapMaxY){
+        if(targetX < mapMinX-16 || targetY < mapMinY-16 || targetX > mapMaxX + 16 || targetY > mapMaxY + 16){
             return false;
         }
         return true;

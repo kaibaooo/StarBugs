@@ -20,6 +20,10 @@ import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.client.Client;
 import com.github.nukcsie110.starbugs.packet.Union;
 import com.github.nukcsie110.starbugs.util.Logger;
+
+import java.sql.Time;
+import java.util.TimerTask;
+import java.util.Timer;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -97,6 +101,7 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/pic/WholeCat.png", Texture.class);
         manager.load("assets/pic/fistBow.png", Texture.class);
         manager.load("assets/pic/fistSwordattack.png", Texture.class);
+        manager.load("assets/pic/big-creeper-face.png", Texture.class);
         Gdx.app.log("manager", "section 2 finished");
         //inventory
         manager.load("assets/inventory/inventory65.png", Texture.class);
@@ -137,7 +142,7 @@ public class LoadToGameScreen implements Screen {
                         playerID = ops.player.getIDString();
                     }else{
                         Logger.log("Failed to join. Abort.");
-//                        game.setScreen(new GameScreen(game,user_name,manager, client, playerID, nameTable));
+                        game.setScreen(new TitleScreen(game));
                     }
                     break;
                 case 0x02:
@@ -175,12 +180,14 @@ public class LoadToGameScreen implements Screen {
             client.join(user_name);
             Gdx.app.log("manager", "update");
             currentOnlineUser = 0;
+            Gdx.graphics.setTitle("STARBUGS Alpha 2.0");
 //            game.setScreen(new GameScreen(game,user_name,manager, client, playerID, nameTable));
 //            sound.stop();
         }
         if(rank == (byte)0xFF){
             game.setScreen(new GameScreen(game,user_name,manager, client, playerID, nameTable));
             sound.stop();
+            Gdx.graphics.setTitle("STARBUGS Alpha 2.0");
         }
 
     }
@@ -211,3 +218,8 @@ public class LoadToGameScreen implements Screen {
     }
 
 }
+//class failConnection extends TimerTask {
+//    public void run() {
+//        client.updateDirection((float) oldDeg);
+//    }
+//}
