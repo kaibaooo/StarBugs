@@ -12,7 +12,7 @@ import com.github.nukcsie110.starbugs.util.Logger;
 public class Game{
     private ServerState state;
     private GameMap map = new GameMap();
-    public static final int MAX_PLAYER = 3;
+    public static final int MAX_PLAYER = 2;
     protected final long MAX_TICK = 60*GameMap.TICK_PER_SECOND;
     protected HashMap<Integer, ServerUser> playerList = new HashMap<Integer, ServerUser>();
     protected HashSet<Item> itemList = new HashSet<Item>();
@@ -138,6 +138,7 @@ class MapUpdater extends TimerTask{
                 = game.getOnlinePlayers().entrySet().iterator();
             while(iter_other.hasNext()){
                 ServerUser other = iter_other.next().getValue();
+                if(other==me) continue;
                 byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(other);
                 me.getHandler().send(updateSinglePlayerPacket);
             }
