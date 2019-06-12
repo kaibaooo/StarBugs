@@ -7,7 +7,7 @@ import com.shopping.Screen.LoadToGameScreen;
 public class Base extends Game{
     @Override
     public void create () {
-        this.setScreen(new LoadToGameScreen(this,"Valorlo"));
+        this.setScreen(new TitleScreen(this));
     }
 
     @Override

@@ -73,7 +73,7 @@ public class GameScreen implements Screen, InputProcessor{
     private final int userSpeedY = 15;
     private final int startX = Gdx.graphics.getWidth() / 2;// -Gdx.graphics.getWidth()/2;
     private final int startY = Gdx.graphics.getHeight() / 2;
-    private float minAltitude = 20f;
+    private float minAltitude = 1.7f;
     private float maxAltitude = 10.5f;
     private float percent;
     private float counter;
@@ -594,7 +594,7 @@ public class GameScreen implements Screen, InputProcessor{
         // 切換高倍鏡
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (minAltitude == 1.7f)
-                minAltitude = 20f;
+                minAltitude = 2.5f;
             else
                 minAltitude = 1.7f;
         }
@@ -695,14 +695,14 @@ public class GameScreen implements Screen, InputProcessor{
             batch.end();
         }
         if (inventoryChoose == 0) {
-            //minAltitude = 1.7f;
+            minAltitude = 1.7f;
             choose.setSize(46, 47);
             choose.setPosition(Gdx.graphics.getWidth() - 98, 490);
             batch.begin();
             choose.draw(batch);
             batch.end();
         } else if (inventoryChoose == 1) {
-            //minAltitude = 1.7f;
+            minAltitude = 1.7f;
             choose.setSize(46, 47);
             choose.setPosition(Gdx.graphics.getWidth() - 98, 436);
             batch.begin();
