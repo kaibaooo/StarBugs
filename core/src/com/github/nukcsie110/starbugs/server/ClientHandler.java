@@ -29,7 +29,7 @@ public class ClientHandler implements Handler {
         this.player = _player;
         this.game = _game;
         this.kill = false;
-        this.joined = true;
+        this.joined = false;
         this.myKey = _myKey;
     }  
 
