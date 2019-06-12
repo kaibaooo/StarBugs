@@ -173,10 +173,11 @@ public class LoadToGameScreen implements Screen {
             client.join(user_name);
             Gdx.app.log("manager", "update");
             currentOnlineUser = 0;
-        }
-        if(rank == (byte)0xFF){
             game.setScreen(new GameScreen(game,user_name,manager, client, playerID, nameTable));
             sound.stop();
+        }
+        if(rank == (byte)0xFF){
+
         }
 
     }
