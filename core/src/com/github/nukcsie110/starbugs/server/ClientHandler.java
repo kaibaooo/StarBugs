@@ -95,7 +95,7 @@ public class ClientHandler implements Handler {
                 for(ServerUser i:playerList){
                     Logger.log("\t"+i.getDisplayName());
                 }
-                byte[] nameTablePacket = Parser.updateNameTable(playerList);
+                byte[] nameTablePacket = Parser.updateNameTable(playerList, game.MAX_PLAYER);
                 game.broadcast(nameTablePacket);
 
             break;

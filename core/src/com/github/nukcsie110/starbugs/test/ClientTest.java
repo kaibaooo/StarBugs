@@ -37,6 +37,7 @@ public class ClientTest{
                     break;
                     case 0x02:
                         Logger.log("Recived updateNameTable");
+                        Logger.log("Max player:"+ops.maxPlayer);
                         for(User i:ops.nameTable){
                             Logger.log(i.getDisplayName());
                         }

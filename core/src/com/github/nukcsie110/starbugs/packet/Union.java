@@ -17,6 +17,7 @@ import com.github.nukcsie110.starbugs.basic.GameMap;
 public final class Union{
     public byte pkID;
     public byte state;
+    public int maxPlayer;
     public User player;
     //public short playerID;
     public byte cnt;

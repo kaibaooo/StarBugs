@@ -96,12 +96,13 @@ public class Parser{
     private static void _updateNameTable(byte[] x, Union y){
         byte cnt = x[0];
         int elementSize = 34;
-        if(x.length != 1+cnt*elementSize){
+        if(x.length != 5+cnt*elementSize){
             Logger.log("Illigle updateNameTable packet length");
             y.pkID = -1;
             return;
         }
         ByteBuffer buf = ByteBuffer.wrap(x, 1, x.length-1);
+        y.maxPlayer = buf.getInt();
         y.nameTable = new ArrayList<User>();
         while(cnt-- != 0){
             User tmpUser = new User();
@@ -119,9 +120,10 @@ public class Parser{
         }
     }
 
-    public static byte[] updateNameTable(ArrayList<ServerUser> table){
-        ByteBuffer buf = ByteBuffer.allocate(1+table.size()*34);
+    public static byte[] updateNameTable(ArrayList<ServerUser> table, int maxPlayer){
+        ByteBuffer buf = ByteBuffer.allocate(5+table.size()*34);
         buf.put((byte)table.size());
+        buf.putInt(maxPlayer);
         for(User i:table){
             buf.putShort(i.getID());
             buf.put(

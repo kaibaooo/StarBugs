@@ -33,11 +33,12 @@ public class testParser{
 
         Logger.println("---Testing updateNameTable parser---");
         ArrayList<ServerUser> userTable = new ArrayList<ServerUser>();
-        userTable.add((ServerUser)new User((short)0xDEAD, "ABC", new Coordinate(0,0,0)));
-        userTable.add((ServerUser)new User((short)0xBEEF, "123456", new Coordinate(0,0,0)));
-        byte[] updateNameTablePacket = Parser.updateNameTable(userTable);
+        userTable.add(new ServerUser((short)0xDEAD, "ABC", new Coordinate(0,0,0)));
+        userTable.add(new ServerUser((short)0xBEEF, "123456", new Coordinate(0,0,0)));
+        byte[] updateNameTablePacket = Parser.updateNameTable(userTable, 123);
         Logger.printBytes(updateNameTablePacket);
         Union parsedUpdateNameTable = Parser.toUnion(updateNameTablePacket);
+        Logger.log("Max player:"+parsedUpdateNameTable.maxPlayer);
         for(User i: parsedUpdateNameTable.nameTable){
             Logger.println(i.getDisplayName());
         }

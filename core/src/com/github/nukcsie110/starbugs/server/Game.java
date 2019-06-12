@@ -9,7 +9,7 @@ import com.github.nukcsie110.starbugs.server.*;
 
 public class Game{
     private ServerState state;
-    private static final int MAX_PLAYER = 5;
+    public static final int MAX_PLAYER = 5;
     private GameMap map = new GameMap();
     protected final float maxTime = 6000;
     protected HashMap<Integer, ServerUser> playerList = new HashMap<Integer, ServerUser>();
