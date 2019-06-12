@@ -10,11 +10,11 @@ public class Item{
     /**
      * Represent item unique ID
      */
-    protected byte itemID;
+    public byte itemID;
     /**
      * Item position
      */
-    protected Coordinate coordinate;
+    public Coordinate coordinate;
     /**
      * Constructer of Item
      * @param itemID init item ID
