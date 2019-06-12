@@ -24,6 +24,7 @@ public class Parser{
         if(x.length < 5){
             rtVal.pkID = -1;
             Logger.log("Invaild packet length");
+            return rtVal;
         }else{
             ByteBuffer header = ByteBuffer.wrap(x);
             rtVal.pkID = header.get();
@@ -31,6 +32,7 @@ public class Parser{
             if(x.length != len){
                 rtVal.pkID = -1;
                 Logger.log("Invaild packet length "+x.length+".Expect "+len);
+                return rtVal;
             }
         }
 

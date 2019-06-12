@@ -13,7 +13,7 @@ import java.util.*;
 
 
 public class Client extends Thread{
-    private static final int BUFFER_LEN = 65536;
+    private static final int BUFFER_LEN = 102400;
     private static final int SELECTOR_TIMEOUT = 1;
     private InetSocketAddress serverAddr; 
     private RecvBuffer recvBuf;

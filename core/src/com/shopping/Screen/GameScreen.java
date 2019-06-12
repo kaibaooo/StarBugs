@@ -269,12 +269,14 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     }
                     break;
                 case 0x04:
+                    Logger.log("Recived updateSignalPlayer");
                     enemy = ops.player;
                     onlineUsers.get(enemy.getID()).getPos().setPosX(enemy.getPos().getPosX());
                     onlineUsers.get(enemy.getID()).getPos().setPosY(enemy.getPos().getPosY());
                     onlineUsers.get(enemy.getID()).getPos().setDir(enemy.getPos().getDir());
                     break;
                 case 0x05:
+                    Logger.log("Recived updateYou");
                     mainPlayer = ops.player;
                     break;
                 case 0x10:
