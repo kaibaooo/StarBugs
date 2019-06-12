@@ -19,27 +19,27 @@ public class basic_User{
         a = new User();
         Logger.log(a);
 
-        Equipment rt = a.assEquip(Equipment.LONG_GUN);
+        Equipment rt = a.addEquip(Equipment.LONG_GUN);
         Logger.log(a);
         Logger.log("\tReturn value: "+rt);
         
-        rt = a.assEquip(Equipment.LONG_BOW);
+        rt = a.addEquip(Equipment.LONG_BOW);
         Logger.log(a);
         Logger.log("\tReturn value: "+rt);
         
-        rt = a.assEquip(Equipment.SHORT_SWORD);
+        rt = a.addEquip(Equipment.SHORT_SWORD);
         Logger.log(a);
         Logger.log("\tReturn value: "+rt);
         
-        rt = a.assEquip(Equipment.ARMOR_LV1);
+        rt = a.addEquip(Equipment.ARMOR_LV1);
         Logger.log(a);
         Logger.log("\tReturn value: "+rt);
         
-        rt = a.assEquip(Equipment.LONG_GUN);
+        rt = a.addEquip(Equipment.LONG_GUN);
         Logger.log(a);
         Logger.log("\tReturn value: "+rt);
         
-        rt = a.assEquip(Equipment.NONE);
+        rt = a.addEquip(Equipment.NONE);
         Logger.log(a);
         Logger.log("\tReturn value: "+rt);
 

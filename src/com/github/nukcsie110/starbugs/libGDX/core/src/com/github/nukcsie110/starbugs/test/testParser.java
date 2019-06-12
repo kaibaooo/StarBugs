@@ -6,7 +6,8 @@ import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
 import com.github.nukcsie110.starbugs.basic.Equipment;
-import com.github.nukcsie110.starbugs.basic.Map;
+import com.github.nukcsie110.starbugs.basic.GameMap;
+import com.github.nukcsie110.starbugs.server.ServerUser;
 import com.github.nukcsie110.starbugs.util.Logger;
 import java.util.ArrayList;
 
@@ -31,9 +32,9 @@ public class testParser{
         Logger.println(User.getIDString(parsedJoinReply.player.getID()));
 
         Logger.println("---Testing updateNameTable parser---");
-        ArrayList<User> userTable = new ArrayList<>();
-        userTable.add(new User((short)0xDEAD, "ABC", new Coordinate(0,0,0)));
-        userTable.add(new User((short)0xBEEF, "123456", new Coordinate(0,0,0)));
+        ArrayList<ServerUser> userTable = new ArrayList<>();
+        userTable.add((ServerUser)new User((short)0xDEAD, "ABC", new Coordinate(0,0,0)));
+        userTable.add((ServerUser)new User((short)0xBEEF, "123456", new Coordinate(0,0,0)));
         byte[] updateNameTablePacket = Parser.updateNameTable(userTable);
         Logger.printBytes(updateNameTablePacket);
         Union parsedUpdateNameTable = Parser.toUnion(updateNameTablePacket);
@@ -82,7 +83,7 @@ public class testParser{
         Logger.println(parsedUpdateYou.player);
         
         Logger.println("---Testing updateMap parser---");
-        Map b = new Map();
+        GameMap b = new GameMap();
         b.setSaveZone(10f, new Coordinate(87f, 78.5f, 0));
         b.setCurrentTime(20123);
         b.setNextSaveZoneTime(40000);
