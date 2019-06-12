@@ -203,14 +203,16 @@ class MapUpdater extends TimerTask{
             myHandler.send(updateYouPacket);
             
             //Update other player
+            ArrayList<ServerUser> online = new ArrayList<ServerUser>();
             Iterator<Map.Entry<Integer, ServerUser>> iter_other
                 = game.getOnlinePlayers().entrySet().iterator();
             while(iter_other.hasNext()){
                 ServerUser other = iter_other.next().getValue();
                 if(other==me) continue;
-                byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(other);
-                myHandler.send(updateSinglePlayerPacket);
+                online.add(other);
             }
+            byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(online);
+            myHandler.send(updateSinglePlayerPacket);
 
             //TODO: updateGlobalItems
 

@@ -19,6 +19,7 @@ public final class Union{
     public byte state;
     public int maxPlayer;
     public User player;
+    public ArrayList<User> players;
     //public short playerID;
     public byte cnt;
     public ArrayList<User> nameTable;

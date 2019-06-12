@@ -90,7 +90,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private float halfWindowWidth = Gdx.graphics.getWidth() / 2;
     private float halfWindowHeight = Gdx.graphics.getHeight() / 2;
     private ArrayList<Item> lst = new ArrayList<Item>();
-    private HashMap<Short, User> onlineUsers = new HashMap<Short, User>();
+    private ArrayList<User> onlineUsers = new ArrayList<User>();
     private byte maxUser;
 
     private float timeSeconds = 0f;
@@ -163,7 +163,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         maxUser = (byte)nameTable.size();
         for(User ele:nameTable){
 
-            onlineUsers.put(ele.getID(),new User(ele.getID(), ele.getName(), new Coordinate(0,0,0)));
+            onlineUsers.add(new User(ele.getID(), ele.getName(), new Coordinate(0,0,0)));
         }
 //        for(int i = 0;i<5;i++){
 //            User tmp  = new User(i,"a"+i,new Coordinate((float)(Math.random()*1000+1000),(float)(Math.random()*1000+1000),0));
@@ -272,10 +272,11 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     break;
                 case 0x04:
 //                    Logger.log("Recived updateSignalPlayer");
-                    enemy = ops.player;
-                    onlineUsers.get(enemy.getID()).getPos().setPosX(enemy.getPos().getPosX());
-                    onlineUsers.get(enemy.getID()).getPos().setPosY(enemy.getPos().getPosY());
-                    onlineUsers.get(enemy.getID()).getPos().setDir(enemy.getPos().getDir());
+                    onlineUsers = ops.players;
+                    //enemy = ops.player;
+                    //onlineUsers.get(enemy.getID()).getPos().setPosX(enemy.getPos().getPosX());
+                    //onlineUsers.get(enemy.getID()).getPos().setPosY(enemy.getPos().getPosY());
+                    //onlineUsers.get(enemy.getID()).getPos().setDir(enemy.getPos().getDir());
                     break;
                 case 0x05:
 //                    Logger.log("Recived updateYou");
@@ -568,13 +569,13 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 //            }
 //        }
 
-        for (short key : onlineUsers.keySet()) {
-            float deltaItemX = (onlineUsers.get(key).getPos().getPosX() - currentX) / minAltitude;
-            float deltaItemY = (onlineUsers.get(key).getPos().getPosY() - currentY) / minAltitude;
-            if (onlineUsers.get(key).getPos().getPosX()-100 < currentX + halfWindowWidth * minAltitude
-                    && onlineUsers.get(key).getPos().getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
-                if (onlineUsers.get(key).getPos().getPosY() - 100 < currentY + halfWindowHeight * minAltitude
-                        && onlineUsers.get(key).getPos().getPosY() + 100 > currentY - halfWindowHeight * minAltitude) {
+        for (User ele : onlineUsers) {
+            float deltaItemX = (ele.getPos().getPosX() - currentX) / minAltitude;
+            float deltaItemY = (ele.getPos().getPosY() - currentY) / minAltitude;
+            if (ele.getPos().getPosX()-100 < currentX + halfWindowWidth * minAltitude
+                    && ele.getPos().getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
+                if (ele.getPos().getPosY() - 100 < currentY + halfWindowHeight * minAltitude
+                        && ele.getPos().getPosY() + 100 > currentY - halfWindowHeight * minAltitude) {
                     batch.draw(creeper, 800 + deltaItemX - 127, 450 + deltaItemY - 140, creeper.getOriginX() / minAltitude,
                             creeper.getOriginY() / minAltitude, creeper.getHeight() / minAltitude,
                             creeper.getWidth() / minAltitude, 0.1f, 0.1f, 0);
@@ -1012,7 +1013,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT ) {
             client.keyDown((byte)'L');
-            attack();
+            //attack();
             if(inventory[2] == 1 && inventoryChoose == 2) {
                 double deltaX = Gdx.input.getX()-800;
                 double deltaY = 450 - Gdx.input.getY();
