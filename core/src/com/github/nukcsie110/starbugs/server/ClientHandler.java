@@ -122,6 +122,7 @@ public class ClientHandler implements Handler {
                         case '2': player.setWeaponInHand(EquipmentSlot.SHORT); break;
                         case '3': player.setWeaponInHand(EquipmentSlot.LONG); break;
                         case '4': player.usePoison(); break;
+                        case 'L': game.attackDetection(this.player); break;
                         case '0': player.setBlood(player.getBlood()-10); break; //For test
                         case '5': player.clearSlot(EquipmentSlot.ARMOR); break; //For test
                         case '6': player.addEquip(Equipment.ARMOR_LV1); break; //For test
@@ -139,7 +140,7 @@ public class ClientHandler implements Handler {
                 Logger.log(logPrefix+"Recived keyUp: "+parsedPacket.keyCode);
             break;
             case 0x09:
-                Logger.log(logPrefix+"Recived updateDirection: "+parsedPacket.newDirection);
+                //Logger.log(logPrefix+"Recived updateDirection: "+parsedPacket.newDirection);
                 player.getPos().setDir(parsedPacket.newDirection);
             break;
             default:
@@ -182,27 +183,8 @@ public class ClientHandler implements Handler {
         }
     }
 
-    //Write into buffer, but no flush
-    /*public void write(byte[] x){
-        if(this.myKey.isValid()){
-            this.writeBuf.put(x);
-        }
-    }
-
-    //Flush buffer
-    public synchronized void flush(){
-        try{
-            synchronized(this.myKey){
-                if(this.myKey.isValid() && this.myKey.interestOps()!=SelectionKey.OP_WRITE){
-                    this.myKey.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
-                }
-            }
-        }catch(CancelledKeyException e){
-            Logger.log(this.logPrefix+"CancelledKeyException");
-        }
-    }*/
-
     public synchronized void terminate(){
         this.kill = true;
     }
+    
 }  

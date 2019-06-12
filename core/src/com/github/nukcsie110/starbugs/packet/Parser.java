@@ -166,32 +166,45 @@ public class Parser{
     }
 
     private static void _updateSinglePlayer(byte[] x, Union y){
-        ByteBuffer buf = ByteBuffer.wrap(x);
-        int playerID = (int)buf.getShort();
-        float posX = buf.getFloat();
-        float posY = buf.getFloat();
-        float dir = buf.getFloat();
-        Coordinate pos = new Coordinate(posX, posY, dir);
-        y.player = new User(playerID, "", pos);
-        byte equipment = buf.get();
-        EquipmentSlot weaponInHand = EquipmentSlot.getName((equipment>>4)&0xF);
-        Equipment armor = Equipment.getName((equipment)&0xF);
-        y.player.addEquip(armor);
-        y.player.setWeaponInHand(weaponInHand);
+        byte cnt = x[0];
+        int elementSize = 15;
+        if(x.length != 1+cnt*elementSize){
+            Logger.log("Illigle updateSinglePlayer packet length");
+            y.pkID = -1;
+            return;
+        }
+        ByteBuffer buf = ByteBuffer.wrap(x, 1, x.length-1);
+        y.players = new ArrayList<User>();
+        while(cnt-- != 0){
+            int playerID = (int)buf.getShort();
+            float posX = buf.getFloat();
+            float posY = buf.getFloat();
+            float dir = buf.getFloat();
+            Coordinate pos = new Coordinate(posX, posY, dir);
+            User newPlayer = new User(playerID, "", pos);
+            byte equipment = buf.get();
+            EquipmentSlot weaponInHand = EquipmentSlot.getName((equipment>>4)&0xF);
+            Equipment armor = Equipment.getName((equipment)&0xF);
+            newPlayer.addEquip(armor);
+            newPlayer.setWeaponInHand(weaponInHand);
+            y.players.add(newPlayer);
+        }
     }
 
-    public static byte[] updateSinglePlayer(User target){
-        ByteBuffer buf = ByteBuffer.allocate(15);
-        buf.putShort(target.getID());
-        buf.putFloat(target.getPos().getPosX());
-        buf.putFloat(target.getPos().getPosY());
-        buf.putFloat(target.getPos().getDir());
+    public static byte[] updateSinglePlayer(ArrayList<ServerUser> target){
+        ByteBuffer buf = ByteBuffer.allocate(1+target.size()*15);
+        buf.put((byte)target.size());
+        for(ServerUser player:target){
+            buf.putShort(player.getID());
+            buf.putFloat(player.getPos().getPosX());
+            buf.putFloat(player.getPos().getPosY());
+            buf.putFloat(player.getPos().getDir());
 
-        byte equipment = 0;
-        equipment |= (((target.getWeaponInHand().getID())&0xF)<<4);
-        equipment |= ((target.getArmor().getID())&0xF);
-        buf.put(equipment);
-
+            byte equipment = 0;
+            equipment |= (((player.getWeaponInHand().getID())&0xF)<<4);
+            equipment |= ((player.getArmor().getID())&0xF);
+            buf.put(equipment);
+        }
         return makePacket((byte)0x04, buf);
     }
     private static void _keyPress(byte[] x, Union y){

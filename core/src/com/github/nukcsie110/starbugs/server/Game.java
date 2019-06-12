@@ -104,7 +104,63 @@ public class Game{
         this.state = ServerState.WAITTING;
         Logger.log("[Server] Game reseted");
     }
+    
+    public void attackDetection(ServerUser player){
+        int zoneSize = 200;
 
+        Iterator<Map.Entry<Integer, ServerUser>> iter
+            = this.getOnlinePlayers().entrySet().iterator();
+        while(iter.hasNext()){
+            ServerUser ele = iter.next().getValue();
+            if(ele==player) continue;
+            if((Math.abs(player.getPos().getPosX()-ele.getPos().getPosX())
+              +Math.abs(player.getPos().getPosX()-ele.getPos().getPosX()))<=zoneSize){
+                int damage = damageCalc(player, ele);
+                Logger.log(player.getName()+" hit "+ele.getName()+" -"+damage);
+                ele.setBlood(ele.getBlood()-damage);
+            }
+            // N
+            /*if(player.getPos().getDir()>=135 && player.getPos().getDir()<225){
+                if(ele.getPos().getPosX()<player.getPos().getPosX()+zoneSize
+                    && ele.getPos().getPosX()>player.getPos().getPosX()-zoneSize
+                    && ele.getPos().getPosY()<player.getPos().getPosY()+zoneSize
+                    && ele.getPos().getPosY()>=player.getPos().getPosY()){
+                    Logger.log(player.getName()+" hit "+ele.getName());
+                }
+            }
+            else if(player.getPos().getDir()>=225 && player.getPos().getDir()<315){
+                if(ele.getPos().getPosY()<player.getPos().getPosY()-zoneSize
+                        && ele.getPos().getPosY()<player.getPos().getPosY()+zoneSize
+                        && ele.getPos().getPosY()>player.getPos().getPosX()-zoneSize
+                        && ele.getPos().getPosY()<=player.getPos().getPosX()){
+                    Logger.log(player.getName()+" hit "+ele.getName());
+                }
+            }
+            else if(player.getPos().getDir()>=315 && player.getPos().getDir()<405){
+                if(ele.getPos().getPosX()<player.getPos().getPosX()+zoneSize
+                        && ele.getPos().getPosX()<player.getPos().getPosX()-zoneSize
+                        && ele.getPos().getPosY()>player.getPos().getPosY()-zoneSize
+                        && ele.getPos().getPosY()<=player.getPos().getPosY()){
+                    Logger.log(player.getName()+" hit "+ele.getName());
+                }
+            }
+            else if(player.getPos().getDir()>=405 || player.getPos().getDir()<135){
+                if(ele.getPos().getPosY()<player.getPos().getPosY()-zoneSize
+                        && ele.getPos().getPosY()<player.getPos().getPosY()+zoneSize
+                        && ele.getPos().getPosY()<player.getPos().getPosX()+zoneSize
+                        && ele.getPos().getPosY()>=player.getPos().getPosX()){
+                    Logger.log(player.getName()+" hit "+ele.getName());
+                }
+            }*/
+        }
+    }
+    private int damageCalc(ServerUser attacker, ServerUser victim){
+        if(victim.getArmor()!=Equipment.NONE){
+            return attacker.getWeapon().getPoint()*(1-victim.getArmor().getPoint()/100);
+        }else{
+            return attacker.getWeapon().getPoint();
+        }
+    }
 }
 
 class MapUpdater extends TimerTask{
@@ -118,9 +174,11 @@ class MapUpdater extends TimerTask{
     }
 
     public void run(){
-        Logger.log(this.map.getCurrentTick());
+        //Logger.log(this.map.getCurrentTick());
 
         //TODO:Update items(Collision detect & arrow fly)
+        
+
 
         Iterator<Map.Entry<Integer, ServerUser>> iter
             = game.getOnlinePlayers().entrySet().iterator();
@@ -128,11 +186,14 @@ class MapUpdater extends TimerTask{
             ServerUser me = iter.next().getValue();
             ClientHandler myHandler = me.getHandler();
             
+            //Logger.log(me);
+
             //Game over behavior
             if(me.getBlood()<=0){
+                Logger.log(me.getDisplayName()+" died");
                 byte[] gameOverPacket = Parser.gameOver((byte)game.getOnlinePlayerCount());
                 myHandler.send(gameOverPacket);
-                myHandler.terminate();
+                //myHandler.terminate();
                 iter.remove();
                 continue;
             }
@@ -142,14 +203,16 @@ class MapUpdater extends TimerTask{
             myHandler.send(updateYouPacket);
             
             //Update other player
+            ArrayList<ServerUser> online = new ArrayList<ServerUser>();
             Iterator<Map.Entry<Integer, ServerUser>> iter_other
                 = game.getOnlinePlayers().entrySet().iterator();
             while(iter_other.hasNext()){
                 ServerUser other = iter_other.next().getValue();
                 if(other==me) continue;
-                byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(other);
-                myHandler.send(updateSinglePlayerPacket);
+                online.add(other);
             }
+            byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(online);
+            myHandler.send(updateSinglePlayerPacket);
 
             //TODO: updateGlobalItems
 

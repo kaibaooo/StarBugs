@@ -170,6 +170,16 @@ public class User{
         return this.weaponInHand;
     }
 
+    public Equipment getWeapon(){
+        if(this.weaponInHand==EquipmentSlot.NONE){
+            return Equipment.NONE;
+        }else if(this.weaponInHand==EquipmentSlot.SHORT){
+            return this.shortWeapon;
+        }else{
+            return this.longWeapon;
+        }
+    }
+
     /*
       Notice: setPos is not needed
       if you want to set position or direction, 
