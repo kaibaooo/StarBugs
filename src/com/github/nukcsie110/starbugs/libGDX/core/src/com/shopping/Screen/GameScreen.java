@@ -3,6 +3,7 @@ package com.shopping.Screen;
 //import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Random;
+import java.awt.Rectangle;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -61,7 +62,7 @@ public class GameScreen implements Screen, InputProcessor{
     private GameJudger judge;
     // controller
     boolean hasControllers;
-    private int r = 130;//130
+    private double r = 130;//130
 
     private  int[] TIME_SINCE_COLLISION;
     private float timeSinceCollision = 0;
@@ -186,6 +187,11 @@ public class GameScreen implements Screen, InputProcessor{
         Gdx.graphics.setCursor(cursor);
         pixmap.dispose();
 
+       for(int i=0;i<50;i++){
+            Item e = new Item();
+            lst.add(i,e);
+        }
+
         // Inventory pre load
         inventory65 = new Sprite(manager.get("assets/inventory/inventory65.png", Texture.class));
         sword = new Sprite(manager.get("assets/inventory/sword.png", Texture.class));
@@ -251,14 +257,13 @@ public class GameScreen implements Screen, InputProcessor{
         stage.act();
         stage.draw();
 
+        drawItemsTest();
         drawBlood();
         inventory();
-        drawItemsTest();
         keyInProcess();
         keyInProcessDebug();
         drawEnemy();
         showTimer();
-
 
         mapItem.draw();
         if (blood <= 0) {
@@ -266,12 +271,13 @@ public class GameScreen implements Screen, InputProcessor{
             game.setScreen(new EndScreen(game, 1));
             music.stop();
         }
+
         drawMainPlayer();
 //        drawSmallMapPlayer();
 
         renderer.begin(ShapeRenderer.ShapeType.Line);
         renderer.setColor(Color.BLACK);
-        renderer.circle(1467, 135, r);
+        renderer.circle(1467, 135, (float)r);
         renderer.end();
 
         if(bulletManager.size()!=0)    drawBullet();
@@ -338,137 +344,149 @@ public class GameScreen implements Screen, InputProcessor{
         timeSinceCollision += delta;
         System.out.println(timeSinceCollision);
         if (timeSinceCollision == TIME_SINCE_COLLISION[0]) {
-            X = X - 500;
-            Y = Y - 500;
-            posX += 250;
-            posY += 250;
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
             Basemap.setPosition(posX, posY);
             Basemap.setOrigin(1, 1);
             Basemap.setSize(X, Y);
             if(count >= 1) {
-                r=r-5;
+                r=r-1.8;
                 renderer.begin(ShapeRenderer.ShapeType.Line);
                 renderer.setColor(Color.RED);
-                renderer.circle(1467, 135, r);
+                renderer.circle(1467, 135, (float)r);
                 renderer.end();
             }
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[1]) {
-            X = X - 500;
-            Y = Y - 500;
-            posX += 250;
-            posY += 250;
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
             Basemap.setPosition(posX, posY);
             Basemap.setOrigin(1, 1);
             Basemap.setSize(X, Y);
             if(count >= 1) {
-                r=r-5;
+                r=r-1.8;
                 renderer.begin(ShapeRenderer.ShapeType.Line);
                 renderer.setColor(Color.RED);
-                renderer.circle(1467, 135, r);
+                renderer.circle(1467, 135, (float)r);
                 renderer.end();
             }
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[2]) {
-            X = X - 500;
-            Y = Y - 500;
-            posX += 250;
-            posY += 250;
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
             Basemap.setPosition(posX, posY);
             Basemap.setOrigin(1, 1);
             Basemap.setSize(X, Y);
             if(count >= 1) {
-                r=r-5;
+                r=r-1.8;
                 renderer.begin(ShapeRenderer.ShapeType.Line);
                 renderer.setColor(Color.RED);
-                renderer.circle(1467, 135, r);
+                renderer.circle(1467, 135, (float)r);
                 renderer.end();
             }
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[3]) {
-            X = X - 500;
-            Y = Y - 500;
-            posX += 250;
-            posY += 250;
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
             Basemap.setPosition(posX, posY);
             Basemap.setSize(X, Y);
             if(count >= 1) {
-                r=r-5;
+                r=r-1.8;
                 renderer.begin(ShapeRenderer.ShapeType.Line);
                 renderer.setColor(Color.RED);
-                renderer.circle(1467, 135, r);
+                renderer.circle(1467, 135, (float)r);
                 renderer.end();
             }
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[4]) {
-            X = X - 500;
-            Y = Y - 500;
-            posX += 250;
-            posY += 250;
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
             Basemap.setPosition(posX, posY);
             Basemap.setSize(X, Y);
             if(count >= 1) {
-                r=r-5;
+                r=r-1.8;
                 renderer.begin(ShapeRenderer.ShapeType.Line);
                 renderer.setColor(Color.RED);
-                renderer.circle(1467, 135, r);
+                renderer.circle(1467, 135, (float)r);
                 renderer.end();
             }
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[5]) {
-            X = X - 500;
-            Y = Y - 500;
-            posX += 250;
-            posY += 250;
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
             Basemap.setPosition(posX, posY);
             Basemap.setSize(X, Y);
             if(count >= 1) {
-                r=r-5;
+                r=r-1.8;
                 renderer.begin(ShapeRenderer.ShapeType.Line);
                 renderer.setColor(Color.RED);
-                renderer.circle(1467, 135, r);
+                renderer.circle(1467, 135, (float)r);
                 renderer.end();
             }
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[6]) {
-            X = X - 500;
-            Y = Y - 500;
-            posX += 250;
-            posY += 250;
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
             Basemap.setPosition(posX, posY);
             Basemap.setSize(X, Y);
             if(count >= 1) {
-                r=r-5;
+                r=r-1.8;
                 renderer.begin(ShapeRenderer.ShapeType.Line);
                 renderer.setColor(Color.RED);
-                renderer.circle(1467, 135, r);
+                renderer.circle(1467, 135, (float)r);
                 renderer.end();
             }
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[7]) {
-            X = X - 500;
-            Y = Y - 500;
-            posX += 250;
-            posY += 250;
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
             Basemap.setPosition(posX, posY);
             Basemap.setOrigin(1, 1);
             Basemap.setSize(X, Y);
             if(count >= 1) {
-                r=r-5;
+                r=r-1.8;
                 renderer.begin(ShapeRenderer.ShapeType.Line);
                 renderer.setColor(Color.RED);
-                renderer.circle(1467, 135, r);
+                renderer.circle(1467, 135, (float)r);
                 renderer.end();
             }
             timeSinceCollision -= TIME_SINCE_COLLISION[4];
             count++;
+        }
+    }
+
+    private void detect(int cx,int cy){
+        double r=80;
+        for(int i=0;i<50;i++){
+            double result = Math.sqrt((lst.get(i).posX-cx)*(lst.get(i).posX-cx)+(lst.get(i).posY-cy)*(lst.get(i).posY-cy));
+            //System.out.println("result"+result);
+            if(result<=2*r){
+                System.out.println("result"+result);
+                System.out.println("touch!");
+            }
         }
     }
 
@@ -572,24 +590,27 @@ public class GameScreen implements Screen, InputProcessor{
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             if(judge.judgeUserMoveIllegal(currentX-userSpeedX, currentY)){
-
                 currentX -= userSpeedX;
+                detect((int)currentX,(int)currentY);
             }
 
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             if(judge.judgeUserMoveIllegal(currentX+userSpeedX, currentY)){
                 currentX += userSpeedX;
+                detect((int)currentX,(int)currentY);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             if(judge.judgeUserMoveIllegal(currentX, currentY-userSpeedY)){
                 currentY -= userSpeedY;
+                detect((int)currentX,(int)currentY);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             if(judge.judgeUserMoveIllegal(currentX, currentY+userSpeedY)){
                 currentY += userSpeedY;
+                detect((int)currentX,(int)currentY);
             }
         }
 
@@ -996,6 +1017,7 @@ public class GameScreen implements Screen, InputProcessor{
     public boolean keyTyped(char character) {
         return false;
     }
+    
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -1192,14 +1214,16 @@ public class GameScreen implements Screen, InputProcessor{
     // ==================================
     // |             Others             |
     // ==================================
+    //H = 435~10545
+    //W = 800~10880
     class Item {
         public float posX;
         public float posY;
         Random rnd = new Random();
 
         public Item() {
-            posX = rnd.nextInt(10000) + 500;
-            posY = rnd.nextInt(10000) + 500;
+            posX = rnd.nextInt(10080)+800;
+            posY = rnd.nextInt(10110)+435;
         }
     }
 
