@@ -279,8 +279,22 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                 case 0x05:
 //                    Logger.log("Recived updateYou");
                     mainPlayer = ops.player;
-                    blood = mainPlayer.getBlood();
 
+                    blood = mainPlayer.getBlood();
+                    inventory[3] = mainPlayer.getPoison();
+
+                    armorType = mainPlayer.getArmor().getID();
+                    if(armorType>0) armorType+=4;
+
+                    int longWeapon = mainPlayer.getLongWeapon().getID();
+                    if(longWeapon == 2) inventory[2] = 1;
+                    else inventory[2] = 0;
+
+                    int shortWeapon = mainPlayer.getShortWeapon().getID();
+                    if(shortWeapon == 3) inventory[1] = 1;
+                    else inventory[1] = 0;
+
+                    inventoryChoose = mainPlayer.getWeaponInHand().getID();
                     break;
                 case 0x10:
                     Logger.log("Game over");
@@ -404,11 +418,11 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private void keyInProcessDebug() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
             client.keyDown((byte)'0');
-            blood -= 30;
+//            blood -= 30;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
             client.keyDown((byte)'5');
-            armorType = 0;
+//            armorType = 0;
             if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/CharacterCat.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
@@ -428,7 +442,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) {
             client.keyDown((byte)'6');
-            armorType = 1;
+//            armorType = 1;
             if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/IronArmor.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
@@ -448,7 +462,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
             client.keyDown((byte)'7');
-            armorType = 2;
+//            armorType = 2;
             if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/GoldenArmor.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
@@ -469,7 +483,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
             client.keyDown((byte)'8');
-            armorType = 3;
+//            armorType = 3;
             if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/DiamondArmor.png", Texture.class);
                 character.setSize(current.getWidth(), current.getHeight());
@@ -489,9 +503,9 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             client.keyDown((byte)'P');
-            if (inventory[3] < 3) {
-                inventory[3]++;
-            }
+//            if (inventory[3] < 3) {
+//                inventory[3]++;
+//            }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             Gdx.app.log("LogStart", "=========================================");
