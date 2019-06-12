@@ -91,6 +91,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private float halfWindowHeight = Gdx.graphics.getHeight() / 2;
     private ArrayList<Item> lst = new ArrayList<Item>();
     private HashMap<Short, User> onlineUsers = new HashMap<Short, User>();
+    private byte maxUser;
 
     private float timeSeconds = 0f;
     private float period = 1f;
@@ -159,7 +160,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         player = Player;
         playerID = pID;
         nameTable = passedNameTable;
-
+        maxUser = (byte)nameTable.size();
         for(User ele:nameTable){
 
             onlineUsers.put(ele.getID(),new User(ele.getID(), ele.getName(), new Coordinate(0,0,0)));
@@ -301,10 +302,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     byte rank = ops.rank;
                     stage.dispose();
                     if(rank == 1){
-                        game.setScreen(new EndScreen(game, 1, player));
+                        game.setScreen(new EndScreen(game, 1, player, rank, maxUser));
                     }
                     else{
-                        game.setScreen(new EndScreen(game, 0, player));
+                        game.setScreen(new EndScreen(game, 0, player, rank, maxUser));
                     }
                     music.stop();
                     client.close();
@@ -348,11 +349,11 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         drawMainPlayer();
 
         mapItem.draw();
-        if (blood <= 0) {
-            stage.dispose();
-            game.setScreen(new EndScreen(game, 0, player));
-            music.stop();
-        }
+//        if (blood <= 0) {
+//            stage.dispose();
+//            game.setScreen(new EndScreen(game, 0, player));
+//            music.stop();
+//        }
 
 
 
@@ -919,55 +920,55 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         batch.end();
     }
 
-    private void attack(){
-        for(short ele:onlineUsers.keySet()){
-            // N
-            if(deg>=135 && deg<225){
-                if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
-                    && onlineUsers.get(ele).getPos().getPosX()>currentX-50
-                    && onlineUsers.get(ele).getPos().getPosY()<currentY+50
-                    && onlineUsers.get(ele).getPos().getPosY()>=currentY){
-                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
-                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
-
-                }
-                Logger.log("Attack N");
-            }
-            // S
-            else if(deg>=225 && deg<315){
-                if(onlineUsers.get(ele).getPos().getPosY()<currentY-50
-                        && onlineUsers.get(ele).getPos().getPosY()<currentY+50
-                        && onlineUsers.get(ele).getPos().getPosY()>currentX-50
-                        && onlineUsers.get(ele).getPos().getPosY()<=currentX){
-                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
-                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
-                }
-                Logger.log("Attack W");
-            }
-            // W
-            else if(deg>=315 && deg<405){
-                if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
-                        && onlineUsers.get(ele).getPos().getPosX()<currentX-50
-                        && onlineUsers.get(ele).getPos().getPosY()>currentY-50
-                        && onlineUsers.get(ele).getPos().getPosY()<=currentY){
-                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
-                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
-                }
-                Logger.log("Attack S");
-            }
-            // E
-            else if(deg>=405 || deg<135){
-                if(onlineUsers.get(ele).getPos().getPosY()<currentY-50
-                        && onlineUsers.get(ele).getPos().getPosY()<currentY+50
-                        && onlineUsers.get(ele).getPos().getPosY()<currentX+50
-                        && onlineUsers.get(ele).getPos().getPosY()>=currentX){
-                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
-                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
-                }
-                Logger.log("Attack E");
-            }
-        }
-    }
+//    private void attack(){
+//        for(short ele:onlineUsers.keySet()){
+//            // N
+//            if(deg>=135 && deg<225){
+//                if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
+//                    && onlineUsers.get(ele).getPos().getPosX()>currentX-50
+//                    && onlineUsers.get(ele).getPos().getPosY()<currentY+50
+//                    && onlineUsers.get(ele).getPos().getPosY()>=currentY){
+//                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+//                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+//
+//                }
+//                Logger.log("Attack N");
+//            }
+//            // S
+//            else if(deg>=225 && deg<315){
+//                if(onlineUsers.get(ele).getPos().getPosY()<currentY-50
+//                        && onlineUsers.get(ele).getPos().getPosY()<currentY+50
+//                        && onlineUsers.get(ele).getPos().getPosY()>currentX-50
+//                        && onlineUsers.get(ele).getPos().getPosY()<=currentX){
+//                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+//                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+//                }
+//                Logger.log("Attack W");
+//            }
+//            // W
+//            else if(deg>=315 && deg<405){
+//                if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
+//                        && onlineUsers.get(ele).getPos().getPosX()<currentX-50
+//                        && onlineUsers.get(ele).getPos().getPosY()>currentY-50
+//                        && onlineUsers.get(ele).getPos().getPosY()<=currentY){
+//                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+//                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+//                }
+//                Logger.log("Attack S");
+//            }
+//            // E
+//            else if(deg>=405 || deg<135){
+//                if(onlineUsers.get(ele).getPos().getPosY()<currentY-50
+//                        && onlineUsers.get(ele).getPos().getPosY()<currentY+50
+//                        && onlineUsers.get(ele).getPos().getPosY()<currentX+50
+//                        && onlineUsers.get(ele).getPos().getPosY()>=currentX){
+//                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+//                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+//                }
+//                Logger.log("Attack E");
+//            }
+//        }
+//    }
     // ==================================
     // |         Keyboard event         |
     // ==================================
@@ -991,8 +992,8 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         if (keycode == Input.Keys.NUM_4 && inventory[3] > 0) {
             client.keyDown((byte)'4');
             click.play();
-            inventory[3]--;
-            blood = (100 - blood) / 2 + blood;
+//            inventory[3]--;
+//            blood = (100 - blood) / 2 + blood;
         }
         return false;
     }

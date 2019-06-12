@@ -118,6 +118,7 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/sound/nyan.mp3", Music.class);
         manager.load("assets/sound/LOL_inGame.mp3", Music.class);
         manager.load("assets/sound/punch.mp3", Music.class);
+        manager.load("assets/sound/punchSuccess.mp3", Music.class);
         Gdx.app.log("manager", "section 4 finished");
 //        user_name = name;
 

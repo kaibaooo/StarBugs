@@ -39,18 +39,21 @@ public class EndScreen implements Screen, InputProcessor {
     private Stage stage;
     private OrthographicCamera camera;
     private int deg = 0;
+
     Music sad;
     Music hot;
     Sprite pepe;
     Sprite nyan;
     String player;
-    public EndScreen(Game aGame, int type, String name_){
+    public EndScreen(Game aGame, int type, String name_, byte rk, byte maxusr){
         batch = new SpriteBatch();
         showScreenType = type;
         lastPlayerNumber=4;
         allPlayerNumber=5;
         kills=1;
         player = name_;
+        lastPlayerNumber = rk;
+        allPlayerNumber = maxusr;
         stage = new Stage(new ScreenViewport());
         camera = (OrthographicCamera) stage.getViewport().getCamera();
         sad = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/lose.mp3"));
@@ -147,7 +150,7 @@ public class EndScreen implements Screen, InputProcessor {
         winDeadFont.draw(batch, "#"+lastPlayerNumber, 1420, 850);
         whiteFont.draw(batch, "/   "+allPlayerNumber, 1490, 850);
 
-        whiteFont.draw(batch, "kills : "+kills, 30, 650);
+//        whiteFont.draw(batch, "kills : "+kills, 30, 650);
         lightGrayFont26.draw(batch, "Press Esc to end the game!", 600, 200);
         batch.draw(pepe, 700, 300);
         batch.end();
