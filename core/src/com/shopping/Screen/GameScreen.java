@@ -770,12 +770,12 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         // 旋轉要除以縮放比例
 //        // 物品放置
         for (Item ele : lst) {
-            float deltaItemX = (ele.getCoordinate().getPosX() - currentX) / minAltitude;
-            float deltaItemY = (ele.getCoordinate().getPosY() - currentY) / minAltitude;
-            if (ele.getCoordinate().getPosX()-100 < currentX + halfWindowWidth * minAltitude
-                    && ele.getCoordinate().getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
-                if (ele.getCoordinate().getPosY()-100 < currentY + halfWindowHeight * minAltitude
-                        && ele.getCoordinate().getPosY()+100 > currentY - halfWindowHeight * minAltitude) {
+            float deltaItemX = (ele.getPos().getPosX() - currentX) / minAltitude;
+            float deltaItemY = (ele.getPos().getPosY() - currentY) / minAltitude;
+            if (ele.getPos().getPosX()-100 < currentX + halfWindowWidth * minAltitude
+                    && ele.getPos().getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
+                if (ele.getPos().getPosY()-100 < currentY + halfWindowHeight * minAltitude
+                        && ele.getPos().getPosY()+100 > currentY - halfWindowHeight * minAltitude) {
                     if(ele.getItemID().getID() == 2){
                         batch.draw(bow, 800 + deltaItemX, 450 + deltaItemY, bow.getOriginX() / minAltitude,
                                 bow.getOriginY() / minAltitude, bow.getHeight() / minAltitude,
