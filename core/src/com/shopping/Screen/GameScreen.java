@@ -552,7 +552,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                         && onlineUsers.get(key).getPos().getPosY() + 100 > currentY - halfWindowHeight * minAltitude) {
                     batch.draw(creeper, 800 + deltaItemX, 450 + deltaItemY, creeper.getOriginX() / minAltitude,
                             creeper.getOriginY() / minAltitude, creeper.getHeight() / minAltitude,
-                            creeper.getWidth() / minAltitude, 0.3f, 0.3f, 0);
+                            creeper.getWidth() / minAltitude, 0.1f, 0.1f, 0);
                 }
             }
         }
