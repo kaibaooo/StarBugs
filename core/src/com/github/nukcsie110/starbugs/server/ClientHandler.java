@@ -98,6 +98,12 @@ public class ClientHandler implements Handler {
                 byte[] nameTablePacket = Parser.updateNameTable(playerList, game.MAX_PLAYER);
                 game.broadcast(nameTablePacket);
 
+                
+                //if queue is full
+                if(game.getOnlinePlayerCount()==game.MAX_PLAYER){
+                    game.startGame();
+                }
+
             break;
             case 0x07:
                 Logger.log(logPrefix+"Recived keyDown: "+parsedPacket.keyCode);
@@ -132,10 +138,16 @@ public class ClientHandler implements Handler {
         }  
     }
 
-    public void send(byte[] x){
+    public synchronized void send(byte[] x){
         if(this.myKey.isValid()){
             this.writeBuf.put(x);
-            this.myKey.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
+            if(this.myKey.interestOps()!=SelectionKey.OP_WRITE){
+                this.myKey.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
+            }
         }
+    }
+
+    public synchronized void terminate(){
+        this.kill = true;
     }
 }  

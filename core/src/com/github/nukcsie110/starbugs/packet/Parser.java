@@ -250,26 +250,26 @@ public class Parser{
         float posX = buf.getFloat();
         float posY = buf.getFloat();
         float radius = buf.getFloat();
-        int currentTime = buf.getInt();
-        int timeLeft = buf.getInt();
+        long currentTick = buf.getLong();
+        long tickLeft = buf.getLong();
 
         Coordinate tmpPos = new Coordinate(posX, posY, 0);
         newMap.setSaveZone(radius, tmpPos);
-        newMap.setCurrentTime(currentTime);
-        newMap.setNextSaveZoneTime(timeLeft);
+        newMap.setCurrentTick(currentTick);
+        newMap.setNextSaveZoneTick(tickLeft);
         newMap.setCurrentPlayers(currentLives);
 
         y.map = newMap;
     }
 
     public static byte[] updateMap(GameMap target){
-        ByteBuffer buf = ByteBuffer.allocate(21);
+        ByteBuffer buf = ByteBuffer.allocate(29);
         buf.put((byte)(target.getCurrentPlayers()&0xFF));
         buf.putFloat(target.getSaveZoneCenterPos().getPosX());
         buf.putFloat(target.getSaveZoneCenterPos().getPosY());
         buf.putFloat(target.getSaveZoneRadius());
-        buf.putInt(target.getCurrentTime());
-        buf.putInt(target.getNextSaveZoneTime());
+        buf.putLong(target.getCurrentTick());
+        buf.putLong(target.getNextSaveZoneTick());
 
         return makePacket((byte)0x06, buf);
     }
