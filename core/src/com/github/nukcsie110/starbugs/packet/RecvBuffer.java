@@ -73,7 +73,7 @@ public class RecvBuffer{
             this.recvBuf.position(headOfPacket); //Restore starting point of this packet
             //Read only expected length
             rtVal = new byte[this.expectPacketLength];
-            Logger.log("Packet size: "+ this.expectPacketLength);
+            //Logger.log("Packet size: "+ this.expectPacketLength);
             this.recvBuf.get(rtVal);
             this.headOfPacket = this.recvBuf.position(); //Mark the starting point of next packet
             this.recvCnt -= this.expectPacketLength;

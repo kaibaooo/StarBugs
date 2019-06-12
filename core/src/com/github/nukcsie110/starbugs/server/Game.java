@@ -48,7 +48,7 @@ public class Game{
         return this.map;
     }
 
-    public void broadcast(byte[] msg){
+    public synchronized void broadcast(byte[] msg){
         Iterator<Map.Entry<Integer, ServerUser>> iter
             = this.playerList.entrySet().iterator();
         while(iter.hasNext()){
@@ -62,14 +62,14 @@ public class Game{
         
         //Prepare map, items;
         
-        //Start main game loop
-        Timer timer = new Timer();
-        this.updater = new MapUpdater(this);
-        timer.schedule(this.updater, 0, 1000/GameMap.TICK_PER_SECOND);
-        
         //Broadcast game start
         byte[] startGamePacket = Parser.gameOver((byte)0xFF);
         this.broadcast(startGamePacket);
+        
+        //Start main game loop
+        Timer timer = new Timer();
+        this.updater = new MapUpdater(this);
+        timer.schedule(this.updater, 1000, 1000/GameMap.TICK_PER_SECOND);
         
         Logger.log("[Server] Game started");
     }

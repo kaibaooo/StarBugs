@@ -21,6 +21,7 @@ public class ClientHandler implements Handler {
     private boolean kill;
     private SelectionKey myKey;
     private boolean joined;
+    private String logPrefix;
       
     public ClientHandler(ServerUser _player, Game _game, SelectionKey _myKey) {  
     //public ClientHandler() {  
@@ -31,6 +32,9 @@ public class ClientHandler implements Handler {
         this.kill = false;
         this.joined = false;
         this.myKey = _myKey;
+        try{
+            this.logPrefix = "["+((SocketChannel)(myKey.channel())).getRemoteAddress()+"] ";
+        }catch(IOException e){}
     }  
 
     public void execute(Selector selector, SelectionKey key) {  
@@ -61,7 +65,6 @@ public class ClientHandler implements Handler {
     private void packetHandle(byte[] packet, SelectionKey key)throws IOException{
         //Logger.printBytes(packet);
         Union parsedPacket = Parser.toUnion(packet);
-        String logPrefix = "["+((SocketChannel)(key.channel())).getRemoteAddress()+"] ";
         switch(parsedPacket.pkID){
             case 0x00:
                 //Ignore logined packet
@@ -147,11 +150,15 @@ public class ClientHandler implements Handler {
     }
 
     public synchronized void send(byte[] x){
-        if(this.myKey.isValid()){
-            this.writeBuf.put(x);
-            if(this.myKey.interestOps()!=SelectionKey.OP_WRITE){
+        try{
+            if(this.myKey.isValid()){
+                this.writeBuf.put(x);
+            }
+            if(this.myKey.isValid() && this.myKey.interestOps()!=SelectionKey.OP_WRITE){
                 this.myKey.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
             }
+        }catch(CancelledKeyException e){
+            Logger.log(this.logPrefix+"CancelledKeyException");
         }
     }
 
