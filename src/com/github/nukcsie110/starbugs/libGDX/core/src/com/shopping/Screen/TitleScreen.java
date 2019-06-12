@@ -160,6 +160,10 @@ public class TitleScreen implements Screen{
 
     public void registerScreen(Skin Skin1,Skin Skin2){
 
+        Image regBG = new Image(new Texture(Gdx.files.absolute("assets/map/registerBG.png")));
+        regBG.setSize(1000,600);
+        regBG.setPosition(Gdx.graphics.getWidth()/2-475,Gdx.graphics.getHeight()/2-300);
+
         final TextField textField = new TextField("",Skin1);
         textField.setWidth(Gdx.graphics.getWidth()/3);
         textField.setPosition(Gdx.graphics.getWidth()/3+150,Gdx.graphics.getHeight()/2);
@@ -193,6 +197,7 @@ public class TitleScreen implements Screen{
             }
         });
 
+        stage.addActor(regBG);
         stage.addActor(icon);
         stage.addActor(textField);
         stage.addActor(queue);

@@ -15,11 +15,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.assets.AssetManager;
 import com.shopping.Base.InputProcessing;
@@ -51,16 +53,19 @@ public class GameScreen implements Screen, InputProcessor{
     private TextureRegion region1;
     private Pixmap pixmap;
     private Music click;
-    //private int x=10,y = 10,X=10240,Y=10240;
+    private int X=20300,Y=20300;
+    private float posX=-4250,posY=-4555;
+    private ShapeRenderer renderer;
     private Texture timerTexture;
     private Pixmap timerPixmap;
     private GameJudger judge;
     // controller
     boolean hasControllers;
-    private int R = 8000;
+    private int r = 130;//130
 
-    private final float TIME_SINCE_COLLISION = 30;
-    float timeSinceCollision = 0;
+    private  int[] TIME_SINCE_COLLISION;
+    private float timeSinceCollision = 0;
+    private int count=0;
 
     // Player settings
 
@@ -68,7 +73,7 @@ public class GameScreen implements Screen, InputProcessor{
     private final int userSpeedY = 15;
     private final int startX = Gdx.graphics.getWidth() / 2;// -Gdx.graphics.getWidth()/2;
     private final int startY = Gdx.graphics.getHeight() / 2;
-    private float minAltitude = 1.7f;
+    private float minAltitude = 20f;
     private float maxAltitude = 10.5f;
     private float percent;
     private float counter;
@@ -123,7 +128,16 @@ public class GameScreen implements Screen, InputProcessor{
     int tmpX = 0;
     int tmpY = 0;
     public GameScreen(Game aGame, String Player, AssetManager mng) {
-
+        TIME_SINCE_COLLISION = new int[8];
+        TIME_SINCE_COLLISION[0] = 10;
+        TIME_SINCE_COLLISION[1] = 12;
+        TIME_SINCE_COLLISION[2] = 14;
+        TIME_SINCE_COLLISION[3] = 16;
+        TIME_SINCE_COLLISION[4] = 18;
+        TIME_SINCE_COLLISION[5] = 20;
+        TIME_SINCE_COLLISION[6] = 22;
+        TIME_SINCE_COLLISION[7] = 24;
+        renderer = new ShapeRenderer();
         game = aGame;
         stage = new Stage(new ScreenViewport());
         mapItem = new Stage(new ScreenViewport());
@@ -151,8 +165,8 @@ public class GameScreen implements Screen, InputProcessor{
         smallMap.setSize(258,259);
         mapOutline.setPosition(1330,0);
         mapOutline.setSize(274,275);
-        mapItem.addActor(mapOutline);
         mapItem.addActor(smallMap);
+        mapItem.addActor(mapOutline);
         System.out.println(map.getX()+" "+map.getY());
 
         camera = (OrthographicCamera) stage.getViewport().getCamera();
@@ -161,8 +175,6 @@ public class GameScreen implements Screen, InputProcessor{
         // inputProcessor = new InputProcessing();
         // startTime = Instant.now().toEpochMilli();
         click = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/ButtonSoundEffects.mp3"));
-
-        region1 = new TextureRegion(manager.get("assets/map/map.png", Texture.class));
 
         itemSprite = new Sprite(manager.get("assets/pic/iron_chestplate.png", Texture.class));
         Pixmap pixmap = manager.get("assets/pic/icons8-center-of-gravity-64.png", Pixmap.class);
@@ -237,8 +249,6 @@ public class GameScreen implements Screen, InputProcessor{
         stage.act();
         stage.draw();
 
-        //update(1);
-
         drawBlood();
         inventory();
         drawItemsTest();
@@ -255,7 +265,10 @@ public class GameScreen implements Screen, InputProcessor{
             music.stop();
         }
 
-
+        renderer.begin(ShapeRenderer.ShapeType.Line);
+        renderer.setColor(Color.BLACK);
+        renderer.circle(1467, 135, r);
+        renderer.end();
 
         if(bulletManager.size()!=0)    drawBullet();
 
@@ -263,6 +276,9 @@ public class GameScreen implements Screen, InputProcessor{
         if (timeSeconds > period) {
             timeSeconds -= period;
             passTime++;
+            if(count!=3) {
+                update(1);
+            }
         }
 
 
@@ -314,27 +330,143 @@ public class GameScreen implements Screen, InputProcessor{
         mapItem.dispose();
     }
 
-//    public void update(float delta) {
-//        timeSinceCollision += delta;
-//        Image fuck = new Image();
-//        if (timeSinceCollision == TIME_SINCE_COLLISION) {
-//            for(int i=0;i<3;i++){
-//                region1.setRegion(x,y,X,Y);
-//                map.remove();
-//                fuck = new Image(region1);
-//                fuck.setSize(X,Y);
-//                fuck.setPosition(800,450);
-//                stage.addActor(fuck);
-//                x+=10;
-//                y+=10;
-//                X-=240;
-//                Y-=240;
-//                System.out.println("Mappppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppps");
-//           }
-//            timeSinceCollision -= TIME_SINCE_COLLISION;
-//        }
-//
-//    }
+    private void update(float delta) {
+        timeSinceCollision += delta;
+        System.out.println(timeSinceCollision);
+        if (timeSinceCollision == TIME_SINCE_COLLISION[0]) {
+            X = X - 500;
+            Y = Y - 500;
+            posX += 250;
+            posY += 250;
+            Basemap.setPosition(posX, posY);
+            Basemap.setOrigin(1, 1);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-5;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[1]) {
+            X = X - 500;
+            Y = Y - 500;
+            posX += 250;
+            posY += 250;
+            Basemap.setPosition(posX, posY);
+            Basemap.setOrigin(1, 1);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-5;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[2]) {
+            X = X - 500;
+            Y = Y - 500;
+            posX += 250;
+            posY += 250;
+            Basemap.setPosition(posX, posY);
+            Basemap.setOrigin(1, 1);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-5;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[3]) {
+            X = X - 500;
+            Y = Y - 500;
+            posX += 250;
+            posY += 250;
+            Basemap.setPosition(posX, posY);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-5;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[4]) {
+            X = X - 500;
+            Y = Y - 500;
+            posX += 250;
+            posY += 250;
+            Basemap.setPosition(posX, posY);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-5;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[5]) {
+            X = X - 500;
+            Y = Y - 500;
+            posX += 250;
+            posY += 250;
+            Basemap.setPosition(posX, posY);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-5;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[6]) {
+            X = X - 500;
+            Y = Y - 500;
+            posX += 250;
+            posY += 250;
+            Basemap.setPosition(posX, posY);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-5;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[7]) {
+            X = X - 500;
+            Y = Y - 500;
+            posX += 250;
+            posY += 250;
+            Basemap.setPosition(posX, posY);
+            Basemap.setOrigin(1, 1);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-5;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, r);
+                renderer.end();
+            }
+            timeSinceCollision -= TIME_SINCE_COLLISION[4];
+            count++;
+        }
+    }
 
     private void keyInProcessDebug() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
@@ -462,7 +594,7 @@ public class GameScreen implements Screen, InputProcessor{
         // 切換高倍鏡
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (minAltitude == 1.7f)
-                minAltitude = 2.5f;
+                minAltitude = 20f;
             else
                 minAltitude = 1.7f;
         }
@@ -563,14 +695,14 @@ public class GameScreen implements Screen, InputProcessor{
             batch.end();
         }
         if (inventoryChoose == 0) {
-            minAltitude = 1.7f;
+            //minAltitude = 1.7f;
             choose.setSize(46, 47);
             choose.setPosition(Gdx.graphics.getWidth() - 98, 490);
             batch.begin();
             choose.draw(batch);
             batch.end();
         } else if (inventoryChoose == 1) {
-            minAltitude = 1.7f;
+            //minAltitude = 1.7f;
             choose.setSize(46, 47);
             choose.setPosition(Gdx.graphics.getWidth() - 98, 436);
             batch.begin();
@@ -813,7 +945,6 @@ public class GameScreen implements Screen, InputProcessor{
         batch.draw(region, 1440, 840);
 
         lightGrayFont26.draw(batch, passTime / 60 + " m " + passTime % 60 + " s", 1470, 878);
-
         batch.end();
     }
 
