@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		config.width = 1600;
 		config.height = 900;
 		config.resizable = false;
-		config.title = "STARBUGS Alpha 1.0";
+		config.title = "STARBUGS Alpha 2.0";
 		config.addIcon("assets/icon/WholeCat.png", Files.FileType.Internal);
 		new LwjglApplication(new Base(), config);
 	}

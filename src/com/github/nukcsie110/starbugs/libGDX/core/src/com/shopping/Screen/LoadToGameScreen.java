@@ -38,28 +38,34 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/map/Big_map.png", Texture.class);
         manager.load("assets/pic/icons8-center-of-gravity-64.png", Pixmap.class);
         manager.load("assets/map/navigation.png", Texture.class);
+        Gdx.app.log("manager", "section 1 finished");
         // character
         manager.load("assets/pic/CharacterCat.png", Texture.class);
         manager.load("assets/pic/Diamondattack(left).png", Texture.class);
+        manager.load("assets/pic/Diamondattack(right).png", Texture.class);
         manager.load("assets/pic/DiamondArmor.png", Texture.class);
         manager.load("assets/pic/DiamondSword.png", Texture.class);
         manager.load("assets/pic/DiamondSwordattack.png", Texture.class);
         manager.load("assets/pic/DiamondBow.png", Texture.class);
         manager.load("assets/pic/Goldenattack(left).png", Texture.class);
+        manager.load("assets/pic/Goldenattack(right).png", Texture.class);
         manager.load("assets/pic/GoldenArmor.png", Texture.class);
         manager.load("assets/pic/GoldenSword.png", Texture.class);
         manager.load("assets/pic/GoldenSwordattack.png", Texture.class);
         manager.load("assets/pic/GoldenBow.png", Texture.class);
         manager.load("assets/pic/Ironattack(left).png", Texture.class);
+        manager.load("assets/pic/Ironattack(right).png", Texture.class);
         manager.load("assets/pic/IronArmor.png", Texture.class);
         manager.load("assets/pic/IronSword.png", Texture.class);
         manager.load("assets/pic/IronSwordattack.png", Texture.class);
         manager.load("assets/pic/IronBow.png", Texture.class);
         manager.load("assets/pic/attack(left).png", Texture.class);
+        manager.load("assets/pic/attack(right).png", Texture.class);
         manager.load("assets/pic/Sword.png", Texture.class);
         manager.load("assets/pic/WholeCat.png", Texture.class);
         manager.load("assets/pic/fistBow.png", Texture.class);
         manager.load("assets/pic/fistSwordattack.png", Texture.class);
+        Gdx.app.log("manager", "section 2 finished");
         //inventory
         manager.load("assets/inventory/inventory65.png", Texture.class);
         manager.load("assets/inventory/sword.png", Texture.class);
@@ -68,10 +74,13 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/inventory/potion2.png", Texture.class);
         manager.load("assets/inventory/potion3.png", Texture.class);
         manager.load("assets/inventory/choose.png", Texture.class);
-
+        Gdx.app.log("manager", "section 3 finished");
+        //bullet
+        manager.load("assets/inventory/arrow.png", Texture.class);
         //sound
         manager.load("assets/sound/LOL_inGame.mp3", Music.class);
         manager.load("assets/sound/punch.mp3", Music.class);
+        Gdx.app.log("manager", "section 4 finished");
         user_name = name;
 
     }
@@ -94,8 +103,9 @@ public class LoadToGameScreen implements Screen {
         cat.draw(batch);
         batch.end();
         if(manager.update()) {
-            sound.stop();
+            Gdx.app.log("manager", "update");
             game.setScreen(new GameScreen(game,user_name,manager));
+            sound.stop();
         }
 
 
