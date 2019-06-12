@@ -12,7 +12,7 @@ import com.github.nukcsie110.starbugs.util.Logger;
 public class Game{
     private ServerState state;
     private GameMap map = new GameMap();
-    public static final int MAX_PLAYER = 2;
+    public static final int MAX_PLAYER = 3;
     protected final long MAX_TICK = 60*GameMap.TICK_PER_SECOND;
     protected HashMap<Integer, ServerUser> playerList = new HashMap<Integer, ServerUser>();
     protected HashSet<Item> itemList = new HashSet<Item>();
@@ -54,6 +54,15 @@ public class Game{
         while(iter.hasNext()){
             Map.Entry<Integer, ServerUser> enrty = iter.next();
             enrty.getValue().getHandler().send(msg);
+        }
+    }
+    
+    public synchronized void asyncBroadcast(byte[] msg){
+        Iterator<Map.Entry<Integer, ServerUser>> iter
+            = this.playerList.entrySet().iterator();
+        while(iter.hasNext()){
+            Map.Entry<Integer, ServerUser> enrty = iter.next();
+            enrty.getValue().getHandler().write(msg);
         }
     }
 
@@ -112,7 +121,7 @@ class MapUpdater extends TimerTask{
         //Update map(1 TPS)
         if(map.getCurrentTick()%map.TICK_PER_SECOND == 0){
             byte[] updateMapPacket = Parser.updateMap(map);
-            this.game.broadcast(updateMapPacket);
+            this.game.asyncBroadcast(updateMapPacket);
         }
         this.map.incTick();
         Logger.log(this.map.getCurrentTick());
@@ -120,12 +129,25 @@ class MapUpdater extends TimerTask{
         //Update me
         Iterator<Map.Entry<Integer, ServerUser>> iter
             = game.getOnlinePlayers().entrySet().iterator();
-        //Logger.log("1");
         while(iter.hasNext()){
             ServerUser me = iter.next().getValue();
             //Logger.log(me);
             byte[] updateYouPacket = Parser.updateYou(me);
-            me.getHandler().send(updateYouPacket);
+            me.getHandler().write(updateYouPacket);
+            Iterator<Map.Entry<Integer, ServerUser>> iter_other
+                = game.getOnlinePlayers().entrySet().iterator();
+            while(iter_other.hasNext()){
+                ServerUser other = iter_other.next().getValue();
+                byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(other);
+                me.getHandler().write(updateSinglePlayerPacket);
+            }
+        }
+
+        //Flush buffer
+        iter = game.getOnlinePlayers().entrySet().iterator();
+        while(iter.hasNext()){
+            ServerUser player = iter.next().getValue();
+            player.getHandler().flush();
         }
     }
 
