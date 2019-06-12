@@ -65,7 +65,7 @@ public class TitleScreen implements Screen, ControllerListener{
         final Skin fontSkin = new Skin(Gdx.files.internal("assets/skin/craftacular/craftacular-ui.json"));
 
         final Label label1 = new Label("S T = R B U G S",fontSkin,"title");
-        label1.setPosition(Gdx.graphics.getWidth()/2-label1.getWidth()/2,Gdx.graphics.getHeight()/2+100);
+        label1.setPosition(Gdx.graphics.getWidth()/2-label1.getWidth()/2,Gdx.graphics.getHeight()/2+150);
         stage.addActor(label1);
 
         final Skin mySkin = new Skin(Gdx.files.internal("assets/skin/Igdx/lgdxs-ui.json"));
