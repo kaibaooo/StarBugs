@@ -5,6 +5,7 @@ import com.github.nukcsie110.starbugs.packet.Parser;
 import com.github.nukcsie110.starbugs.server.ClientHandler;
 import com.github.nukcsie110.starbugs.util.Logger;
 import com.github.nukcsie110.starbugs.server.Game;
+import com.github.nukcsie110.starbugs.basic.Coordinate;
 import java.nio.channels.*;
 import java.io.IOException;
 
@@ -28,17 +29,14 @@ public class ServerHandler implements Handler {
         try {  
             client.configureBlocking(false);  
             clientKey = client.register(selector, SelectionKey.OP_READ);
-            ServerUser newPlayer  = new ServerUser();
+
+            //Generate new player and give random position
+            ServerUser newPlayer  = new ServerUser(0,"", Coordinate.genRandomPos());
             ClientHandler handler = new ClientHandler(newPlayer, game, clientKey);
             newPlayer.setHandler(handler);
 
             //Generate new id
             newPlayer.setID((int)(Math.random()*0x10000));
-
-            //Random position
-            float x = (float)Math.random()*5000 + 2500;
-            float y = (float)Math.random()*5000 + 2500;
-            newPlayer.getPos().moveTo(x,y);
 
             clientKey.attach(newPlayer.getHandler());  
 

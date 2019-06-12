@@ -3,11 +3,8 @@ package com.github.nukcsie110.starbugs.packet;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.ArrayList;
-import com.github.nukcsie110.starbugs.basic.User;
-import com.github.nukcsie110.starbugs.basic.Item;
-import com.github.nukcsie110.starbugs.basic.Coordinate;
-import com.github.nukcsie110.starbugs.basic.Equipment;
-import com.github.nukcsie110.starbugs.basic.GameMap;
+
+import com.github.nukcsie110.starbugs.basic.*;
 import com.github.nukcsie110.starbugs.util.Logger;
 import com.github.nukcsie110.starbugs.server.ServerUser;
 import java.io.UnsupportedEncodingException;
@@ -146,7 +143,7 @@ public class Parser{
         ByteBuffer buf = ByteBuffer.wrap(x, 1, x.length-1);
         y.items = new ArrayList<Item>();
         while(cnt-- != 0){
-            byte itemID = buf.get();
+            ItemID itemID = ItemID.getName(buf.get());
             float posX = buf.getFloat();
             float posY = buf.getFloat();
             float dir = buf.getFloat();
@@ -160,7 +157,7 @@ public class Parser{
         ByteBuffer buf = ByteBuffer.allocate(1+items.size()*13);
         buf.put((byte)items.size());
         for(Item i:items){
-            buf.put(i.getItemID());
+            buf.put(i.getItemID().getID());
             buf.putFloat(i.getCoordinate().getPosX());
             buf.putFloat(i.getCoordinate().getPosY());
             buf.putFloat(i.getCoordinate().getDir());
