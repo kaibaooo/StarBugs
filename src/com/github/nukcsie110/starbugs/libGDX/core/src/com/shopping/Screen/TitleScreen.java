@@ -160,27 +160,21 @@ public class TitleScreen implements Screen{
 
     public void registerScreen(Skin Skin1,Skin Skin2){
 
-        Image regBG = new Image(new Texture(Gdx.files.absolute("assets/map/registerBG.png")));
-        regBG.setSize(1000,600);
-        regBG.setPosition(Gdx.graphics.getWidth()/2-475,Gdx.graphics.getHeight()/2-300);
+        Image regBG = new Image(new Texture(Gdx.files.absolute("assets/pic/register_icon.png")));
+        regBG.setPosition(Gdx.graphics.getWidth()/2-regBG.getWidth()/2,Gdx.graphics.getHeight()/2-regBG.getHeight()/2);
 
         final TextField textField = new TextField("",Skin1);
-        textField.setWidth(Gdx.graphics.getWidth()/3);
-        textField.setPosition(Gdx.graphics.getWidth()/3+150,Gdx.graphics.getHeight()/2);
-
-        Texture texture1 = new Texture(Gdx.files.absolute("assets/pic/joystick.png"));
-        Image icon = new Image(texture1);
-        icon.setSize(100,100);
-        icon.setPosition(Gdx.graphics.getWidth()/3-150,Gdx.graphics.getHeight()/2+130);
+        textField.setWidth(Gdx.graphics.getWidth()/6);
+        textField.setPosition(Gdx.graphics.getWidth()/3+128,Gdx.graphics.getHeight()/2-55);
 
         Texture texture2 = new Texture(Gdx.files.absolute("assets/pic/Symbol 2 – 1.png"));
         Image str = new Image(texture2);
         str.setSize(250,28);
-        str.setPosition(Gdx.graphics.getWidth()/3-120,Gdx.graphics.getHeight()/2+12);
+        str.setPosition(Gdx.graphics.getWidth()/3+134,Gdx.graphics.getHeight()/2+50);
 
         final Button queue = new TextButton("Ready!",Skin2,"oval2");
         queue.setSize(200,50);
-        queue.setPosition(Gdx.graphics.getWidth()/3+500,Gdx.graphics.getHeight()/2-150);
+        queue.setPosition(Gdx.graphics.getWidth()/3+160,Gdx.graphics.getHeight()/2-155);
 
         queue.addListener(new InputListener(){
             @Override
@@ -198,7 +192,6 @@ public class TitleScreen implements Screen{
         });
 
         stage.addActor(regBG);
-        stage.addActor(icon);
         stage.addActor(textField);
         stage.addActor(queue);
         stage.addActor(str);

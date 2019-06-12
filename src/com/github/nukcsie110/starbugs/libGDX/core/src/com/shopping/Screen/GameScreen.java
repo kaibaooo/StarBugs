@@ -130,14 +130,14 @@ public class GameScreen implements Screen, InputProcessor{
     int tmpY = 0;
     public GameScreen(Game aGame, String Player, AssetManager mng) {
         TIME_SINCE_COLLISION = new int[8];
-        TIME_SINCE_COLLISION[0] = 10;
-        TIME_SINCE_COLLISION[1] = 12;
-        TIME_SINCE_COLLISION[2] = 14;
-        TIME_SINCE_COLLISION[3] = 16;
-        TIME_SINCE_COLLISION[4] = 18;
-        TIME_SINCE_COLLISION[5] = 20;
-        TIME_SINCE_COLLISION[6] = 22;
-        TIME_SINCE_COLLISION[7] = 24;
+        TIME_SINCE_COLLISION[0] = 100;
+        TIME_SINCE_COLLISION[1] = 102;
+        TIME_SINCE_COLLISION[2] = 104;
+        TIME_SINCE_COLLISION[3] = 106;
+        TIME_SINCE_COLLISION[4] = 108;
+        TIME_SINCE_COLLISION[5] = 110;
+        TIME_SINCE_COLLISION[6] = 112;
+        TIME_SINCE_COLLISION[7] = 114;
         renderer = new ShapeRenderer();
         game = aGame;
         stage = new Stage(new ScreenViewport());
