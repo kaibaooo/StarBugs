@@ -41,7 +41,7 @@ public class LoadToGameScreen implements Screen {
     ArrayList<User> nameTable;
     public LoadToGameScreen(Game aGame, String name, Client passedClient){
         sound = Gdx.audio.newSound(Gdx.files.internal("assets/sound/loading.mp3"));
-
+        Gdx.graphics.setTitle("STARBUGS Alpha 2.0, Loading...");
         long id = sound.play();
         sound.setVolume(id, 0.3f);
         game = aGame;
@@ -110,6 +110,7 @@ public class LoadToGameScreen implements Screen {
         //bullet
         manager.load("assets/inventory/arrow.png", Texture.class);
         //sound
+        manager.load("assets/sound/nyan.mp3", Music.class);
         manager.load("assets/sound/LOL_inGame.mp3", Music.class);
         manager.load("assets/sound/punch.mp3", Music.class);
         Gdx.app.log("manager", "section 4 finished");
@@ -136,6 +137,7 @@ public class LoadToGameScreen implements Screen {
                         playerID = ops.player.getIDString();
                     }else{
                         Logger.log("Failed to join. Abort.");
+//                        game.setScreen(new GameScreen(game,user_name,manager, client, playerID, nameTable));
                     }
                     break;
                 case 0x02:
@@ -173,11 +175,12 @@ public class LoadToGameScreen implements Screen {
             client.join(user_name);
             Gdx.app.log("manager", "update");
             currentOnlineUser = 0;
-            game.setScreen(new GameScreen(game,user_name,manager, client, playerID, nameTable));
-            sound.stop();
+//            game.setScreen(new GameScreen(game,user_name,manager, client, playerID, nameTable));
+//            sound.stop();
         }
         if(rank == (byte)0xFF){
-
+            game.setScreen(new GameScreen(game,user_name,manager, client, playerID, nameTable));
+            sound.stop();
         }
 
     }

@@ -39,7 +39,7 @@ import java.util.ArrayList;
 //import com.shopping.Base.InputProcessing;
 
 public class GameScreen implements Screen, InputProcessor, ControllerListener {
-
+    // Pre declare object
     private Stage stage;
     private Stage mapItem;
     private Game game;
@@ -68,6 +68,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     float timeSinceCollision = 0;
 
     // Player settings
+    private User mainPlayer;
     private final int userSpeedX = 15;
     private final int userSpeedY = 15;
     private final int startX = Gdx.graphics.getWidth() / 2;// -Gdx.graphics.getWidth()/2;
@@ -84,6 +85,8 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private int armorType = 0; // 0 none 1 iron 2 gold 3 diamond
     private int attackHand;
     private double deg;
+    private double oldDeg;
+
     // general attributes
     private float halfWindowWidth = Gdx.graphics.getWidth() / 2;
     private float halfWindowHeight = Gdx.graphics.getHeight() / 2;
@@ -147,7 +150,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         mapItem = new Stage(new ScreenViewport());
         judge = new GameJudger();
         batch = new SpriteBatch();
-
+        mainPlayer = new User();
 
         // Networking
         client = passedClient;
@@ -254,6 +257,11 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                         Logger.log(i.getDisplayName());
                     }
                     break;
+                case 0x05:
+//                  Logger.log("Recived updateNameTable");
+                    mainPlayer = ops.player;
+                    Logger.log("Pos : " + mainPlayer.getPos());
+                    break;
                 case 0x10:
                     Logger.log("Game over");
                     client.close();
@@ -274,6 +282,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         //======================================
         networkUpdate();
         //======================================
+
+        currentX = mainPlayer.getPos().getPosX();
+        currentY = mainPlayer.getPos().getPosY();
+        deg = mainPlayer.getPos().getDir();
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -459,29 +471,31 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             if(judge.judgeUserMoveIllegal(currentX-userSpeedX, currentY)){
                 client.keyDown((byte)'A');
-                currentX -= userSpeedX;
+//                currentX -= userSpeedX;
             }
 
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             if(judge.judgeUserMoveIllegal(currentX+userSpeedX, currentY)){
                 client.keyDown((byte)'D');
-                currentX += userSpeedX;
+//                currentX += userSpeedX;
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             if(judge.judgeUserMoveIllegal(currentX, currentY-userSpeedY)){
                 client.keyDown((byte)'S');
-                currentY -= userSpeedY;
+//                currentY -= userSpeedY;
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             if(judge.judgeUserMoveIllegal(currentX, currentY+userSpeedY)){
                 client.keyDown((byte)'W');
-                currentY += userSpeedY;
+//                currentY += userSpeedY;
             }
         }
-
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            client.keyDown((byte)'E');
+        }
 
 
         // 切換高倍鏡
@@ -515,6 +529,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     }
 
     private void drawMainPlayer() {
+        oldDeg = deg;
         double deltaX = Gdx.input.getX() - 800;
         double deltaY = 450 - Gdx.input.getY();
         float percentZ = Math.abs(percent - 0.5f) * 2;
@@ -529,6 +544,11 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         } else {
             deg = Math.toDegrees(ang) + 90;
         }
+        double diffDeg = Math.min(Math.abs(oldDeg - deg), 360-Math.abs(oldDeg - deg));
+        if (diffDeg > 10.0) {
+            client.updateDirection((float) deg);
+        }
+        deg = oldDeg;
 
         character.rotate((float) deg);
         batch.begin();

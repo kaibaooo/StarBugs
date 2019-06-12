@@ -27,7 +27,7 @@ public class Client extends Thread{
     public Client(){
         this.recvBuf = new RecvBuffer(BUFFER_LEN);
         this.writeBuf = new WriteBuffer(BUFFER_LEN);
-        this.serverAddr = new InetSocketAddress("127.0.0.1", 8787);
+        this.serverAddr = new InetSocketAddress("192.168.0.115", 8787);
         this.ready = false;
         this.gameEnded = false;
     }

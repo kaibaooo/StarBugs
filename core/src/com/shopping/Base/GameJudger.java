@@ -1,8 +1,8 @@
 package com.shopping.Base;
 
 public class GameJudger {
-    private int mapMinX = 800;
-    private int mapMinY = 435;
+    private int mapMinX = 780;
+    private int mapMinY = 425;
     private int mapMaxX = 10880;
     private int mapMaxY = 10545;
 

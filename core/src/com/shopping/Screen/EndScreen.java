@@ -53,7 +53,7 @@ public class EndScreen implements Screen, InputProcessor {
         stage = new Stage(new ScreenViewport());
         camera = (OrthographicCamera) stage.getViewport().getCamera();
         sad = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/lose.mp3"));
-        hot = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/win.mp3"));
+        hot = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/nyan.mp3"));
         Pixmap pixmap = new Pixmap(Gdx.files.internal("assets/pic/icons8-center-of-gravity-64.png"));
         int xHotspot = pixmap.getWidth()/2;
         int yHotspot = pixmap.getHeight()/2;
