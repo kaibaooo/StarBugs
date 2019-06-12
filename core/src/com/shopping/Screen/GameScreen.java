@@ -460,10 +460,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         timeSinceCollision += delta;
         System.out.println(timeSinceCollision);
         if (timeSinceCollision == TIME_SINCE_COLLISION[0]) {
-            X = X - 580;
-            Y = Y - 580;
-            posX += 290;
-            posY += 290;
+            X = X - 650;
+            Y = Y - 650;
+            posX += 325;
+            posY += 325;
             Basemap.setPosition(posX, posY);
             Basemap.setOrigin(1, 1);
             Basemap.setSize(X, Y);
@@ -477,10 +477,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[1]) {
-            X = X - 580;
-            Y = Y - 580;
-            posX += 290;
-            posY += 290;
+            X = X - 650;
+            Y = Y - 650;
+            posX += 325;
+            posY += 325;
             Basemap.setPosition(posX, posY);
             Basemap.setOrigin(1, 1);
             Basemap.setSize(X, Y);
@@ -494,10 +494,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[2]) {
-            X = X - 580;
-            Y = Y - 580;
-            posX += 290;
-            posY += 290;
+            X = X - 650;
+            Y = Y - 650;
+            posX += 325;
+            posY += 325;
             Basemap.setPosition(posX, posY);
             Basemap.setOrigin(1, 1);
             Basemap.setSize(X, Y);
@@ -511,10 +511,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[3]) {
-            X = X - 580;
-            Y = Y - 580;
-            posX += 290;
-            posY += 290;
+            X = X - 650;
+            Y = Y - 650;
+            posX += 325;
+            posY += 325;
             Basemap.setPosition(posX, posY);
             Basemap.setSize(X, Y);
             if(count >= 1) {
@@ -527,10 +527,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[4]) {
-            X = X - 580;
-            Y = Y - 580;
-            posX += 290;
-            posY += 290;
+            X = X - 650;
+            Y = Y - 650;
+            posX += 325;
+            posY += 325;
             Basemap.setPosition(posX, posY);
             Basemap.setSize(X, Y);
             if(count >= 1) {
@@ -543,10 +543,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[5]) {
-            X = X - 580;
-            Y = Y - 580;
-            posX += 290;
-            posY += 290;
+            X = X - 650;
+            Y = Y - 650;
+            posX += 325;
+            posY += 325;
             Basemap.setPosition(posX, posY);
             Basemap.setSize(X, Y);
             if(count >= 1) {
@@ -559,10 +559,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[6]) {
-            X = X - 580;
-            Y = Y - 580;
-            posX += 290;
-            posY += 290;
+            X = X - 650;
+            Y = Y - 650;
+            posX += 325;
+            posY += 325;
             Basemap.setPosition(posX, posY);
             Basemap.setSize(X, Y);
             if(count >= 1) {
@@ -575,10 +575,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             update(1);
         }
         if (timeSinceCollision == TIME_SINCE_COLLISION[7]) {
-            X = X - 580;
-            Y = Y - 580;
-            posX += 290;
-            posY += 290;
+            X = X - 650;
+            Y = Y - 650;
+            posX += 325;
+            posY += 325;
             Basemap.setPosition(posX, posY);
             Basemap.setOrigin(1, 1);
             Basemap.setSize(X, Y);

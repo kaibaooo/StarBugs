@@ -175,7 +175,7 @@ public class Game{
     }
     
     public void itemCollisionDetect(ServerUser player){
-        double r=80;
+        double r=50;
         Iterator<Item> iter = itemList.iterator(); 
         while(iter.hasNext()){
             Item i = iter.next();
@@ -194,10 +194,15 @@ public class Game{
                         player.addEquip(Equipment.LONG_BOW);
                     break;
                     case ARMOR_LV1:
-                        player.addEquip(Equipment.ARMOR_LV1);
+                        if(player.getArmor()!=Equipment.ARMOR_LV2 ||
+                           player.getArmor()!=Equipment.ARMOR_LV3){
+                            player.addEquip(Equipment.ARMOR_LV1);
+                        }
                     break;
                     case ARMOR_LV2:
-                        player.addEquip(Equipment.ARMOR_LV2);
+                        if(player.getArmor()!=Equipment.ARMOR_LV3){
+                            player.addEquip(Equipment.ARMOR_LV2);
+                        }
                     break;
                     case ARMOR_LV3:
                         player.addEquip(Equipment.ARMOR_LV3);
@@ -210,6 +215,7 @@ public class Game{
                         player.setPoison(player.getPoison()+1);
                     }
                 }
+                Logger.log(player);
                 iter.remove();
             }
         }
