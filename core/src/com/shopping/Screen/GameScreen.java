@@ -920,55 +920,55 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         batch.end();
     }
 
-    private void attack(){
-        for(short ele:onlineUsers.keySet()){
-            // N
-            if(deg>=135 && deg<225){
-                if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
-                    && onlineUsers.get(ele).getPos().getPosX()>currentX-50
-                    && onlineUsers.get(ele).getPos().getPosY()<currentY+50
-                    && onlineUsers.get(ele).getPos().getPosY()>=currentY){
-                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
-                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
-
-                }
-                Logger.log("Attack N");
-            }
-            // S
-            else if(deg>=225 && deg<315){
-                if(onlineUsers.get(ele).getPos().getPosY()<currentY-50
-                        && onlineUsers.get(ele).getPos().getPosY()<currentY+50
-                        && onlineUsers.get(ele).getPos().getPosY()>currentX-50
-                        && onlineUsers.get(ele).getPos().getPosY()<=currentX){
-                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
-                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
-                }
-                Logger.log("Attack W");
-            }
-            // W
-            else if(deg>=315 && deg<405){
-                if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
-                        && onlineUsers.get(ele).getPos().getPosX()<currentX-50
-                        && onlineUsers.get(ele).getPos().getPosY()>currentY-50
-                        && onlineUsers.get(ele).getPos().getPosY()<=currentY){
-                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
-                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
-                }
-                Logger.log("Attack S");
-            }
-            // E
-            else if(deg>=405 || deg<135){
-                if(onlineUsers.get(ele).getPos().getPosY()<currentY-50
-                        && onlineUsers.get(ele).getPos().getPosY()<currentY+50
-                        && onlineUsers.get(ele).getPos().getPosY()<currentX+50
-                        && onlineUsers.get(ele).getPos().getPosY()>=currentX){
-                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
-                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
-                }
-                Logger.log("Attack E");
-            }
-        }
-    }
+//    private void attack(){
+//        for(short ele:onlineUsers.keySet()){
+//            // N
+//            if(deg>=135 && deg<225){
+//                if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
+//                    && onlineUsers.get(ele).getPos().getPosX()>currentX-50
+//                    && onlineUsers.get(ele).getPos().getPosY()<currentY+50
+//                    && onlineUsers.get(ele).getPos().getPosY()>=currentY){
+//                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+//                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+//
+//                }
+//                Logger.log("Attack N");
+//            }
+//            // S
+//            else if(deg>=225 && deg<315){
+//                if(onlineUsers.get(ele).getPos().getPosY()<currentY-50
+//                        && onlineUsers.get(ele).getPos().getPosY()<currentY+50
+//                        && onlineUsers.get(ele).getPos().getPosY()>currentX-50
+//                        && onlineUsers.get(ele).getPos().getPosY()<=currentX){
+//                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+//                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+//                }
+//                Logger.log("Attack W");
+//            }
+//            // W
+//            else if(deg>=315 && deg<405){
+//                if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
+//                        && onlineUsers.get(ele).getPos().getPosX()<currentX-50
+//                        && onlineUsers.get(ele).getPos().getPosY()>currentY-50
+//                        && onlineUsers.get(ele).getPos().getPosY()<=currentY){
+//                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+//                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+//                }
+//                Logger.log("Attack S");
+//            }
+//            // E
+//            else if(deg>=405 || deg<135){
+//                if(onlineUsers.get(ele).getPos().getPosY()<currentY-50
+//                        && onlineUsers.get(ele).getPos().getPosY()<currentY+50
+//                        && onlineUsers.get(ele).getPos().getPosY()<currentX+50
+//                        && onlineUsers.get(ele).getPos().getPosY()>=currentX){
+//                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+//                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+//                }
+//                Logger.log("Attack E");
+//            }
+//        }
+//    }
     // ==================================
     // |         Keyboard event         |
     // ==================================
