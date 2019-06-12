@@ -106,8 +106,15 @@ public class ClientHandler implements Handler {
 
             break;
             case 0x07:
-                Logger.log(logPrefix+"Recived keyDown: "+parsedPacket.keyCode);
-                
+                Logger.log(logPrefix+"Recived keyDown: "+(char)(parsedPacket.keyCode));
+                synchronized(player){
+                    switch((char)(parsedPacket.keyCode)){
+                        case 'W': player.moveTop(); break;
+                        case 'S': player.moveDown(); break;
+                        case 'A': player.moveLeft(); break;
+                        case 'D': player.moveRight(); break;
+                    }
+                }
                 //byte[] gameOverPacket = Parser.gameOver((byte)0);
                 //this.send(gameOverPacket);
                 //this.kill = true;
@@ -118,6 +125,7 @@ public class ClientHandler implements Handler {
             break;
             case 0x09:
                 Logger.log(logPrefix+"Recived updateDirection: "+parsedPacket.newDirection);
+                player.getPos().setDir(parsedPacket.newDirection);
             break;
             default:
         }

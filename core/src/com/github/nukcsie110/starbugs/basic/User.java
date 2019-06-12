@@ -20,6 +20,8 @@ public class User{
     protected int blood;
     protected int cntPoison;
     public static final int MAX_BLOOD = 100;
+    protected static final float velocityX = 15;
+    protected static final float velocityY = 15;
 
 
     /**
@@ -172,6 +174,18 @@ public class User{
       if you want to set position or direction, 
       just use User.getPos().moveTo()
     */
+    public void moveTop(){
+        this.pos.moveOffset(0, velocityY);
+    }
+    public void moveDown(){
+        this.pos.moveOffset(0, -velocityY);
+    }
+    public void moveRight(){
+        this.pos.moveOffset(velocityX, 0);
+    }
+    public void moveLeft(){
+        this.pos.moveOffset(-velocityX, 0);
+    }
 
     public Coordinate getPos(){
         //Return the reference of position

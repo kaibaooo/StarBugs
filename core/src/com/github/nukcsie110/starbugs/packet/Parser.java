@@ -227,7 +227,7 @@ public class Parser{
         y.player = newPlayer;
     }
 
-    public static byte[] updateYou(User target){
+    public static byte[] updateYou(ServerUser target){
         ByteBuffer buf = ByteBuffer.allocate(16);
         buf.putFloat(target.getPos().getPosX());
         buf.putFloat(target.getPos().getPosY());

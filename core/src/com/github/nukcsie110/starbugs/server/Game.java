@@ -100,16 +100,31 @@ public class Game{
 
 class MapUpdater extends TimerTask{
     private Game game;
+    private GameMap map;
     
     public MapUpdater(Game _game){
         this.game = _game;
+        this.map = this.game.getMap();
     }
 
     public void run(){
-        this.game.getMap().incTick();
-        byte[] updateMapPacket = Parser.updateMap(this.game.getMap());
-        this.game.broadcast(updateMapPacket);
+        //Update map(1 TPS)
+        if(map.getCurrentTick()%map.TICK_PER_SECOND == 0){
+            byte[] updateMapPacket = Parser.updateMap(map);
+            this.game.broadcast(updateMapPacket);
+        }
+        this.map.incTick();
 
+        //Update me
+        Iterator<Map.Entry<Integer, ServerUser>> iter
+            = game.getOnlinePlayers().entrySet().iterator();
+        //Logger.log("1");
+        while(iter.hasNext()){
+            ServerUser me = iter.next().getValue();
+            //Logger.log(me);
+            byte[] updateYouPacket = Parser.updateYou(me);
+            me.getHandler().send(updateYouPacket);
+        }
     }
 
 }

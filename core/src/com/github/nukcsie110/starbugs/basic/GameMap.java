@@ -1,7 +1,7 @@
 package com.github.nukcsie110.starbugs.basic;
 
 public class GameMap{
-    public static final int TICK_PER_SECOND = 1;
+    public static final int TICK_PER_SECOND = 100;
     protected float saveZoneRadius = 0;
     protected Coordinate saveZoneCenterPos = new Coordinate(0,0,0);
     protected Long currentTick = 0l;

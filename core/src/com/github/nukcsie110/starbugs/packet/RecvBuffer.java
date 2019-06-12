@@ -40,6 +40,7 @@ public class RecvBuffer{
      * @return Whether there are complete packet in buffer
      */
     public synchronized boolean hasPacket(){
+        //TODO: Unexpected negitive lenght
         boolean rtVal = false;
         //Read packet length
         if(this.expectPacketLength == -1 && this.recvCnt>=5){
