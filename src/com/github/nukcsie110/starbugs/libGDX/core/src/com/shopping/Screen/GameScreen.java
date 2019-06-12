@@ -100,6 +100,7 @@ public class GameScreen implements Screen, InputProcessor{
     Sprite potion3;
     Sprite choose;
     Sprite character;
+    Sprite smallMapPlayer;
     Sprite bulletPicture;
     // blood
     private int blood;
@@ -149,6 +150,7 @@ public class GameScreen implements Screen, InputProcessor{
         mapOutline = new Image(manager.get("assets/map/smallMap.png",Texture.class));
         smallMap.setPosition(1337,7);
         smallMap.setSize(258,259);
+        smallMapPlayer = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
         mapOutline.setPosition(1330,0);
         mapOutline.setSize(274,275);
         mapItem.addActor(mapOutline);
@@ -246,7 +248,7 @@ public class GameScreen implements Screen, InputProcessor{
         keyInProcessDebug();
         drawEnemy();
         showTimer();
-        drawMainPlayer();
+
 
         mapItem.draw();
         if (blood <= 0) {
@@ -254,6 +256,8 @@ public class GameScreen implements Screen, InputProcessor{
             game.setScreen(new EndScreen(game, 1));
             music.stop();
         }
+        drawMainPlayer();
+//        drawSmallMapPlayer();
 
 
 
@@ -503,6 +507,15 @@ public class GameScreen implements Screen, InputProcessor{
         } else {
             deg = Math.toDegrees(ang) + 90;
         }
+
+        smallMapPlayer.setSize(20, 22);
+        smallMapPlayer.setOrigin(10,11);
+        smallMapPlayer.rotate((float)deg);
+        smallMapPlayer.setPosition((currentX-800)/39.06976f+1327.5f,(currentY-435)/39.03475f);
+        batch.begin();
+        smallMapPlayer.draw(batch);
+        batch.end();
+        smallMapPlayer.rotate(-(float)deg);
 
         // sprite.setPosition(-10,100);
         character.rotate((float) deg);
