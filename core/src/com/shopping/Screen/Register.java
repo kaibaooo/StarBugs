@@ -9,6 +9,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.github.nukcsie110.starbugs.client.Client;
 import com.shopping.Actors.Background;
 import com.shopping.Base.Base;
 
@@ -52,6 +53,7 @@ public class Register implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();
+
     }
 
     @Override

@@ -22,6 +22,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.assets.AssetManager;
+import com.github.nukcsie110.starbugs.basic.User;
+import com.github.nukcsie110.starbugs.client.Client;
+import com.github.nukcsie110.starbugs.packet.Union;
+import com.github.nukcsie110.starbugs.util.Logger;
 import com.shopping.Base.InputProcessing;
 import com.badlogic.gdx.controllers.*;
 import com.shopping.Base.GameJudger;
@@ -118,44 +122,30 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
     int tmpX = 0;
     int tmpY = 0;
-    public GameScreen(Game aGame, String Player, AssetManager mng) {
+
+    //Networking
+    Client client;
+    public GameScreen(Game aGame, String Player, AssetManager mng, Client passedClient) {
 
         game = aGame;
         stage = new Stage(new ScreenViewport());
         mapItem = new Stage(new ScreenViewport());
         judge = new GameJudger();
-        if(!Player.equals("")){
-            player = Player;
-        }
-        else{
-            player = "NullPointerException";
-        }
+        client = passedClient;
+        player = Player;
         batch = new SpriteBatch();
         manager = mng;
         maps = new Pixmap(Gdx.files.internal("assets/map/map.png"));
         Basemap = new Image(manager.get("assets/map/map.png", Texture.class));
-        // map = new Image(new Texture(roundPixmap(maps,R)));
-        // map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
         Basemap.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        // System.out.println(map.getX()+" "+map.getY());
         stage.addActor(Basemap);
-        // stage.addActor(map);
-        // change map
-        // smallMap = new Image(new Texture(roundPixmap(maps,R)));
         mapOutline = new Image(manager.get("assets/map/smallMap.png", Texture.class));
-        // smallMap.setPosition(Gdx.graphics.getWidth()-mapOutline.getWidth()/2-13,Gdx.graphics.getHeight()/3-289);
-        // smallMap.setSize(253,253);
         mapOutline.setPosition(Gdx.graphics.getWidth() - mapOutline.getWidth() / 2 - 23,
                 Gdx.graphics.getHeight() / 3 - 300);
         mapOutline.setSize(274, 275);
-        // mapItem.addActor(mapOutline);
-        // mapItem.addActor(smallMap);
-        // System.out.println(map.getX()+" "+map.getY());
         camera = (OrthographicCamera) stage.getViewport().getCamera();
         camera.translate(startX, startY);
         counter = 0;
-        // inputProcessor = new InputProcessing();
-        // startTime = Instant.now().toEpochMilli();
         click = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/ButtonSoundEffects.mp3"));
 
         itemSprite = new Sprite(manager.get("assets/pic/iron_chestplate.png", Texture.class));
@@ -214,6 +204,33 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
     }
 
+    public void networkUpdate(){
+        Union ops;
+        if(client.isReadable()){
+            ops = client.read();
+            switch(ops.pkID){
+                case 0x01:
+                    Logger.log("Recived joinReply");
+                    if(ops.state==0){
+                        Logger.log("My ID is: "+ops.player.getIDString());
+                    }else{
+                        Logger.log("Failed to join. Abort.");
+                    }
+                    break;
+                case 0x02:
+                    Logger.log("Recived updateNameTable");
+                    for(User i:ops.nameTable){
+                        Logger.log(i.getDisplayName());
+                    }
+                    break;
+                case 0x10:
+                    Logger.log("Game over");
+                    client.close();
+                default:
+            }
+        }
+    }
+
     @Override
     public void show() {
         Gdx.app.log("MainScreen", "show");
@@ -223,6 +240,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
     @Override
     public void render(float delta) {
+        //======================================
+        networkUpdate();
+        //======================================
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -515,15 +536,15 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
         // sprite.setPosition(-10,100);
         character.rotate((float) deg);
-        int nameOffset = 0;
-        if(player.length() > 8) nameOffset=100;
+//        int nameOffset = 0;
+//        if(player.length() > 8) nameOffset=100;
         batch.begin();
         // 旋轉要除以縮放比例
         choosePlayerTexture();
         batch.draw(character, halfWindowWidth, halfWindowHeight, character.getOriginX() / minAltitude,
                 character.getOriginY() / minAltitude, character.getWidth() / minAltitude,
                 character.getHeight() / minAltitude, 1, 1, (float) deg);
-        font.draw(batch, player, halfWindowWidth-nameOffset, halfWindowHeight + 100);
+        font.draw(batch, player, halfWindowWidth, halfWindowHeight + 100);
         batch.end();
     }
 

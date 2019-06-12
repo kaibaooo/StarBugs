@@ -14,7 +14,14 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import com.github.nukcsie110.starbugs.basic.User;
+import com.github.nukcsie110.starbugs.client.Client;
+import com.github.nukcsie110.starbugs.packet.Union;
+import com.github.nukcsie110.starbugs.util.Logger;
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 
 public class LoadToGameScreen implements Screen {
     private Stage stage;
@@ -23,13 +30,35 @@ public class LoadToGameScreen implements Screen {
     SpriteBatch batch = new SpriteBatch();
     String user_name;
     Sound sound;
-    public LoadToGameScreen(Game aGame, String name){
+    Client client;
+
+    int currentOnlineUser;
+    int maxPlayer;
+    byte rank; // determine if the game start
+    public LoadToGameScreen(Game aGame, String name, Client passedClient){
         sound = Gdx.audio.newSound(Gdx.files.internal("assets/sound/loading.mp3"));
 
         long id = sound.play();
         sound.setVolume(id, 0.3f);
         game = aGame;
         stage = new Stage(new ScreenViewport());
+
+        //Network
+        client = passedClient;
+        rank = 0x00;
+        currentOnlineUser = 0;
+        if(!name.equals("")){
+            user_name = name;
+        }
+        else{
+            user_name = "NullPointerException";
+        }
+
+        //Test
+
+        client.start();
+
+        //End test
 
         manager.load("assets/pic/iron_chestplate.png", Texture.class);
         manager.load("assets/map/Lava_map.png",Texture.class);
@@ -80,7 +109,9 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/sound/LOL_inGame.mp3", Music.class);
         manager.load("assets/sound/punch.mp3", Music.class);
         Gdx.app.log("manager", "section 4 finished");
-        user_name = name;
+//        user_name = name;
+
+
 
     }
     @Override
@@ -90,6 +121,35 @@ public class LoadToGameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        Union ops;
+        if(client.isReadable()){
+            ops = client.read();
+            switch(ops.pkID){
+                case 0x01:
+                    Logger.log("Recived joinReply");
+                    if(ops.state==0){
+                        Logger.log("My ID is: "+ops.player.getIDString());
+                    }else{
+                        Logger.log("Failed to join. Abort.");
+                    }
+                    break;
+                case 0x02:
+                    Logger.log("Recived updateNameTable");
+                    currentOnlineUser = ops.nameTable.size();
+                    maxPlayer = ops.maxPlayer;
+                    Gdx.graphics.setTitle("STARBUGS Alpha 2.0, Waiting " + currentOnlineUser + " / " + maxPlayer);
+                    for(User i:ops.nameTable){
+                        Logger.log(i.getDisplayName());
+                    }
+                    break;
+                case 0x10:
+                    Logger.log("Game over");
+                    rank = ops.rank;
+                    client.close();
+                default:
+            }
+        }
+
 
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -101,12 +161,16 @@ public class LoadToGameScreen implements Screen {
         batch.draw(cat,Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         cat.draw(batch);
         batch.end();
-        if(manager.update()) {
+        if(manager.update() && currentOnlineUser == maxPlayer) {
+            while(!client.isReady());
+            client.join(user_name);
             Gdx.app.log("manager", "update");
-            game.setScreen(new GameScreen(game,user_name,manager));
+
+        }
+        if(rank == 0xFF){
+            game.setScreen(new GameScreen(game,user_name,manager, client));
             sound.stop();
         }
-
 
     }
 

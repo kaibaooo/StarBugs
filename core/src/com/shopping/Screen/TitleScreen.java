@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.github.nukcsie110.starbugs.client.Client;
 import com.shopping.Actors.Background;
 import com.shopping.Screen.GameScreen;
 import com.shopping.Screen.LoadToGameScreen;
@@ -185,7 +186,8 @@ public class TitleScreen implements Screen, ControllerListener{
                 String user_name = textField.getText();
                 System.out.println(user_name);
                 music.stop();
-                game.setScreen(new LoadToGameScreen(game, user_name));
+                Client client  = new Client();
+                game.setScreen(new LoadToGameScreen(game, user_name, client));
             }
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
