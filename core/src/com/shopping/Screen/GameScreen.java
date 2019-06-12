@@ -163,10 +163,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
             onlineUsers.put(ele.getID(),new User(ele.getID(), ele.getName(), new Coordinate(0,0,0)));
         }
-        for(int i = 0;i<5;i++){
-            User tmp  = new User(i,"a"+i,new Coordinate((float)(Math.random()*1000+1000),(float)(Math.random()*1000+1000),0));
-            onlineUsers.put((short)i, tmp);
-        }
+//        for(int i = 0;i<5;i++){
+//            User tmp  = new User(i,"a"+i,new Coordinate((float)(Math.random()*1000+1000),(float)(Math.random()*1000+1000),0));
+//            onlineUsers.put((short)i, tmp);
+//        }
 
         // camera
         camera = (OrthographicCamera) stage.getViewport().getCamera();
