@@ -30,7 +30,7 @@ public class RecvBuffer{
     public synchronized boolean read(SocketChannel target) throws IOException{
         int n = target.read(recvBuf);  
         if(n!=-1 && n!=0){ //not reach End-Of-Stream
-//            Logger.log("Recived: "+n+" bytes");
+            //Logger.log("Recived: "+n+" bytes");
             this.recvCnt += n;
         }
         return n!=-1;
@@ -49,7 +49,12 @@ public class RecvBuffer{
             this.recvBuf.get(); //Skip 1 byte (pkID)
             this.expectPacketLength = HEADER_LEN+this.recvBuf.getInt();
             recvBuf.position(oldPos); //Restore position
-            //Logger.log("Got header; expected length:"+ this.expectPacketLength);
+            if(this.expectPacketLength<0 || this.expectPacketLength>=2048){
+                this.clear();
+                Logger.log("Got a murmur packet; Dropped;");
+            }else{
+                //Logger.log("Got header; expected length:"+ this.expectPacketLength);
+            }
         }
 
         if(this.expectPacketLength != -1 && this.recvCnt>=this.expectPacketLength){
@@ -68,11 +73,12 @@ public class RecvBuffer{
     public synchronized byte[] getPacket(){
         byte[] rtVal;
         if(!this.hasPacket()){
-            rtVal = null;
+            rtVal = new byte[0];
         }else{
             this.recvBuf.position(headOfPacket); //Restore starting point of this packet
             //Read only expected length
-            Logger.log("Expected Len : " + this.expectPacketLength);
+            //Logger.log("Expected Len : " + this.expectPacketLength);
+
             rtVal = new byte[this.expectPacketLength];
             //Logger.log("Packet size: "+ this.expectPacketLength);
             this.recvBuf.get(rtVal);
@@ -87,5 +93,15 @@ public class RecvBuffer{
             }
         }
         return rtVal;
+    }
+
+    /**
+     * Clear the data in buffer and reset pointers
+     */
+    public void clear(){
+        recvBuf.clear();
+        recvCnt = 0;
+        expectPacketLength = -1;
+        headOfPacket = 0;
     }
 }
