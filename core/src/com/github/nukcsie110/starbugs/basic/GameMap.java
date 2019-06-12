@@ -1,14 +1,18 @@
 package com.github.nukcsie110.starbugs.basic;
 
 public class GameMap{
+    public static final int TICK_PER_SECOND = 1;
     protected float saveZoneRadius = 0;
     protected Coordinate saveZoneCenterPos = new Coordinate(0,0,0);
-    protected int currentTime = 0;
-    protected int nextSaveZoneTime = 0;
+    protected Long currentTick = 0l;
+    protected Long nextSaveZoneTick = 0l;
     protected int currentPlayers = 0;
 
-    public int getLeftTime(){
-        return this.nextSaveZoneTime - this.currentTime;
+    public long getLeftTick(){
+        return this.nextSaveZoneTick - this.currentTick;
+    }
+    public float getLeftTime(){
+        return (this.nextSaveZoneTick - this.currentTick)/this.TICK_PER_SECOND;
     }
     public void setSaveZone(float newRadius, Coordinate newPos){
         if(newRadius>=0){
@@ -24,22 +28,31 @@ public class GameMap{
         return this.saveZoneCenterPos;
     }
 
-    public void setCurrentTime(int newTime){
-        if(newTime >=0 ){
-            this.currentTime = newTime;
+    public void setCurrentTick(long newTick){
+        synchronized(currentTick){
+            if(newTick >=0 ){
+                this.currentTick = newTick;
+            }
         }
     }
-    public int getCurrentTime(){
-        return this.currentTime;
+    public void incTick(){
+        synchronized(currentTick){
+            this.currentTick = this.currentTick+1;
+        }
+    }
+    public long getCurrentTick(){
+        synchronized(currentTick){
+            return this.currentTick;
+        }
     }
 
-    public void setNextSaveZoneTime(int newTime){
-        if(newTime >= currentTime){
-            this.nextSaveZoneTime = newTime;
+    public void setNextSaveZoneTick(long newTick){
+        if(newTick >= currentTick){
+            this.nextSaveZoneTick = newTick;
         }
     }
-    public int getNextSaveZoneTime(){
-        return this.nextSaveZoneTime;
+    public long getNextSaveZoneTick(){
+        return this.nextSaveZoneTick;
     }
 
     public void setCurrentPlayers(int newPlayers){
@@ -54,13 +67,13 @@ public class GameMap{
         return String.format(
             "saveZoneRadius: %f\n"+
             "saveZoneCenterPos: %s\n"+
-            "currentTime: %d\n"+
-            "nextSaveZoneTime: %d\n"+
+            "currentTick: %d\n"+
+            "nextSaveZoneTick: %d\n"+
             "currentPlayers: %d\n",
             this.saveZoneRadius,
             this.saveZoneCenterPos,
-            this.currentTime,
-            this.nextSaveZoneTime,
+            this.currentTick,
+            this.nextSaveZoneTick,
             this.currentPlayers
         );
     }

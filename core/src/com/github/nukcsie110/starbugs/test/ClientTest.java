@@ -42,10 +42,18 @@ public class ClientTest{
                             Logger.log(i.getDisplayName());
                         }
                     break;
+                    case 0x06:
+                        Logger.log("Recived updateMap");
+                        Logger.log(ops.map.getCurrentTick());
+                    break;
                     case 0x10:
-                        Logger.log("Game over");
-                        client.close();
-                        gameOver = true;
+                        if(ops.rank==(byte)0xFF){
+                            Logger.log("Game started");
+                        }else{
+                            Logger.log("Game over");
+                            client.close();
+                            gameOver = true;
+                        }
                     default:
                 }
             }
