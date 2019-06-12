@@ -1,5 +1,7 @@
 package com.github.nukcsie110.starbugs.basic;
 
+import com.github.nukcsie110.starbugs.basic.ItemID;
+
 /**
  * @author     kaibao  
  * @version    0.1
@@ -10,18 +12,19 @@ public class Item{
     /**
      * Represent item unique ID
      */
-    public byte itemID;
+    private ItemID itemID;
     /**
      * Item position
      */
-    public Coordinate coordinate;
+    private Coordinate coordinate;
+    private int extra;
     /**
      * Constructer of Item
      * @param itemID init item ID
      * @param coordinate init item position
      * @since             0.1
      */
-    public Item(byte id, Coordinate pos){
+    public Item(ItemID id, Coordinate pos){
         itemID = id;
         coordinate = pos;
     }
@@ -30,7 +33,7 @@ public class Item{
      * @return  byte itemID
      * @since             0.1
      */
-    public byte getItemID(){
+    public ItemID getItemID(){
         return itemID;
     }
     /**
@@ -40,6 +43,13 @@ public class Item{
      */
     public Coordinate getCoordinate(){
         return coordinate;
+    }
+
+    public void setExtra(int x){
+        extra = x;
+    }
+    public int getExtra(){
+        return extra;
     }
 
     public String toString(){

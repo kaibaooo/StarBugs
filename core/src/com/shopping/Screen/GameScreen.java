@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.assets.AssetManager;
+import com.github.nukcsie110.starbugs.basic.ItemID;
 import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.client.Client;
 import com.github.nukcsie110.starbugs.packet.Union;
@@ -243,7 +244,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         // random test item
         for(int i = 0;i<100;i++){
             Coordinate testPos = new Coordinate((float)(Math.random() * 10000 + 600), (float)(Math.random() * 10000 + 1000), 1);
-            Item tmp = new Item((byte)i, testPos);
+            Item tmp = new Item(ItemID.ARMOR_LV1, testPos);
             lst.add(tmp);
         }
 

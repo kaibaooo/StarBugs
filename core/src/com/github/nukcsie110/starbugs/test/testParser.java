@@ -1,12 +1,8 @@
 package com.github.nukcsie110.starbugs.test;
 
+import com.github.nukcsie110.starbugs.basic.*;
 import com.github.nukcsie110.starbugs.packet.Parser;
 import com.github.nukcsie110.starbugs.packet.Union;
-import com.github.nukcsie110.starbugs.basic.User;
-import com.github.nukcsie110.starbugs.basic.Item;
-import com.github.nukcsie110.starbugs.basic.Coordinate;
-import com.github.nukcsie110.starbugs.basic.Equipment;
-import com.github.nukcsie110.starbugs.basic.GameMap;
 import com.github.nukcsie110.starbugs.server.ServerUser;
 import com.github.nukcsie110.starbugs.util.Logger;
 import java.util.ArrayList;
@@ -45,8 +41,8 @@ public class testParser{
         
         Logger.println("---Testing updateGlobalItem parser---");
         ArrayList<Item> items = new ArrayList<Item>();
-        items.add(new Item((byte)12, new Coordinate(0.5f,0.5f,0.5f)));
-        items.add(new Item((byte)87, new Coordinate(10f,10f,179.9f)));
+        items.add(new Item(ItemID.ARROW, new Coordinate(0.5f,0.5f,0.5f)));
+        items.add(new Item(ItemID.POISON, new Coordinate(10f,10f,179.9f)));
         byte[] updateGlobalItemPacket = Parser.updateGlobalItem(items);
         Logger.printBytes(updateGlobalItemPacket);
         Union parsedUpdateGlobalItem = Parser.toUnion(updateGlobalItemPacket);

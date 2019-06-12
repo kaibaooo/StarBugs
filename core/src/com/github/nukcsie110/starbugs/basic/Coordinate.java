@@ -118,4 +118,16 @@ public class Coordinate{
         return "("+posX+", "+posY+", "+dir+")";
     }
 
+    public static Coordinate genRandomPos(){
+        int minX = 1000;
+        int maxX = 10000;
+        int minY = 1000;
+        int maxY = 10000;
+
+        float x = (float)(Math.random()*(maxX-minX)+minX);
+        float y = (float)(Math.random()*(maxY-minY)+minY);
+
+        return new Coordinate(x,y,0);
+    }
+
 }

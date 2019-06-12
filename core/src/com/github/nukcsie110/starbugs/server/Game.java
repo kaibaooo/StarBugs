@@ -15,7 +15,7 @@ public class Game{
     public static final int MAX_PLAYER = 2;
     protected final long MAX_TICK = 60*GameMap.TICK_PER_SECOND;
     protected HashMap<Integer, ServerUser> playerList = new HashMap<Integer, ServerUser>();
-    protected HashSet<Item> itemList = new HashSet<Item>();
+    protected ArrayList<Item> itemList = new ArrayList<Item>();
     private Random randGenerater = new Random();
     private MapUpdater updater;
     public Game(){
@@ -78,7 +78,7 @@ public class Game{
         //Start main game loop
         Timer timer = new Timer();
         this.updater = new MapUpdater(this);
-        timer.schedule(this.updater, 1000, 1000/GameMap.TICK_PER_SECOND);
+        timer.schedule(this.updater, 100, 1000/GameMap.TICK_PER_SECOND);
         
         Logger.log("[Server] Game started");
     }
@@ -118,31 +118,49 @@ class MapUpdater extends TimerTask{
     }
 
     public void run(){
-        //Update map(1 TPS)
-        if(map.getCurrentTick()%map.TICK_PER_SECOND == 0){
-            byte[] updateMapPacket = Parser.updateMap(map);
-            this.game.broadcast(updateMapPacket);
-        }
-        this.map.incTick();
         Logger.log(this.map.getCurrentTick());
 
-        //Update me
+        //TODO:Update items(Collision detect & arrow fly)
+
         Iterator<Map.Entry<Integer, ServerUser>> iter
             = game.getOnlinePlayers().entrySet().iterator();
         while(iter.hasNext()){
             ServerUser me = iter.next().getValue();
-            //Logger.log(me);
+            ClientHandler myHandler = me.getHandler();
+            
+            //Game over behavior
+            if(me.getBlood()<=0){
+                byte[] gameOverPacket = Parser.gameOver((byte)game.getOnlinePlayerCount());
+                myHandler.send(gameOverPacket);
+                myHandler.terminate();
+                iter.remove();
+                continue;
+            }
+
+            //Update me 
             byte[] updateYouPacket = Parser.updateYou(me);
-            me.getHandler().send(updateYouPacket);
+            myHandler.send(updateYouPacket);
+            
+            //Update other player
             Iterator<Map.Entry<Integer, ServerUser>> iter_other
                 = game.getOnlinePlayers().entrySet().iterator();
             while(iter_other.hasNext()){
                 ServerUser other = iter_other.next().getValue();
                 if(other==me) continue;
                 byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(other);
-                me.getHandler().send(updateSinglePlayerPacket);
+                myHandler.send(updateSinglePlayerPacket);
+            }
+
+            //TODO: updateGlobalItems
+
+            //Update map(1 TPS)
+            if(map.getCurrentTick()%map.TICK_PER_SECOND == 0){
+                byte[] updateMapPacket = Parser.updateMap(map);
+                myHandler.send(updateMapPacket);
             }
         }
+        
+        this.map.incTick();
 
         //Flush buffer
         /*iter = game.getOnlinePlayers().entrySet().iterator();
