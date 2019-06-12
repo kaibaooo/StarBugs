@@ -324,7 +324,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         mapItem.draw();
         if (blood <= 0) {
             stage.dispose();
-            game.setScreen(new EndScreen(game, 1));
+            game.setScreen(new EndScreen(game, 0, player));
             music.stop();
         }
 
@@ -545,6 +545,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     batch.draw(creeper, 800 + deltaItemX - 127, 450 + deltaItemY - 140, creeper.getOriginX() / minAltitude,
                             creeper.getOriginY() / minAltitude, creeper.getHeight() / minAltitude,
                             creeper.getWidth() / minAltitude, 0.1f, 0.1f, 0);
+//                    font.draw(batch, onlineUsers.get(key).getName(), halfWindowWidth, halfWindowHeight + 100);
                 }
             }
         }
