@@ -31,6 +31,7 @@ import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
 import com.badlogic.gdx.controllers.*;
 import com.shopping.Base.GameJudger;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.ArrayList;
 //import com.shopping.Base.InputProcessing;
@@ -41,16 +42,13 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private Stage mapItem;
     private Game game;
     private String player;
-    private Image Basemap;
-    private Image map;
-    private Image mapOutline;
-    private Image smallMap;
     private OrthographicCamera camera;
     private Sprite sprite;
     private SpriteBatch batch;
     private Sprite itemSprite;
     private Texture texture;
     private TextureRegion region;
+    private TextureRegion region1;
     private Pixmap maps;
     private Pixmap pixmap;
     private Music click;
@@ -59,11 +57,19 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private GameJudger judge;
     private Timer timer;
     private AssetManager manager = new AssetManager();
+    //map
+    private Image Basemap;
+    private Image map;
+    private Image mapOutline;
+    private Image smallMap;
+    private Image BigMapLava;
+
     // controller
     boolean hasControllers;
     private int R = 8000;
-    private final float TIME_SINCE_COLLISION = 30;
-    float timeSinceCollision = 0;
+    private  int[] TIME_SINCE_COLLISION;
+    private float timeSinceCollision = 0;
+    private int count=0;
 
     // Player settings
     private User mainPlayer;
@@ -85,6 +91,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private int attackHand;
     private double deg;
     private double oldDeg;
+//    private float posX,posY;
 
     // general attributes
     private float halfWindowWidth = Gdx.graphics.getWidth() / 2;
@@ -92,6 +99,11 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private ArrayList<Item> lst = new ArrayList<Item>();
     private ArrayList<User> onlineUsers = new ArrayList<User>();
     private byte maxUser;
+    private double r = 130;//130
+    private int X=20300,Y=20300;
+    private float posX=-4250,posY=-4555;
+    private ShapeRenderer renderer;
+
 
     private float timeSeconds = 0f;
     private float period = 1f;
@@ -110,6 +122,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     Sprite character;
     Sprite bulletPicture;
     Sprite creeper;
+    Sprite smallMapPlayer;
     // blood
     private int blood;
     private Pixmap bloodPix;
@@ -143,6 +156,19 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                       Client passedClient,
                       String pID,
                       ArrayList<User> passedNameTable) {
+
+        //map
+        TIME_SINCE_COLLISION = new int[8];
+        TIME_SINCE_COLLISION[0] = 100;
+        TIME_SINCE_COLLISION[1] = 102;
+        TIME_SINCE_COLLISION[2] = 104;
+        TIME_SINCE_COLLISION[3] = 106;
+        TIME_SINCE_COLLISION[4] = 108;
+        TIME_SINCE_COLLISION[5] = 110;
+        TIME_SINCE_COLLISION[6] = 112;
+        TIME_SINCE_COLLISION[7] = 114;
+        renderer = new ShapeRenderer();
+
         // get input arguement
         game = aGame;
         manager = mng;
@@ -179,12 +205,27 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         counter = 0;
         click = Gdx.audio.newMusic(Gdx.files.internal("assets/sound/ButtonSoundEffects.mp3"));
         itemSprite = new Sprite(manager.get("assets/pic/iron_chestplate.png", Texture.class));
+        Basemap = new Image(manager.get("assets/map/Big_map.png",Texture.class));
         map = new Image(manager.get("assets/map/map.png", Texture.class));
-        stage.addActor(map);
         map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        Basemap.setSize(20300,20300);
+        Basemap.setPosition(-4250,-4555);
+        stage.addActor(map);
+        stage.addActor(Basemap);
         Pixmap pixmap = manager.get("assets/pic/icons8-center-of-gravity-64.png", Pixmap.class);
         int xHotspot = pixmap.getWidth() / 2;
         int yHotspot = pixmap.getHeight() / 2;
+
+        //change map
+        smallMap = new Image(manager.get("assets/map/map.png", Texture.class));
+        mapOutline = new Image(manager.get("assets/map/smallMap.png",Texture.class));
+        smallMap.setPosition(1337,7);
+        smallMap.setSize(258,259);
+        smallMapPlayer = new Sprite(manager.get("assets/pic/CharacterCat.png", Texture.class));
+        mapOutline.setPosition(1330,0);
+        mapOutline.setSize(274,275);
+        mapItem.addActor(smallMap);
+        mapItem.addActor(mapOutline);
 
         // Cursor setup
         Cursor cursor = Gdx.graphics.newCursor(pixmap, xHotspot, yHotspot);
@@ -349,6 +390,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         showTimer();
         drawMainPlayer();
 
+
         mapItem.draw();
 //        if (blood <= 0) {
 //            stage.dispose();
@@ -356,15 +398,28 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 //            music.stop();
 //        }
 
-
-
-        if(bulletManager.size()!=0)    drawBullet();
+        renderer.begin(ShapeRenderer.ShapeType.Line);
+        renderer.setColor(Color.BLACK);
+        renderer.circle(1467, 135, (float)r);
+        renderer.end();
 
         timeSeconds += Gdx.graphics.getRawDeltaTime();
         if (timeSeconds > period) {
             timeSeconds -= period;
             passTime++;
+            if(count!=3) {
+                update(1);
+            }
         }
+        if(bulletManager.size()!=0)    drawBullet();
+
+        if(bulletManager.size()!=0)    drawBullet();
+
+//        timeSeconds += Gdx.graphics.getRawDeltaTime();
+//        if (timeSeconds > period) {
+//            timeSeconds -= period;
+//            passTime++;
+//        }
 
 
         //controller
@@ -388,7 +443,155 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         camera.zoom = currentZ;
         camera.update();
     }
+    private void update(float delta) {
+        timeSinceCollision += delta;
+        System.out.println(timeSinceCollision);
+        if (timeSinceCollision == TIME_SINCE_COLLISION[0]) {
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
+            Basemap.setPosition(posX, posY);
+            Basemap.setOrigin(1, 1);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-1.8;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, (float)r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[1]) {
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
+            Basemap.setPosition(posX, posY);
+            Basemap.setOrigin(1, 1);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-1.8;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, (float)r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[2]) {
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
+            Basemap.setPosition(posX, posY);
+            Basemap.setOrigin(1, 1);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-1.8;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, (float)r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[3]) {
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
+            Basemap.setPosition(posX, posY);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-1.8;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, (float)r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[4]) {
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
+            Basemap.setPosition(posX, posY);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-1.8;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, (float)r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[5]) {
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
+            Basemap.setPosition(posX, posY);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-1.8;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, (float)r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[6]) {
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
+            Basemap.setPosition(posX, posY);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-1.8;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, (float)r);
+                renderer.end();
+            }
+            update(1);
+        }
+        if (timeSinceCollision == TIME_SINCE_COLLISION[7]) {
+            X = X - 580;
+            Y = Y - 580;
+            posX += 290;
+            posY += 290;
+            Basemap.setPosition(posX, posY);
+            Basemap.setOrigin(1, 1);
+            Basemap.setSize(X, Y);
+            if(count >= 1) {
+                r=r-1.8;
+                renderer.begin(ShapeRenderer.ShapeType.Line);
+                renderer.setColor(Color.RED);
+                renderer.circle(1467, 135, (float)r);
+                renderer.end();
+            }
+            timeSinceCollision -= TIME_SINCE_COLLISION[4];
+            count++;
+        }
+    }
 
+//    private void detect(int cx,int cy){
+//        double r=80;
+//        for(int i=0;i<50;i++){
+//            double result = Math.sqrt((lst.get(i).posX-cx)*(lst.get(i).posX-cx)+(lst.get(i).posY-cy)*(lst.get(i).posY-cy));
+//            //System.out.println("result"+result);
+//            if(result<=2*r){
+//                System.out.println("result"+result);
+//                System.out.println("touch!");
+//            }
+//        }
+//    }
     @Override
     public void resize(int width, int height) {
 
@@ -604,6 +807,15 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             deg = Math.toDegrees(ang) + 90;
         }
 //        Gdx.app.log("Degree:", String.valueOf(deg));
+
+        smallMapPlayer.setSize(20, 22);
+        smallMapPlayer.setOrigin(10,11);
+        smallMapPlayer.rotate((float)deg);
+        smallMapPlayer.setPosition((currentX-800)/39.06976f+1327.5f,(currentY-435)/39.03475f);
+        batch.begin();
+        smallMapPlayer.draw(batch);
+        batch.end();
+        smallMapPlayer.rotate(-(float)deg);
 
         //predict
         oldDeg = deg;
@@ -881,6 +1093,8 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         }
     }
 
+
+
     private void drawBullet() {
         for (int i = 0; i < bulletManager.size(); i++) {
             currentBullet = bulletManager.get(i);
@@ -1013,7 +1227,6 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT ) {
             client.keyDown((byte)'L');
-            //attack();
             if(inventory[2] == 1 && inventoryChoose == 2) {
                 double deltaX = Gdx.input.getX()-800;
                 double deltaY = 450 - Gdx.input.getY();
@@ -1219,6 +1432,12 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         public void run() {
 //            Logger.log("Dir update" + oldDeg);
             client.updateDirection((float) oldDeg);
+        }
+    }
+    class gameTimer extends TimerTask{
+        public void run() {
+//            Logger.log("Dir update" + oldDeg);
+            passTime++;
         }
     }
     public class Bullet{
