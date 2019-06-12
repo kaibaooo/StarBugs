@@ -20,6 +20,7 @@ public class ClientHandler implements Handler {
     private Game game;
     private boolean kill;
     private SelectionKey myKey;
+    private boolean joined;
       
     public ClientHandler(ServerUser _player, Game _game, SelectionKey _myKey) {  
     //public ClientHandler() {  
@@ -28,6 +29,7 @@ public class ClientHandler implements Handler {
         this.player = _player;
         this.game = _game;
         this.kill = false;
+        this.joined = true;
         this.myKey = _myKey;
     }  
 
@@ -62,6 +64,10 @@ public class ClientHandler implements Handler {
         String logPrefix = "["+((SocketChannel)(key.channel())).getRemoteAddress()+"] ";
         switch(parsedPacket.pkID){
             case 0x00:
+                //Ignore logined packet
+                if(this.joined){
+                    break;
+                }
 
                 //If cannot join (Game started or queue is full)
                 if(!game.addPlayer(this.player)){
@@ -75,7 +81,8 @@ public class ClientHandler implements Handler {
                 //Set basic information
                 this.player.setName(parsedPacket.player.getName());
                 Logger.log(logPrefix+"New player joined: "+this.player.getDisplayName());
-                
+                this.joined = true;
+
                 //Send join reply
                 byte[] joinReplyPacket = Parser.joinReply((byte)0x00, this.player.getID());
                 this.send(joinReplyPacket);
