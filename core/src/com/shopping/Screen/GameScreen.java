@@ -338,7 +338,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     inventory[3] = mainPlayer.getPoison();
 
                     armorType = mainPlayer.getArmor().getID();
-                    if(armorType>0) armorType+=4;
+                    if(armorType>0) armorType=mainPlayer.getArmor().getID()-3;
 
                     int longWeapon = mainPlayer.getLongWeapon().getID();
                     if(longWeapon == 2) inventory[2] = 1;
@@ -729,6 +729,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             Gdx.app.log("Blood", String.valueOf(blood));
             Gdx.app.log("ArmorType", String.valueOf(armorType));
             Gdx.app.log("inventoryChoose", String.valueOf(inventoryChoose));
+            Gdx.app.log("attackingState", String.valueOf(isAttackingState));
             Gdx.app.log("LogEnd", "=========================================");
         }
     }
