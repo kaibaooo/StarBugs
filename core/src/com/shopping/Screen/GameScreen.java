@@ -576,6 +576,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         } else {
             deg = Math.toDegrees(ang) + 90;
         }
+        Gdx.app.log("Degree:", String.valueOf(deg));
 
         //predict
         oldDeg = deg;
@@ -893,7 +894,21 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         batch.end();
     }
 
-
+    private void attack(){
+        for(short ele:onlineUsers.keySet()){
+            // N
+            if(deg>=45 && deg<135){
+                if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
+                    && onlineUsers.get(ele).getPos().getPosX()<currentX-50
+                    && onlineUsers.get(ele).getPos().getPosY()<currentY+50){
+                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked"]);
+                }
+            }
+            // S
+            // W
+            // E
+        }
+    }
     // ==================================
     // |         Keyboard event         |
     // ==================================
