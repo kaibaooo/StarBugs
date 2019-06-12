@@ -24,8 +24,8 @@ public class ServerUser extends User{
         setID(_id);
         setName(_name);
         
-        this.shortWeapon = Equipment.NONE;
-        this.longWeapon = Equipment.NONE;
+        this.shortWeapon = Equipment.SHORT_SWORD;
+        this.longWeapon = Equipment.LONG_BOW;
         this.weaponInHand = EquipmentSlot.NONE;
         this.armor = Equipment.NONE;
         

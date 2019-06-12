@@ -1,20 +1,25 @@
 package com.github.nukcsie110.starbugs.basic;
 
 public enum Equipment{
-    NONE(0),
-    LONG_GUN(1),
-    LONG_BOW(2),
-    SHORT_SWORD(3),
-    ARMOR_LV1(4),
-    ARMOR_LV2(5),
-    ARMOR_LV3(6);
+    NONE(0,10),
+    LONG_GUN(1, 0),
+    LONG_BOW(2, 30),
+    SHORT_SWORD(3, 20),
+    ARMOR_LV1(4, 10), // -10/100
+    ARMOR_LV2(5, 20), // -20/100
+    ARMOR_LV3(6, 30); // -30/100
 
     private final int val;
-    private Equipment(int x){
+    private final int point; //Attack/Defence
+    private Equipment(int x, int p){
         this.val = x;
+        this.point = p;
     }
     public int getID(){
         return this.val;
+    }
+    public int getPoint(){
+        return this.point;
     }
     public static Equipment getName(int _id){
         /*Equipment[] As = Equipment.values();
