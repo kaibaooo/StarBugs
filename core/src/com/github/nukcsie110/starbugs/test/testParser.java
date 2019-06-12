@@ -57,7 +57,7 @@ public class testParser{
         a.getPos().turnDir(87.45f);
         a.addEquip(Equipment.LONG_BOW);
         a.addEquip(Equipment.ARMOR_LV1);
-        a.setWeaponInHand(Equipment.LONG_BOW);
+        a.setWeaponInHand(EquipmentSlot.LONG);
         byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(a);
         Logger.printBytes(updateSinglePlayerPacket);
         Union parsedUpdateSinglePlayer = Parser.toUnion(updateSinglePlayerPacket);
@@ -71,7 +71,7 @@ public class testParser{
         sa.addEquip(Equipment.LONG_BOW);
         sa.addEquip(Equipment.SHORT_SWORD);
         sa.addEquip(Equipment.ARMOR_LV2);
-        sa.setWeaponInHand(Equipment.LONG_BOW);
+        sa.setWeaponInHand(EquipmentSlot.LONG);
         sa.setBlood(87);
         sa.setPoison(3);
         byte[] updateYouPacket = Parser.updateYou(sa);

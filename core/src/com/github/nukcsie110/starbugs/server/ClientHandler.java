@@ -7,6 +7,8 @@ import com.github.nukcsie110.starbugs.server.ServerUser;
 import com.github.nukcsie110.starbugs.packet.RecvBuffer;
 import com.github.nukcsie110.starbugs.packet.WriteBuffer;
 import com.github.nukcsie110.starbugs.util.Logger;
+import com.github.nukcsie110.starbugs.basic.Equipment;
+import com.github.nukcsie110.starbugs.basic.EquipmentSlot;
 import java.nio.channels.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -116,6 +118,16 @@ public class ClientHandler implements Handler {
                         case 'S': player.moveDown(); break;
                         case 'A': player.moveLeft(); break;
                         case 'D': player.moveRight(); break;
+                        case '1': player.setWeaponInHand(EquipmentSlot.NONE); break;
+                        case '2': player.setWeaponInHand(EquipmentSlot.SHORT); break;
+                        case '3': player.setWeaponInHand(EquipmentSlot.LONG); break;
+                        case '4': player.usePoison(); break;
+                        case '0': player.setBlood(player.getBlood()-10); break; //For test
+                        case '5': player.clearSlot(EquipmentSlot.ARMOR); break; //For test
+                        case '6': player.addEquip(Equipment.ARMOR_LV1); break; //For test
+                        case '7': player.addEquip(Equipment.ARMOR_LV2); break; //For test
+                        case '8': player.addEquip(Equipment.ARMOR_LV3); break; //For test
+                        case 'P': player.setPoison(player.getPoison()+1); break; //For test
                     }
                 }
                 //byte[] gameOverPacket = Parser.gameOver((byte)0);

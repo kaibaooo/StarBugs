@@ -14,7 +14,7 @@ public class User{
     protected String name;
     protected Equipment shortWeapon;
     protected Equipment longWeapon;
-    protected Equipment weaponInHand;
+    protected EquipmentSlot weaponInHand;
     protected Equipment armor;
     protected Coordinate pos;
     protected int blood;
@@ -40,7 +40,7 @@ public class User{
         
         this.shortWeapon = Equipment.NONE;
         this.longWeapon = Equipment.NONE;
-        this.weaponInHand = Equipment.NONE;
+        this.weaponInHand = EquipmentSlot.NONE;
         this.armor = Equipment.NONE;
         
         this.blood = this.MAX_BLOOD;
@@ -160,12 +160,13 @@ public class User{
     /**
      * Check wheather user has such weapon and set weapon in hand
      */
-    public void setWeaponInHand(Equipment weapon){
-        if(this.longWeapon==weapon || this.shortWeapon==weapon){
+    public void setWeaponInHand(EquipmentSlot weapon){
+        this.weaponInHand = weapon;
+        /*if(this.longWeapon==weapon || this.shortWeapon==weapon || weapon==Equipment.NONE){
             this.weaponInHand = weapon;
-        }
+        }*/
     }
-    public Equipment getWeaponInHand(){
+    public EquipmentSlot getWeaponInHand(){
         return this.weaponInHand;
     }
 
@@ -192,7 +193,7 @@ public class User{
         return this.pos;
     }
     public void setBlood(int x){
-        if(x>=0 && x<=this.MAX_BLOOD){
+        if(x<=this.MAX_BLOOD){
             this.blood = x;
         }
     }
@@ -200,12 +201,19 @@ public class User{
         return this.blood;
     }
     public void setPoison(int x){
-        if(x>=0){
+        if(x>=0 && x<=3){
             this.cntPoison = x;
         }
     }
     public int getPoison(){
         return this.cntPoison;
+    }
+
+    public void usePoison(){
+        if(cntPoison>0){
+            cntPoison -= 1;
+            blood += (MAX_BLOOD-blood)/2;
+        }
     }
 
     public String toString(){

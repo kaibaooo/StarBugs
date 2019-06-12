@@ -1,5 +1,6 @@
 package com.github.nukcsie110.starbugs.server;
 
+import com.github.nukcsie110.starbugs.basic.EquipmentSlot;
 import com.github.nukcsie110.starbugs.basic.User;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
 import com.github.nukcsie110.starbugs.basic.Equipment;
@@ -25,7 +26,7 @@ public class ServerUser extends User{
         
         this.shortWeapon = Equipment.NONE;
         this.longWeapon = Equipment.NONE;
-        this.weaponInHand = Equipment.NONE;
+        this.weaponInHand = EquipmentSlot.NONE;
         this.armor = Equipment.NONE;
         
         this.blood = this.MAX_BLOOD;

@@ -174,9 +174,8 @@ public class Parser{
         Coordinate pos = new Coordinate(posX, posY, dir);
         y.player = new User(playerID, "", pos);
         byte equipment = buf.get();
-        Equipment weaponInHand = Equipment.getName((equipment>>4)&0xF);
+        EquipmentSlot weaponInHand = EquipmentSlot.getName((equipment>>4)&0xF);
         Equipment armor = Equipment.getName((equipment)&0xF);
-        y.player.addEquip(weaponInHand);
         y.player.addEquip(armor);
         y.player.setWeaponInHand(weaponInHand);
     }
@@ -220,7 +219,7 @@ public class Parser{
         newPlayer.addEquip(Equipment.getName(itemStatus>>13&0x07)); //Short weapon
         newPlayer.addEquip(Equipment.getName(itemStatus>>10&0x07)); //Long weapon
         newPlayer.addEquip(Equipment.getName(itemStatus>>7&0x07)); //Armor
-        newPlayer.setWeaponInHand(Equipment.getName(itemStatus>>4&0x07));
+        newPlayer.setWeaponInHand(EquipmentSlot.getName(itemStatus>>4&0x07));
         newPlayer.setPoison(itemStatus&0x0F);
         newPlayer.setBlood(buf.getShort());
         y.player = newPlayer;
