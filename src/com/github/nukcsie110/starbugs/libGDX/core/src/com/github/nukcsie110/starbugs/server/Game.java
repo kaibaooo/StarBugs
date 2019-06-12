@@ -12,7 +12,7 @@ public class Game{
     private static final int MAX_PLAYER = 5;
     private GameMap map = new GameMap();
     protected final float maxTime = 6000;
-    protected HashMap<Integer, ServerUser> playerList = new HashMap<>();
+    protected HashMap<Integer, ServerUser> playerList = new HashMap<Integer, ServerUser>();
     //protected HashSet<Item> itemList = new HashSet<>();
     private Random randGenerater = new Random();
     public Game(){

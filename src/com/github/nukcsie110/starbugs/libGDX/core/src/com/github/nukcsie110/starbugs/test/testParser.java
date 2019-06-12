@@ -32,7 +32,7 @@ public class testParser{
         Logger.println(User.getIDString(parsedJoinReply.player.getID()));
 
         Logger.println("---Testing updateNameTable parser---");
-        ArrayList<ServerUser> userTable = new ArrayList<>();
+        ArrayList<ServerUser> userTable = new ArrayList<ServerUser>();
         userTable.add((ServerUser)new User((short)0xDEAD, "ABC", new Coordinate(0,0,0)));
         userTable.add((ServerUser)new User((short)0xBEEF, "123456", new Coordinate(0,0,0)));
         byte[] updateNameTablePacket = Parser.updateNameTable(userTable);
@@ -43,7 +43,7 @@ public class testParser{
         }
         
         Logger.println("---Testing updateGlobalItem parser---");
-        ArrayList<Item> items = new ArrayList<>();
+        ArrayList<Item> items = new ArrayList<Item>();
         items.add(new Item((byte)12, new Coordinate(0.5f,0.5f,0.5f)));
         items.add(new Item((byte)87, new Coordinate(10f,10f,179.9f)));
         byte[] updateGlobalItemPacket = Parser.updateGlobalItem(items);

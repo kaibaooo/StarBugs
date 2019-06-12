@@ -91,7 +91,7 @@ public class ClientHandler implements Handler {
                 
                 //Sent name table of online players
                 HashMap<Integer, ServerUser> onlinePlayer = game.getOnlinePlayers();
-                ArrayList<ServerUser> playerList = new ArrayList<>(onlinePlayer.values());
+                ArrayList<ServerUser> playerList = new ArrayList<ServerUser>(onlinePlayer.values());
                 for(ServerUser i:playerList){
                     Logger.log("\t"+i.getDisplayName());
                 }
