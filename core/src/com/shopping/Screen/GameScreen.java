@@ -56,6 +56,8 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private Pixmap timerPixmap;
     private GameJudger judge;
     private Timer timer;
+    private Sprite goldWear;
+    private Sprite diamondWear;
     private AssetManager manager = new AssetManager();
     //map
     private Image Basemap;
@@ -207,6 +209,11 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         itemSprite = new Sprite(manager.get("assets/pic/iron_chestplate.png", Texture.class));
         Basemap = new Image(manager.get("assets/map/Big_map.png",Texture.class));
         map = new Image(manager.get("assets/map/map.png", Texture.class));
+        goldWear = new Sprite(manager.get("assets/pic/gold.png", Texture.class));
+        diamondWear = new Sprite(manager.get("assets/pic/diamond.png", Texture.class));
+        goldWear = new Sprite(manager.get("assets/pic/gold.png", Texture.class));
+        diamondWear = new Sprite(manager.get("assets/pic/diamond.png", Texture.class));
+
         map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
         Basemap.setSize(20300,20300);
         Basemap.setPosition(-4250,-4555);
@@ -240,7 +247,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         potion2 = new Sprite(manager.get("assets/inventory/potion2.png", Texture.class));
         potion3 = new Sprite(manager.get("assets/inventory/potion3.png", Texture.class));
         choose = new Sprite(manager.get("assets/inventory/choose.png", Texture.class));
-
+        ArrayList<Item> lst = new ArrayList<Item>();
         // Blood
         blood = 50;
         bloodColor = new Color(61, 0, 0, 0.8f);
@@ -310,6 +317,10 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     for(User i:ops.nameTable){
                         Logger.log(i.getDisplayName());
                     }
+                    break;
+                case 0x03:
+                    lst = ops.items;
+
                     break;
                 case 0x04:
 //                    Logger.log("Recived updateSignalPlayer");
@@ -758,19 +769,42 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         batch.begin();
         // 旋轉要除以縮放比例
 //        // 物品放置
-//        for (Item ele : lst) {
-//            float deltaItemX = (ele.coordinate.getPosX() - currentX) / minAltitude;
-//            float deltaItemY = (ele.coordinate.getPosY() - currentY) / minAltitude;
-//            if (ele.coordinate.getPosX()-100 < currentX + halfWindowWidth * minAltitude
-//                    && ele.coordinate.getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
-//                if (ele.coordinate.getPosY()-100 < currentY + halfWindowHeight * minAltitude
-//                        && ele.coordinate.getPosY()+100 > currentY - halfWindowHeight * minAltitude) {
-//                    batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude,
-//                            itemSprite.getOriginY() / minAltitude, itemSprite.getHeight() / minAltitude,
-//                            itemSprite.getWidth() / minAltitude, 1, 1, 0);
-//                }
-//            }
-//        }
+        for (Item ele : lst) {
+            float deltaItemX = (ele.getCoordinate().getPosX() - currentX) / minAltitude;
+            float deltaItemY = (ele.getCoordinate().getPosY() - currentY) / minAltitude;
+            if (ele.getCoordinate().getPosX()-100 < currentX + halfWindowWidth * minAltitude
+                    && ele.getCoordinate().getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
+                if (ele.getCoordinate().getPosY()-100 < currentY + halfWindowHeight * minAltitude
+                        && ele.getCoordinate().getPosY()+100 > currentY - halfWindowHeight * minAltitude) {
+                    if(ele.getItemID().getID() == 2){
+                        batch.draw(bow, 800 + deltaItemX, 450 + deltaItemY, bow.getOriginX() / minAltitude,
+                                bow.getOriginY() / minAltitude, bow.getHeight() / minAltitude,
+                                bow.getWidth() / minAltitude, 1, 1, 0);
+                    }
+                    else if(ele.getItemID().getID() == 3){
+                        batch.draw(sword, 800 + deltaItemX, 450 + deltaItemY, sword.getOriginX() / minAltitude,
+                                sword.getOriginY() / minAltitude, sword.getHeight() / minAltitude,
+                                sword.getWidth() / minAltitude, 1, 1, 0);
+                    }
+                    else if(ele.getItemID().getID() == 4){
+                        batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude,
+                                itemSprite.getOriginY() / minAltitude, itemSprite.getHeight() / minAltitude,
+                                itemSprite.getWidth() / minAltitude, 1, 1, 0);
+                    }
+                    else if(ele.getItemID().getID() == 5){
+                        batch.draw(goldWear, 800 + deltaItemX, 450 + deltaItemY, goldWear.getOriginX() / minAltitude,
+                                goldWear.getOriginY() / minAltitude, goldWear.getHeight() / minAltitude,
+                                goldWear.getWidth() / minAltitude, 1, 1, 0);
+                    }
+                    else{
+                        batch.draw(diamondWear, 800 + deltaItemX, 450 + deltaItemY, diamondWear.getOriginX() / minAltitude,
+                                diamondWear.getOriginY() / minAltitude, diamondWear.getHeight() / minAltitude,
+                                diamondWear.getWidth() / minAltitude, 1, 1, 0);
+                    }
+
+                }
+            }
+        }
 
         for (User ele : onlineUsers) {
             float deltaItemX = (ele.getPos().getPosX() - currentX) / minAltitude;
