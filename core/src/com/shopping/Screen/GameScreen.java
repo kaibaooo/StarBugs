@@ -153,7 +153,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         batch = new SpriteBatch();
         mainPlayer = new User();
         timer = new Timer();
-
+        timer.schedule(new updateDirSchedule(), 500);
         // Networking
         client = passedClient;
         player = Player;
@@ -284,7 +284,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         //======================================
         networkUpdate();
         //======================================
-        timer.schedule(new updateDirSchedule(), 500);
+
         currentX = mainPlayer.getPos().getPosX();
         currentY = mainPlayer.getPos().getPosY();
         deg = mainPlayer.getPos().getDir();
@@ -475,26 +475,26 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             if(judge.judgeUserMoveIllegal(currentX-userSpeedX, currentY)){
                 client.keyDown((byte)'A');
-//                currentX -= userSpeedX;
+                currentX -= userSpeedX;
             }
 
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             if(judge.judgeUserMoveIllegal(currentX+userSpeedX, currentY)){
                 client.keyDown((byte)'D');
-//                currentX += userSpeedX;
+                currentX += userSpeedX;
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             if(judge.judgeUserMoveIllegal(currentX, currentY-userSpeedY)){
                 client.keyDown((byte)'S');
-//                currentY -= userSpeedY;
+                currentY -= userSpeedY;
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             if(judge.judgeUserMoveIllegal(currentX, currentY+userSpeedY)){
                 client.keyDown((byte)'W');
-//                currentY += userSpeedY;
+                currentY += userSpeedY;
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
