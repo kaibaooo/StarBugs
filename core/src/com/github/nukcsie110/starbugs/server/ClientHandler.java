@@ -150,6 +150,12 @@ public class ClientHandler implements Handler {
     }
 
     public void send(byte[] x){
+        /*if(this.myKey.isValid()){
+            try{
+                SocketChannel client = (SocketChannel)(this.myKey.channel());
+                client.write(ByteBuffer.wrap(x));
+            }catch(IOException e){}
+        }*/
         try{
             if(this.myKey.isValid()){
                 this.writeBuf.put(x);
@@ -163,6 +169,26 @@ public class ClientHandler implements Handler {
             Logger.log(this.logPrefix+"CancelledKeyException");
         }
     }
+
+    //Write into buffer, but no flush
+    /*public void write(byte[] x){
+        if(this.myKey.isValid()){
+            this.writeBuf.put(x);
+        }
+    }
+
+    //Flush buffer
+    public synchronized void flush(){
+        try{
+            synchronized(this.myKey){
+                if(this.myKey.isValid() && this.myKey.interestOps()!=SelectionKey.OP_WRITE){
+                    this.myKey.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
+                }
+            }
+        }catch(CancelledKeyException e){
+            Logger.log(this.logPrefix+"CancelledKeyException");
+        }
+    }*/
 
     public synchronized void terminate(){
         this.kill = true;

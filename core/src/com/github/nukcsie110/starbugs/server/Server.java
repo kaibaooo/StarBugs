@@ -22,7 +22,7 @@ public class Server{
         initServer(selector);  
   
         while (true) {  
-            selector.select(SELECTOR_TIMEOUT);  
+            while(selector.select(SELECTOR_TIMEOUT)==0);  
     
             for (Iterator<SelectionKey> itor = selector.selectedKeys().iterator(); itor.hasNext();) {  
                 SelectionKey key = (SelectionKey) itor.next();  

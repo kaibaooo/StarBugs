@@ -12,7 +12,7 @@ import com.github.nukcsie110.starbugs.util.Logger;
 public class Game{
     private ServerState state;
     private GameMap map = new GameMap();
-    public static final int MAX_PLAYER = 2;
+    public static final int MAX_PLAYER = 3;
     protected final long MAX_TICK = 60*GameMap.TICK_PER_SECOND;
     protected HashMap<Integer, ServerUser> playerList = new HashMap<Integer, ServerUser>();
     protected HashSet<Item> itemList = new HashSet<Item>();
@@ -56,6 +56,15 @@ public class Game{
             enrty.getValue().getHandler().send(msg);
         }
     }
+    
+    /*public synchronized void asyncBroadcast(byte[] msg){
+        Iterator<Map.Entry<Integer, ServerUser>> iter
+            = this.playerList.entrySet().iterator();
+        while(iter.hasNext()){
+            Map.Entry<Integer, ServerUser> enrty = iter.next();
+            enrty.getValue().getHandler().write(msg);
+        }
+    }*/
 
     public void startGame(){
         this.state=ServerState.GAMMING;
@@ -120,13 +129,26 @@ class MapUpdater extends TimerTask{
         //Update me
         Iterator<Map.Entry<Integer, ServerUser>> iter
             = game.getOnlinePlayers().entrySet().iterator();
-        //Logger.log("1");
         while(iter.hasNext()){
             ServerUser me = iter.next().getValue();
             //Logger.log(me);
             byte[] updateYouPacket = Parser.updateYou(me);
             me.getHandler().send(updateYouPacket);
+            Iterator<Map.Entry<Integer, ServerUser>> iter_other
+                = game.getOnlinePlayers().entrySet().iterator();
+            while(iter_other.hasNext()){
+                ServerUser other = iter_other.next().getValue();
+                byte[] updateSinglePlayerPacket = Parser.updateSinglePlayer(other);
+                me.getHandler().send(updateSinglePlayerPacket);
+            }
         }
+
+        //Flush buffer
+        /*iter = game.getOnlinePlayers().entrySet().iterator();
+        while(iter.hasNext()){
+            ServerUser player = iter.next().getValue();
+            player.getHandler().flush();
+        }*/
     }
 
 }
