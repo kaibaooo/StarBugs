@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/StarBugs.iml" filepath="$PROJECT_DIR$/.idea/StarBugs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libGDX.iml" filepath="$PROJECT_DIR$/libGDX.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/libGDX.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/libGDX.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/libGDX.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/libGDX.core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/libGDX.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/libGDX.core.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/desktop/libGDX.desktop.iml" filepath="$PROJECT_DIR$/.idea/modules/desktop/libGDX.desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/desktop/libGDX.desktop.main.iml" filepath="$PROJECT_DIR$/.idea/modules/desktop/libGDX.desktop.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/desktop/libGDX.desktop.test.iml" filepath="$PROJECT_DIR$/.idea/modules/desktop/libGDX.desktop.test.iml" />
     </modules>
   </component>
 </project>
