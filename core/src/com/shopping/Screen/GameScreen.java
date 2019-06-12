@@ -552,7 +552,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     && onlineUsers.get(key).getPos().getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
                 if (onlineUsers.get(key).getPos().getPosY() - 100 < currentY + halfWindowHeight * minAltitude
                         && onlineUsers.get(key).getPos().getPosY() + 100 > currentY - halfWindowHeight * minAltitude) {
-                    batch.draw(creeper, 800 + deltaItemX - 127, 450 + deltaItemY - 90, creeper.getOriginX() / minAltitude,
+                    batch.draw(creeper, 800 + deltaItemX - 127, 450 + deltaItemY - 187, creeper.getOriginX() / minAltitude,
                             creeper.getOriginY() / minAltitude, creeper.getHeight() / minAltitude,
                             creeper.getWidth() / minAltitude, 0.1f, 0.1f, 0);
                 }
@@ -903,7 +903,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                 if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
                     && onlineUsers.get(ele).getPos().getPosX()<currentX-50
                     && onlineUsers.get(ele).getPos().getPosY()<currentY+50){
-                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked"]);
+                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
                 }
             }
             // S
