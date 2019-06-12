@@ -279,9 +279,20 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                 case 0x05:
 //                    Logger.log("Recived updateYou");
                     mainPlayer = ops.player;
+                    blood = mainPlayer.getBlood();
+
                     break;
                 case 0x10:
                     Logger.log("Game over");
+                    byte rank = ops.rank;
+                    stage.dispose();
+                    if(rank == 1){
+                        game.setScreen(new EndScreen(game, 1, player));
+                    }
+                    else{
+                        game.setScreen(new EndScreen(game, 0, player));
+                    }
+                    music.stop();
                     client.close();
                 default:
             }
@@ -392,9 +403,11 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
     private void keyInProcessDebug() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
+            client.keyDown((byte)'0');
             blood -= 30;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
+            client.keyDown((byte)'5');
             armorType = 0;
             if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/CharacterCat.png", Texture.class);
@@ -414,6 +427,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) {
+            client.keyDown((byte)'6');
             armorType = 1;
             if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/IronArmor.png", Texture.class);
@@ -433,6 +447,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
+            client.keyDown((byte)'7');
             armorType = 2;
             if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/GoldenArmor.png", Texture.class);
@@ -453,6 +468,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
+            client.keyDown((byte)'8');
             armorType = 3;
             if (inventoryChoose == 0) {
                 Texture current = manager.get("assets/pic/DiamondArmor.png", Texture.class);
@@ -472,6 +488,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            client.keyDown((byte)'P');
             if (inventory[3] < 3) {
                 inventory[3]++;
             }
