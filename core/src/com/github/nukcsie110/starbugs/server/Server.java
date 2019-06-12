@@ -16,7 +16,7 @@ public class Server{
     private static Game game;
 
     public static void main(String[] args) throws IOException {  
-  
+        
         selector = Selector.open();  
         game = new Game();
         initServer(selector);  

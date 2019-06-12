@@ -105,6 +105,7 @@ class MapUpdater extends TimerTask{
     public MapUpdater(Game _game){
         this.game = _game;
         this.map = this.game.getMap();
+        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);  
     }
 
     public void run(){
@@ -114,6 +115,7 @@ class MapUpdater extends TimerTask{
             this.game.broadcast(updateMapPacket);
         }
         this.map.incTick();
+        Logger.log(this.map.getCurrentTick());
 
         //Update me
         Iterator<Map.Entry<Integer, ServerUser>> iter

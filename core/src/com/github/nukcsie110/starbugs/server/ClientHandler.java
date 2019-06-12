@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 public class ClientHandler implements Handler {  
-    private final static int BUF_SIZE=655360;
+    private final static int BUF_SIZE=102400;
     private RecvBuffer recvBuf;
     private WriteBuffer writeBuf;
     private ServerUser player;
@@ -135,7 +135,7 @@ public class ClientHandler implements Handler {
     }
       
     private void flushBuf(Selector selector, SelectionKey key) throws IOException {  
-        // System.out.println("is writable...");  
+        //System.out.println("is writable...");  
         SocketChannel client = (SocketChannel) key.channel();
         writeBuf.write(client);
         if (writeBuf.isEmpty()) {  // write finished, switch to OP_READ  
@@ -149,13 +149,15 @@ public class ClientHandler implements Handler {
         }  
     }
 
-    public synchronized void send(byte[] x){
+    public void send(byte[] x){
         try{
             if(this.myKey.isValid()){
                 this.writeBuf.put(x);
             }
-            if(this.myKey.isValid() && this.myKey.interestOps()!=SelectionKey.OP_WRITE){
-                this.myKey.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
+            synchronized(this.myKey){
+                if(this.myKey.isValid() && this.myKey.interestOps()!=SelectionKey.OP_WRITE){
+                    this.myKey.interestOps(SelectionKey.OP_WRITE); //Switch to write mode
+                }
             }
         }catch(CancelledKeyException e){
             Logger.log(this.logPrefix+"CancelledKeyException");

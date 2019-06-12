@@ -153,7 +153,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         batch = new SpriteBatch();
         mainPlayer = new User();
         timer = new Timer();
-        timer.schedule(new updateDirSchedule(), 500);
+        timer.schedule(new updateDirSchedule(), 500, 100);
         // Networking
         client = passedClient;
         player = Player;
