@@ -71,6 +71,7 @@ public class LoadToGameScreen implements Screen {
         manager.load("assets/pic/iron_chestplate.png", Texture.class);
         manager.load("assets/pic/gold.png", Texture.class);
         manager.load("assets/pic/diamond.png", Texture.class);
+        manager.load("assets/pic/bowBIG.png", Texture.class);
         manager.load("assets/map/Lava_map.png",Texture.class);
         manager.load("assets/map/map.png", Texture.class);
         manager.load("assets/map/smallMap.png", Texture.class);

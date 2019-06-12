@@ -58,6 +58,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private Timer timer;
     private Sprite goldWear;
     private Sprite diamondWear;
+    private Sprite bowBIG;
     private AssetManager manager = new AssetManager();
     //map
     private Image Basemap;
@@ -213,7 +214,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         diamondWear = new Sprite(manager.get("assets/pic/diamond.png", Texture.class));
         goldWear = new Sprite(manager.get("assets/pic/gold.png", Texture.class));
         diamondWear = new Sprite(manager.get("assets/pic/diamond.png", Texture.class));
-
+        bowBIG = new Sprite((manager.get("assets/pic/bowBIG.png", Texture.class)));
         map.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
         Basemap.setSize(20300,20300);
         Basemap.setPosition(-4250,-4555);
@@ -332,8 +333,9 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     break;
                 case 0x05:
 //                    Logger.log("Recived updateYou");
-                    mainPlayer = ops.player;
 
+                    mainPlayer = ops.player;
+                    Logger.log(mainPlayer);
                     blood = mainPlayer.getBlood();
                     inventory[3] = mainPlayer.getPoison();
 
@@ -778,9 +780,9 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                 if (ele.getPos().getPosY()-100 < currentY + halfWindowHeight * minAltitude
                         && ele.getPos().getPosY()+100 > currentY - halfWindowHeight * minAltitude) {
                     if(ele.getItemID().getID() == 2){
-                        batch.draw(bow, 800 + deltaItemX, 450 + deltaItemY, bow.getOriginX() / minAltitude,
-                                bow.getOriginY() / minAltitude, bow.getHeight() / minAltitude,
-                                bow.getWidth() / minAltitude, 2, 2, 0);
+                        batch.draw(bowBIG, 800 + deltaItemX, 450 + deltaItemY, bowBIG.getOriginX() / minAltitude,
+                                bowBIG.getOriginY() / minAltitude, bowBIG.getHeight() / minAltitude,
+                                bowBIG.getWidth() / minAltitude, 1, 1, 0);
                     }
                     else if(ele.getItemID().getID() == 3){
                         batch.draw(sword, 800 + deltaItemX, 450 + deltaItemY, sword.getOriginX() / minAltitude,
@@ -798,7 +800,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                                 goldWear.getWidth() / minAltitude, 1, 1, 0);
                     }
                     else{
-                        batch.draw(diamondWear, 800 + deltaItemX, 450 + deltaItemY, diamondWear.getOriginX() / minAltitude,
+                        batch.draw(diamondWear, 800 + deltaItemX-127, 450 + deltaItemY - 140, diamondWear.getOriginX() / minAltitude,
                                 diamondWear.getOriginY() / minAltitude, diamondWear.getHeight() / minAltitude,
                                 diamondWear.getWidth() / minAltitude, 1, 1, 0);
                     }

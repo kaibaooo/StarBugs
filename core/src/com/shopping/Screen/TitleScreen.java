@@ -37,88 +37,89 @@ public class TitleScreen implements Screen, ControllerListener{
     Sprite sprite;
 
     public TitleScreen(Game aGame) {
-        music.setLooping(true);
-        music.play();
-        game = aGame;
-        stage = new Stage(new ScreenViewport());
-        camera = (OrthographicCamera) stage.getViewport().getCamera();
+            music.setLooping(true);
+            music.play();
+            game = aGame;
+            stage = new Stage(new ScreenViewport());
+            camera = (OrthographicCamera) stage.getViewport().getCamera();
 
-        Pixmap pixmap = new Pixmap(Gdx.files.internal("assets/pic/icons8-center-of-gravity-64.png"));
-        int xHotspot = pixmap.getWidth()/2;
-        int yHotspot = pixmap.getHeight()/2;
-        Cursor cursor = Gdx.graphics.newCursor(pixmap, xHotspot, yHotspot);
-        Gdx.graphics.setCursor(cursor);
-        pixmap.dispose();
+            Pixmap pixmap = new Pixmap(Gdx.files.internal("assets/pic/icons8-center-of-gravity-64.png"));
+            int xHotspot = pixmap.getWidth() / 2;
+            int yHotspot = pixmap.getHeight() / 2;
+            Cursor cursor = Gdx.graphics.newCursor(pixmap, xHotspot, yHotspot);
+            Gdx.graphics.setCursor(cursor);
+            pixmap.dispose();
 
-        Array<Texture> textures = new Array<Texture>();
-        for(int i = 1; i <=6;i++){
-            if(i==2||i==3) continue;
-            textures.add(new Texture(Gdx.files.internal("assets/pic/img"+i+".png")));
-            textures.get(textures.size-1).setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
-        }
-
-        Background background = new Background(textures);
-        background.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        background.setSpeed((float)0.2);
-        stage.addActor(background);
-
-        final Skin fontSkin = new Skin(Gdx.files.internal("assets/skin/craftacular/craftacular-ui.json"));
-
-        final Label label1 = new Label("S T = R B U G S",fontSkin,"title");
-        label1.setPosition(Gdx.graphics.getWidth()/2-label1.getWidth()/2,Gdx.graphics.getHeight()/2+150);
-        stage.addActor(label1);
-
-        final Skin mySkin = new Skin(Gdx.files.internal("assets/skin/Igdx/lgdxs-ui.json"));
-        final Button button1 = new TextButton("Play",mySkin,"oval2");
-        button1.setSize(200,50);
-        button1.setPosition(Gdx.graphics.getWidth()/2-button1.getWidth()/2,Gdx.graphics.getHeight()/2-100);
-
-        final Button button2 = new TextButton("Score board",mySkin,"oval2");
-        button2.setSize(200,50);
-        button2.setPosition(Gdx.graphics.getWidth()/2-button2.getWidth()/2,Gdx.graphics.getHeight()/2-180);
-
-        button1.addListener(new InputListener()
-        {
-            @Override
-            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                label1.setVisible(false);
-                button1.setVisible(false);
-                button2.setVisible(false);
-                registerScreen(fontSkin,mySkin);
+            Array<Texture> textures = new Array<Texture>();
+            for (int i = 1; i <= 6; i++) {
+                if (i == 2 || i == 3) continue;
+                textures.add(new Texture(Gdx.files.internal("assets/pic/img" + i + ".png")));
+                textures.get(textures.size - 1).setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
             }
-            @Override
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-        });
 
-        button2.addListener(new InputListener(){
-            @Override
-            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                label1.setVisible(false);
-                button1.setVisible(false);
-                button2.setVisible(false);
-                scoreBoard();
-            }
-            @Override
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-        });
+            Background background = new Background(textures);
+            background.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            background.setSpeed((float) 0.2);
+            stage.addActor(background);
 
-        stage.addActor(button1);
-        stage.addActor(button2);
+            final Skin fontSkin = new Skin(Gdx.files.internal("assets/skin/craftacular/craftacular-ui.json"));
+
+            final Label label1 = new Label("S T = R B U G S", fontSkin, "title");
+            label1.setPosition(Gdx.graphics.getWidth() / 2 - label1.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 100);
+            stage.addActor(label1);
+
+            final Skin mySkin = new Skin(Gdx.files.internal("assets/skin/Igdx/lgdxs-ui.json"));
+            final Button button1 = new TextButton("Play", mySkin, "oval2");
+            button1.setSize(200, 50);
+            button1.setPosition(Gdx.graphics.getWidth() / 2 - button1.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 100);
+
+            final Button button2 = new TextButton("Score board", mySkin, "oval2");
+            button2.setSize(200, 50);
+            button2.setPosition(Gdx.graphics.getWidth() / 2 - button2.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 180);
+
+            button1.addListener(new InputListener() {
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    label1.setVisible(false);
+                    button1.setVisible(false);
+                    button2.setVisible(false);
+                    registerScreen(fontSkin, mySkin);
+                }
+
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+            });
+
+            button2.addListener(new InputListener() {
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    label1.setVisible(false);
+                    button1.setVisible(false);
+                    button2.setVisible(false);
+                    scoreBoard();
+                }
+
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+            });
+
+            stage.addActor(button1);
+            stage.addActor(button2);
 
 
-        // controller
-        hasControllers = false;
-        Controllers.addListener(this);
-
-        if(Controllers.getControllers().size == 0)
-        {
+            // controller
             hasControllers = false;
+//        Controllers.addListener(this);
+//
+//        if(Controllers.getControllers().size == 0)
+//        {
+//            hasControllers = false;
+//        }
         }
-    }
 
     @Override
     public void show() {
@@ -159,47 +160,45 @@ public class TitleScreen implements Screen, ControllerListener{
         stage.dispose();
     }
 
-    public void registerScreen(Skin Skin1,Skin Skin2){
+        public void registerScreen(Skin Skin1,Skin Skin2){
 
-        final TextField textField = new TextField("",Skin1);
-        textField.setWidth(Gdx.graphics.getWidth()/3);
-        textField.setPosition(Gdx.graphics.getWidth()/3+150,Gdx.graphics.getHeight()/2);
+            Image regBG = new Image(new Texture(Gdx.files.absolute("assets/pic/register_icon.png")));
+            regBG.setPosition(Gdx.graphics.getWidth()/2-regBG.getWidth()/2,Gdx.graphics.getHeight()/2-regBG.getHeight()/2);
 
-        Texture texture1 = new Texture(Gdx.files.absolute("assets/pic/joystick.png"));
-        Image icon = new Image(texture1);
-        icon.setSize(100,100);
-        icon.setPosition(Gdx.graphics.getWidth()/3-150,Gdx.graphics.getHeight()/2+130);
+            final TextField textField = new TextField("",Skin1);
+            textField.setWidth(Gdx.graphics.getWidth()/6);
+            textField.setPosition(Gdx.graphics.getWidth()/3+128,Gdx.graphics.getHeight()/2-55);
 
-        Texture texture2 = new Texture(Gdx.files.absolute("assets/pic/Symbol 2 – 1.png"));
-        Image str = new Image(texture2);
-        str.setSize(250,28);
-        str.setPosition(Gdx.graphics.getWidth()/3-120,Gdx.graphics.getHeight()/2+12);
+            Texture texture2 = new Texture(Gdx.files.absolute("assets/pic/Symbol 2 – 1.png"));
+            Image str = new Image(texture2);
+            str.setSize(250,28);
+            str.setPosition(Gdx.graphics.getWidth()/3+134,Gdx.graphics.getHeight()/2+50);
 
-        final Button queue = new TextButton("Ready!",Skin2,"oval2");
-        queue.setSize(200,50);
-        queue.setPosition(Gdx.graphics.getWidth()/3+500,Gdx.graphics.getHeight()/2-150);
+            final Button queue = new TextButton("Ready!",Skin2,"oval2");
+            queue.setSize(200,50);
+            queue.setPosition(Gdx.graphics.getWidth()/3+160,Gdx.graphics.getHeight()/2-155);
 
-        queue.addListener(new InputListener(){
-            @Override
-            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                //catch user name
-                String user_name = textField.getText();
-                System.out.println(user_name);
-                music.stop();
-                Client client  = new Client();
-                game.setScreen(new LoadToGameScreen(game, user_name, client));
-            }
-            @Override
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-        });
+            queue.addListener(new InputListener(){
+                @Override
+                public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+                    //catch user name
+                    String user_name = textField.getText();
+                    System.out.println(user_name);
+                    music.stop();
+                    Client client = new Client();
+                    game.setScreen(new LoadToGameScreen(game, user_name,client));
+                }
+                @Override
+                public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+            });
 
-        stage.addActor(icon);
-        stage.addActor(textField);
-        stage.addActor(queue);
-        stage.addActor(str);
-    }
+            stage.addActor(regBG);
+            stage.addActor(textField);
+            stage.addActor(queue);
+            stage.addActor(str);
+        }
 
     public void scoreBoard(){
         Texture texture = new Texture(Gdx.files.absolute("assets/pic/earth.png"));
