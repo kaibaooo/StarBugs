@@ -41,7 +41,7 @@ public class Item{
      * @return Coordinate coordinate
      * @since             0.1
      */
-    public Coordinate getCoordinate(){
+    public Coordinate getPos(){
         return coordinate;
     }
 

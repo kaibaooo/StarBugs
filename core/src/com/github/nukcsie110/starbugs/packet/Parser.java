@@ -158,9 +158,9 @@ public class Parser{
         buf.put((byte)items.size());
         for(Item i:items){
             buf.put(i.getItemID().getID());
-            buf.putFloat(i.getCoordinate().getPosX());
-            buf.putFloat(i.getCoordinate().getPosY());
-            buf.putFloat(i.getCoordinate().getDir());
+            buf.putFloat(i.getPos().getPosX());
+            buf.putFloat(i.getPos().getPosY());
+            buf.putFloat(i.getPos().getDir());
         }
         return makePacket((byte)0x03, buf);
     }

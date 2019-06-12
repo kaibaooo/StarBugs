@@ -173,6 +173,47 @@ public class Game{
             return attacker.getWeapon().getPoint();
         }
     }
+    
+    public void itemCollisionDetect(ServerUser player){
+        double r=80;
+        Iterator<Item> iter = itemList.iterator(); 
+        while(iter.hasNext()){
+            Item i = iter.next();
+            double x1 = i.getPos().getPosX();
+            double x2 = player.getPos().getPosX();
+            double y1 = i.getPos().getPosX();
+            double y2 = player.getPos().getPosX();
+
+            double result = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+            if(result<=2*r){
+                switch(i.getItemID()){
+                    case SWORD:
+                        player.addEquip(Equipment.SHORT_SWORD);
+                    break;
+                    case BOW:
+                        player.addEquip(Equipment.LONG_BOW);
+                    break;
+                    case ARMOR_LV1:
+                        player.addEquip(Equipment.ARMOR_LV1);
+                    break;
+                    case ARMOR_LV2:
+                        player.addEquip(Equipment.ARMOR_LV2);
+                    break;
+                    case ARMOR_LV3:
+                        player.addEquip(Equipment.ARMOR_LV3);
+                    break;
+                }
+                if(i.getItemID()==ItemID.POISON){
+                    if(player.getPoison()>=3){
+                        continue;
+                    }else{
+                        player.setPoison(player.getPoison()+1);
+                    }
+                }
+                iter.remove();
+            }
+        }
+    }
 }
 
 class MapUpdater extends TimerTask{
@@ -188,12 +229,16 @@ class MapUpdater extends TimerTask{
     public void run(){
         //Logger.log(this.map.getCurrentTick());
 
-        //TODO:Update items(Collision detect & arrow fly)
-        
-
-
+        //Update items(Collision detect & arrow fly?)
         Iterator<Map.Entry<Integer, ServerUser>> iter
             = game.getOnlinePlayers().entrySet().iterator();
+        while(iter.hasNext()){
+            ServerUser me = iter.next().getValue();
+            game.itemCollisionDetect(me);
+        }
+
+
+        iter = game.getOnlinePlayers().entrySet().iterator();
         while(iter.hasNext()){
             ServerUser me = iter.next().getValue();
             ClientHandler myHandler = me.getHandler();

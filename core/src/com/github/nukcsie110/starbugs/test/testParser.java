@@ -47,7 +47,7 @@ public class testParser{
         Logger.printBytes(updateGlobalItemPacket);
         Union parsedUpdateGlobalItem = Parser.toUnion(updateGlobalItemPacket);
         for(Item i: parsedUpdateGlobalItem.items){
-            Logger.println(i.getItemID()+" "+i.getCoordinate());
+            Logger.println(i.getItemID()+" "+i.getPos());
         }
 
         /*Logger.println("---Testing updateSinglePlayer parser---");
