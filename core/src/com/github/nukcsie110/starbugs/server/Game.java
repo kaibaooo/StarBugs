@@ -5,15 +5,16 @@ import java.util.*;
 
 import com.github.nukcsie110.starbugs.basic.*;
 import com.github.nukcsie110.starbugs.server.*;
+import com.github.nukcsie110.starbugs.packet.*;
 
 
 public class Game{
     private ServerState state;
-    public static final int MAX_PLAYER = 5;
+    public static final int MAX_PLAYER = 2;
     private GameMap map = new GameMap();
     protected final float maxTime = 6000;
     protected HashMap<Integer, ServerUser> playerList = new HashMap<Integer, ServerUser>();
-    //protected HashSet<Item> itemList = new HashSet<>();
+    protected HashSet<Item> itemList = new HashSet<Item>();
     private Random randGenerater = new Random();
     public Game(){
         state = ServerState.WAITTING;
@@ -27,6 +28,10 @@ public class Game{
     public boolean addPlayer(ServerUser player){
         if(this.state==ServerState.WAITTING && this.playerList.size()<this.MAX_PLAYER){
             this.playerList.put((int)player.getID(), player);
+            if(this.playerList.size()==this.MAX_PLAYER){
+                this.state=ServerState.GAMMING;
+                this.startGame();
+            }
             return true;
         }else{
             return false;
@@ -48,6 +53,11 @@ public class Game{
             Map.Entry<Integer, ServerUser> enrty = iter.next();
             enrty.getValue().getHandler().send(msg);
         }
+    }
+
+    private void startGame(){
+        byte[] startGamePacket = Parser.gameOver((byte)0xFF);
+        this.broadcast(startGamePacket);
     }
 
 }
