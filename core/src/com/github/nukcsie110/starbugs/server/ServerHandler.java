@@ -34,6 +34,7 @@ public class ServerHandler implements Handler {
 
             //Generate new id
             newPlayer.setID((int)(Math.random()*0x10000));
+            newPlayer.getPos().moveTo(1000,1000);
             clientKey.attach(newPlayer.getHandler());  
 
         } catch (IOException e) {  

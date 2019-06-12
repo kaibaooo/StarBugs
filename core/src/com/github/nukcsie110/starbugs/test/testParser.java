@@ -68,7 +68,7 @@ public class testParser{
         Logger.println(parsedUpdateSinglePlayer.player);
 
         Logger.println("---Testing updateYou parser---");
-        a = new User();
+        a = new ServerUser();
         a.setID(0x8787);
         a.getPos().moveTo(3.5f, 100.0001f);
         a.getPos().turnDir(87.45f);
