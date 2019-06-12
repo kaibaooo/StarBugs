@@ -143,6 +143,7 @@ public class LoadToGameScreen implements Screen {
                     }else{
                         Logger.log("Failed to join. Abort.");
                         game.setScreen(new TitleScreen(game));
+                        sound.stop();
                     }
                     break;
                 case 0x02:

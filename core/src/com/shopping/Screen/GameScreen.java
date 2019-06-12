@@ -1,8 +1,7 @@
 package com.shopping.Screen;
 //Online version
 //import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -31,10 +30,7 @@ import com.github.nukcsie110.starbugs.basic.Item;
 import com.github.nukcsie110.starbugs.basic.Coordinate;
 import com.badlogic.gdx.controllers.*;
 import com.shopping.Base.GameJudger;
-import java.util.TimerTask;
-import java.util.Timer;
 
-import java.util.Date;
 import java.util.ArrayList;
 //import com.shopping.Base.InputProcessing;
 
@@ -93,6 +89,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private float halfWindowWidth = Gdx.graphics.getWidth() / 2;
     private float halfWindowHeight = Gdx.graphics.getHeight() / 2;
     private ArrayList<Item> lst = new ArrayList<Item>();
+    private HashMap<Short, User> onlineUsers = new HashMap<Short, User>();
 
     private float timeSeconds = 0f;
     private float period = 1f;
@@ -136,7 +133,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     //Networking
     Client client;
     String playerID;
-    ArrayList nameTable;
+    ArrayList<User> nameTable;
 
     public GameScreen(Game aGame,
                       String Player,
@@ -161,6 +158,15 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         player = Player;
         playerID = pID;
         nameTable = passedNameTable;
+
+        for(User ele:nameTable){
+
+            onlineUsers.put(ele.getID(),new User(ele.getID(), ele.getName(), new Coordinate(0,0,0)));
+        }
+        for(int i = 0;i<5;i++){
+            User tmp  = new User(i,"a"+i,new Coordinate((float)(Math.random()*1000+1000),(float)(Math.random()*1000+1000),0));
+            onlineUsers.put((short)i, tmp);
+        }
 
         // camera
         camera = (OrthographicCamera) stage.getViewport().getCamera();
@@ -264,11 +270,12 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     break;
                 case 0x04:
                     enemy = ops.player;
+                    onlineUsers.get(enemy.getID()).getPos().setPosX(enemy.getPos().getPosX());
+                    onlineUsers.get(enemy.getID()).getPos().setPosY(enemy.getPos().getPosY());
+                    onlineUsers.get(enemy.getID()).getPos().setDir(enemy.getPos().getDir());
                     break;
                 case 0x05:
-//                  Logger.log("Recived updateNameTable");
                     mainPlayer = ops.player;
-//                    Logger.log("Pos : " + mainPlayer.getPos());
                     break;
                 case 0x10:
                     Logger.log("Game over");
@@ -521,20 +528,35 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private void drawItemsTest() {
         batch.begin();
         // 旋轉要除以縮放比例
-        // 物品放置
-        for (Item ele : lst) {
-            float deltaItemX = (ele.coordinate.getPosX() - currentX) / minAltitude;
-            float deltaItemY = (ele.coordinate.getPosY() - currentY) / minAltitude;
-            if (ele.coordinate.getPosX()-100 < currentX + halfWindowWidth * minAltitude
-                    && ele.coordinate.getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
-                if (ele.coordinate.getPosY()-100 < currentY + halfWindowHeight * minAltitude
-                        && ele.coordinate.getPosY()+100 > currentY - halfWindowHeight * minAltitude) {
-                    batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude,
-                            itemSprite.getOriginY() / minAltitude, itemSprite.getHeight() / minAltitude,
-                            itemSprite.getWidth() / minAltitude, 1, 1, 0);
+//        // 物品放置
+//        for (Item ele : lst) {
+//            float deltaItemX = (ele.coordinate.getPosX() - currentX) / minAltitude;
+//            float deltaItemY = (ele.coordinate.getPosY() - currentY) / minAltitude;
+//            if (ele.coordinate.getPosX()-100 < currentX + halfWindowWidth * minAltitude
+//                    && ele.coordinate.getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
+//                if (ele.coordinate.getPosY()-100 < currentY + halfWindowHeight * minAltitude
+//                        && ele.coordinate.getPosY()+100 > currentY - halfWindowHeight * minAltitude) {
+//                    batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude,
+//                            itemSprite.getOriginY() / minAltitude, itemSprite.getHeight() / minAltitude,
+//                            itemSprite.getWidth() / minAltitude, 1, 1, 0);
+//                }
+//            }
+//        }
+
+        for (short key : onlineUsers.keySet()) {
+            float deltaItemX = (onlineUsers.get(key).getPos().getPosX() - currentX) / minAltitude;
+            float deltaItemY = (onlineUsers.get(key).getPos().getPosY() - currentY) / minAltitude;
+            if (onlineUsers.get(key).getPos().getPosX()-100 < currentX + halfWindowWidth * minAltitude
+                    && onlineUsers.get(key).getPos().getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
+                if (onlineUsers.get(key).getPos().getPosY() - 100 < currentY + halfWindowHeight * minAltitude
+                        && onlineUsers.get(key).getPos().getPosY() + 100 > currentY - halfWindowHeight * minAltitude) {
+                    batch.draw(creeper, 800 + deltaItemX, 450 + deltaItemY, creeper.getOriginX() / minAltitude,
+                            creeper.getOriginY() / minAltitude, creeper.getHeight() / minAltitude,
+                            creeper.getWidth() / minAltitude, 0.3f, 0.3f, 0);
                 }
             }
         }
+
         batch.end();
     }
 
@@ -555,20 +577,6 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             deg = Math.toDegrees(ang) + 90;
         }
 
-//        double bigger = Math.max(oldDeg, deg);
-//        double smaller = Math.min(oldDeg, deg);
-//        double diffDeg;
-//        if(bigger - smaller - 180 >180){
-//            diffDeg = Math.abs((bigger - smaller - 180)-360);
-//        }
-//        else{
-//            diffDeg = Math.abs(bigger - smaller - 180);
-//        }
-//        Gdx.app.log("oldDeg", String.valueOf(oldDeg-90));
-//        Gdx.app.log("Deg", String.valueOf(deg-90));
-//        if (diffDeg > 10.0) {
-//            client.updateDirection((float) deg);
-//        }
         //predict
         oldDeg = deg;
 
@@ -584,23 +592,9 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
     private void drawEnemy() {
         batch.begin();
-        choosePlayerTexture();
+//        choosePlayerTexture();
 
-        float deltaItemX = (enemy.getPos().getPosX() - currentX) / minAltitude;
-        float deltaItemY = (enemy.getPos().getPosY() - currentY) / minAltitude;
-        if (enemy.getPos().getPosX()-100 < currentX + halfWindowWidth * minAltitude
-                && enemy.getPos().getPosX()+100 > currentX - halfWindowWidth * minAltitude) {
-            if (enemy.getPos().getPosY() - 100 < currentY + halfWindowHeight * minAltitude
-                    && enemy.getPos().getPosY() + 100 > currentY - halfWindowHeight * minAltitude) {
-                batch.draw(creeper, 800 + deltaItemX, 450 + deltaItemY, creeper.getOriginX() / minAltitude,
-                        creeper.getOriginY() / minAltitude, creeper.getHeight() / minAltitude,
-                        creeper.getWidth() / minAltitude, 1, 1, 0);
-            }
-        }
 
-//        batch.draw(creeper, halfWindowWidth, halfWindowHeight, character.getOriginX() / minAltitude,
-//                character.getOriginY() / minAltitude, character.getWidth() / minAltitude,
-//                character.getHeight() / minAltitude, 1, 1, (float) deg);
         batch.end();
     }
 
