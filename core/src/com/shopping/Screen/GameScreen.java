@@ -60,6 +60,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private Texture timerTexture;
     private Pixmap timerPixmap;
     private GameJudger judge;
+    private Timer timer;
     private AssetManager manager = new AssetManager();
     // controller
     boolean hasControllers;
@@ -151,6 +152,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         judge = new GameJudger();
         batch = new SpriteBatch();
         mainPlayer = new User();
+        timer = new Timer();
 
         // Networking
         client = passedClient;
@@ -260,7 +262,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                 case 0x05:
 //                  Logger.log("Recived updateNameTable");
                     mainPlayer = ops.player;
-                    Logger.log("Pos : " + mainPlayer.getPos());
+//                    Logger.log("Pos : " + mainPlayer.getPos());
                     break;
                 case 0x10:
                     Logger.log("Game over");
@@ -282,7 +284,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         //======================================
         networkUpdate();
         //======================================
-
+        timer.schedule(new updateDirSchedule(), 500);
         currentX = mainPlayer.getPos().getPosX();
         currentY = mainPlayer.getPos().getPosY();
         deg = mainPlayer.getPos().getDir();
@@ -369,6 +371,8 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         stage.dispose();
 
     }
+
+
 
     private void keyInProcessDebug() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
@@ -529,7 +533,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     }
 
     private void drawMainPlayer() {
-        oldDeg = deg;
+//        oldDeg = deg;
         double deltaX = Gdx.input.getX() - 800;
         double deltaY = 450 - Gdx.input.getY();
         float percentZ = Math.abs(percent - 0.5f) * 2;
@@ -538,17 +542,29 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         double dot = deltaX;
         double normalize = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         double ang = Math.acos(dot / normalize);
-        double deg = 0;
+        //double deg = 0;
         if (deltaY < 0) {
             deg = 360 - Math.toDegrees(ang) + 90;
         } else {
             deg = Math.toDegrees(ang) + 90;
         }
-        double diffDeg = Math.min(Math.abs(oldDeg - deg), 360-Math.abs(oldDeg - deg));
-        if (diffDeg > 10.0) {
-            client.updateDirection((float) deg);
-        }
-        deg = oldDeg;
+
+//        double bigger = Math.max(oldDeg, deg);
+//        double smaller = Math.min(oldDeg, deg);
+//        double diffDeg;
+//        if(bigger - smaller - 180 >180){
+//            diffDeg = Math.abs((bigger - smaller - 180)-360);
+//        }
+//        else{
+//            diffDeg = Math.abs(bigger - smaller - 180);
+//        }
+//        Gdx.app.log("oldDeg", String.valueOf(oldDeg-90));
+//        Gdx.app.log("Deg", String.valueOf(deg-90));
+//        if (diffDeg > 10.0) {
+//            client.updateDirection((float) deg);
+//        }
+        //predict
+        oldDeg = deg;
 
         character.rotate((float) deg);
         batch.begin();
@@ -1119,6 +1135,12 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         }
     }
 
+    class updateDirSchedule extends TimerTask{
+        public void run() {
+            Logger.log("Dir update" + oldDeg);
+            client.updateDirection((float) oldDeg);
+        }
+    }
     public class Bullet{
         private int TempBulletPositionX,TempBulletPositionY;
         private float TempBulletVelocityX,TempBulletVelocityY;
