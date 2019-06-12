@@ -27,10 +27,13 @@ import com.github.nukcsie110.starbugs.client.Client;
 import com.github.nukcsie110.starbugs.packet.Union;
 import com.github.nukcsie110.starbugs.util.Logger;
 import com.shopping.Base.InputProcessing;
+import com.github.nukcsie110.starbugs.basic.Item;
+import com.github.nukcsie110.starbugs.basic.Coordinate;
 import com.badlogic.gdx.controllers.*;
 import com.shopping.Base.GameJudger;
 import java.util.TimerTask;
 import java.util.Timer;
+
 import java.util.Date;
 import java.util.ArrayList;
 //import com.shopping.Base.InputProcessing;
@@ -125,14 +128,27 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
     //Networking
     Client client;
-    public GameScreen(Game aGame, String Player, AssetManager mng, Client passedClient) {
+    String playerID;
+    ArrayList nameTable;
+
+    public GameScreen(Game aGame,
+                      String Player,
+                      AssetManager mng,
+                      Client passedClient,
+                      String pID,
+                      ArrayList<User> passedNameTable) {
 
         game = aGame;
         stage = new Stage(new ScreenViewport());
         mapItem = new Stage(new ScreenViewport());
         judge = new GameJudger();
+
+        // Networking
         client = passedClient;
         player = Player;
+        playerID = pID;
+        nameTable = passedNameTable;
+
         batch = new SpriteBatch();
         manager = mng;
         maps = new Pixmap(Gdx.files.internal("assets/map/map.png"));
@@ -201,6 +217,8 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         {
             hasControllers = false;
         }
+
+
 
     }
 
@@ -503,12 +521,12 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         // 旋轉要除以縮放比例
         // 物品放置
         for (Item ele : lst) {
-            float deltaItemX = (ele.posX - currentX) / minAltitude;
-            float deltaItemY = (ele.posY - currentY) / minAltitude;
-            if (ele.posX < currentX + halfWindowWidth * minAltitude
-                    && ele.posX > currentX - halfWindowWidth * minAltitude) {
-                if (ele.posY < currentY + halfWindowHeight * minAltitude
-                        && ele.posY > currentY - halfWindowHeight * minAltitude) {
+            float deltaItemX = (ele.coordinate.getPosX() - currentX) / minAltitude;
+            float deltaItemY = (ele.coordinate.getPosY() - currentY) / minAltitude;
+            if (ele.coordinate.getPosX() < currentX + halfWindowWidth * minAltitude
+                    && ele.coordinate.getPosX() > currentX - halfWindowWidth * minAltitude) {
+                if (ele.coordinate.getPosY() < currentY + halfWindowHeight * minAltitude
+                        && ele.coordinate.getPosY() > currentY - halfWindowHeight * minAltitude) {
                     batch.draw(itemSprite, 800 + deltaItemX, 450 + deltaItemY, itemSprite.getOriginX() / minAltitude,
                             itemSprite.getOriginY() / minAltitude, itemSprite.getHeight() / minAltitude,
                             itemSprite.getWidth() / minAltitude, 1, 1, 0);
@@ -854,18 +872,22 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.NUM_1 && inventory[1] > 0) {
+            client.keyDown((byte)'1');
             inventoryChoose = 0;
             click.play();
         }
         if (keycode == Input.Keys.NUM_2 && inventory[1] > 0) {
+            client.keyDown((byte)'2');
             inventoryChoose = 1;
             click.play();
         }
         if (keycode == Input.Keys.NUM_3 && inventory[2] > 0) {
+            client.keyDown((byte)'3');
             inventoryChoose = 2;
             click.play();
         }
         if (keycode == Input.Keys.NUM_4 && inventory[3] > 0) {
+            client.keyDown((byte)'4');
             click.play();
             inventory[3]--;
             blood = (100 - blood) / 2 + blood;
@@ -886,6 +908,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT ) {
+            client.keyDown((byte)'L');
             if(inventory[2] == 1 && inventoryChoose == 2) {
                 double deltaX = Gdx.input.getX()-800;
                 double deltaY = 450 - Gdx.input.getY();
@@ -916,6 +939,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             return true;
         }
         if(button == Input.Buttons.RIGHT && inventory[2] == 1 && inventoryChoose == 2){
+            client.keyDown((byte)'R');
             if(minAltitude == 1.7f)
                 minAltitude = 2.7f;
             else
@@ -1072,21 +1096,6 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     @Override
     public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
         return false;
-    }
-
-
-    // ==================================
-    // |             Others             |
-    // ==================================
-    class Item {
-        public float posX;
-        public float posY;
-        Random rnd = new Random();
-
-        public Item() {
-            posX = rnd.nextInt(10000) + 500;
-            posY = rnd.nextInt(10000) + 500;
-        }
     }
 
     class attackDelay extends TimerTask {

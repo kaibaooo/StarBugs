@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import com.github.nukcsie110.starbugs.basic.User;
@@ -30,11 +31,14 @@ public class LoadToGameScreen implements Screen {
     SpriteBatch batch = new SpriteBatch();
     String user_name;
     Sound sound;
-    Client client;
 
+    //Networking
+    Client client;
     int currentOnlineUser;
     int maxPlayer;
     byte rank; // determine if the game start
+    String playerID;
+    ArrayList<User> nameTable;
     public LoadToGameScreen(Game aGame, String name, Client passedClient){
         sound = Gdx.audio.newSound(Gdx.files.internal("assets/sound/loading.mp3"));
 
@@ -46,7 +50,7 @@ public class LoadToGameScreen implements Screen {
         //Network
         client = passedClient;
         rank = 0x00;
-        currentOnlineUser = 0;
+        currentOnlineUser = -1;
         if(!name.equals("")){
             user_name = name;
         }
@@ -129,6 +133,7 @@ public class LoadToGameScreen implements Screen {
                     Logger.log("Recived joinReply");
                     if(ops.state==0){
                         Logger.log("My ID is: "+ops.player.getIDString());
+                        playerID = ops.player.getIDString();
                     }else{
                         Logger.log("Failed to join. Abort.");
                     }
@@ -137,6 +142,7 @@ public class LoadToGameScreen implements Screen {
                     Logger.log("Recived updateNameTable");
                     currentOnlineUser = ops.nameTable.size();
                     maxPlayer = ops.maxPlayer;
+                    nameTable = ops.nameTable;
                     Gdx.graphics.setTitle("STARBUGS Alpha 2.0, Waiting " + currentOnlineUser + " / " + maxPlayer);
                     for(User i:ops.nameTable){
                         Logger.log(i.getDisplayName());
@@ -144,8 +150,9 @@ public class LoadToGameScreen implements Screen {
                     break;
                 case 0x10:
                     Logger.log("Game over");
+                    Logger.log(ops.rank);
                     rank = ops.rank;
-                    client.close();
+//                    client.close();
                 default:
             }
         }
@@ -161,14 +168,14 @@ public class LoadToGameScreen implements Screen {
         batch.draw(cat,Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         cat.draw(batch);
         batch.end();
-        if(manager.update() && currentOnlineUser == maxPlayer) {
+        if(currentOnlineUser == -1&& manager.update()) {
             while(!client.isReady());
             client.join(user_name);
             Gdx.app.log("manager", "update");
-
+            currentOnlineUser = 0;
         }
-        if(rank == 0xFF){
-            game.setScreen(new GameScreen(game,user_name,manager, client));
+        if(rank == (byte)0xFF){
+            game.setScreen(new GameScreen(game,user_name,manager, client, playerID, nameTable));
             sound.stop();
         }
 
