@@ -255,7 +255,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
             ops = client.read();
             switch(ops.pkID){
                 case 0x01:
-                    Logger.log("Recived joinReply");
+//                    Logger.log("Recived joinReply");
                     if(ops.state==0){
                         Logger.log("My ID is: "+ops.player.getIDString());
                     }else{
@@ -263,20 +263,20 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
                     }
                     break;
                 case 0x02:
-                    Logger.log("Recived updateNameTable");
+//                    Logger.log("Recived updateNameTable");
                     for(User i:ops.nameTable){
                         Logger.log(i.getDisplayName());
                     }
                     break;
                 case 0x04:
-                    Logger.log("Recived updateSignalPlayer");
+//                    Logger.log("Recived updateSignalPlayer");
                     enemy = ops.player;
                     onlineUsers.get(enemy.getID()).getPos().setPosX(enemy.getPos().getPosX());
                     onlineUsers.get(enemy.getID()).getPos().setPosY(enemy.getPos().getPosY());
                     onlineUsers.get(enemy.getID()).getPos().setDir(enemy.getPos().getDir());
                     break;
                 case 0x05:
-                    Logger.log("Recived updateYou");
+//                    Logger.log("Recived updateYou");
                     mainPlayer = ops.player;
                     break;
                 case 0x10:
@@ -515,16 +515,6 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
             client.keyDown((byte)'E');
         }
-
-
-        // 切換高倍鏡
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            client.keyDown((byte)'S');
-            if (minAltitude == 1.7f)
-                minAltitude = 2.5f;
-            else
-                minAltitude = 1.7f;
-        }
     }
 
     private void drawItemsTest() {
@@ -578,7 +568,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
         } else {
             deg = Math.toDegrees(ang) + 90;
         }
-        Gdx.app.log("Degree:", String.valueOf(deg));
+//        Gdx.app.log("Degree:", String.valueOf(deg));
 
         //predict
         oldDeg = deg;
@@ -899,16 +889,50 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     private void attack(){
         for(short ele:onlineUsers.keySet()){
             // N
-            if(deg>=45 && deg<135){
+            if(deg>=135 && deg<225){
                 if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
-                    && onlineUsers.get(ele).getPos().getPosX()<currentX-50
-                    && onlineUsers.get(ele).getPos().getPosY()<currentY+50){
+                    && onlineUsers.get(ele).getPos().getPosX()>currentX-50
+                    && onlineUsers.get(ele).getPos().getPosY()<currentY+50
+                    && onlineUsers.get(ele).getPos().getPosY()>=currentY){
                     Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+
                 }
+                Logger.log("Attack N");
             }
             // S
+            else if(deg>=225 && deg<315){
+                if(onlineUsers.get(ele).getPos().getPosY()<currentY-50
+                        && onlineUsers.get(ele).getPos().getPosY()<currentY+50
+                        && onlineUsers.get(ele).getPos().getPosY()>currentX-50
+                        && onlineUsers.get(ele).getPos().getPosY()<=currentX){
+                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+                }
+                Logger.log("Attack W");
+            }
             // W
+            else if(deg>=315 && deg<405){
+                if(onlineUsers.get(ele).getPos().getPosX()<currentX+50
+                        && onlineUsers.get(ele).getPos().getPosX()<currentX-50
+                        && onlineUsers.get(ele).getPos().getPosY()>currentY-50
+                        && onlineUsers.get(ele).getPos().getPosY()<=currentY){
+                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+                }
+                Logger.log("Attack S");
+            }
             // E
+            else if(deg>=405 || deg<135){
+                if(onlineUsers.get(ele).getPos().getPosY()<currentY-50
+                        && onlineUsers.get(ele).getPos().getPosY()<currentY+50
+                        && onlineUsers.get(ele).getPos().getPosY()<currentX+50
+                        && onlineUsers.get(ele).getPos().getPosY()>=currentX){
+                    Logger.log("User ["+onlineUsers.get(ele).getName()+"] attacked");
+                    Logger.log(onlineUsers.get(ele).getPos().getPosX() + " " + onlineUsers.get(ele).getPos().getPosY());
+                }
+                Logger.log("Attack E");
+            }
         }
     }
     // ==================================
@@ -954,6 +978,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT ) {
             client.keyDown((byte)'L');
+            attack();
             if(inventory[2] == 1 && inventoryChoose == 2) {
                 double deltaX = Gdx.input.getX()-800;
                 double deltaY = 450 - Gdx.input.getY();
@@ -1157,7 +1182,7 @@ public class GameScreen implements Screen, InputProcessor, ControllerListener {
 
     class updateDirSchedule extends TimerTask{
         public void run() {
-            Logger.log("Dir update" + oldDeg);
+//            Logger.log("Dir update" + oldDeg);
             client.updateDirection((float) oldDeg);
         }
     }
