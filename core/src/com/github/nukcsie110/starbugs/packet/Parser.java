@@ -276,9 +276,9 @@ public class Parser{
     public static byte[] updateMap(GameMap target){
         ByteBuffer buf = ByteBuffer.allocate(29);
         buf.put((byte)(target.getCurrentPlayers()&0xFF));
-        buf.putFloat(target.getSaveZoneCenterPos().getPosX());
-        buf.putFloat(target.getSaveZoneCenterPos().getPosY());
-        buf.putFloat(target.getSaveZoneRadius());
+        buf.putFloat(target.getSaveZonePos().getPosX());
+        buf.putFloat(target.getSaveZonePos().getPosY());
+        buf.putFloat((float)target.getSaveZoneRadius());
         buf.putLong(target.getCurrentTick());
         buf.putLong(target.getNextSaveZoneTick());
 

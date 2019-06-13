@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 public class ClientHandler implements Handler {  
-    private final static int BUF_SIZE=102400;
+    private final static int BUF_SIZE=819200;
     private RecvBuffer recvBuf;
     private WriteBuffer writeBuf;
     private ServerUser player;

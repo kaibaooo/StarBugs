@@ -21,10 +21,8 @@ public class Game{
     public Game(){
         state = ServerState.WAITTING;
         map.setCurrentPlayers(0);
-        Coordinate newPos = new Coordinate(0,0,0);
-        newPos.setPosX((float)randGenerater.nextInt(5000) + 2500); 
-        newPos.setPosY((float)randGenerater.nextInt(5000) + 2500); 
-        map.setSaveZone(5000, newPos);
+        Coordinate newPos = new Coordinate(5900,5595,0);
+        map.setSaveZone(7312, newPos);
         map.setCurrentTick(0);
     }
     public boolean addPlayer(ServerUser player){
@@ -113,6 +111,10 @@ public class Game{
         //Reset state
         this.playerList.clear();
         this.map = new GameMap();
+        map.setCurrentPlayers(0);
+        Coordinate newPos = new Coordinate(5900,5595,0);
+        map.setSaveZone(7312, newPos);
+        map.setCurrentTick(0);
         this.state = ServerState.WAITTING;
         Logger.log("[Server] Game reseted");
     }
@@ -175,7 +177,7 @@ public class Game{
     }
     
     public void itemCollisionDetect(ServerUser player){
-        double r=50;
+        double r=80;
         Iterator<Item> iter = itemList.iterator(); 
         while(iter.hasNext()){
             Item i = iter.next();
@@ -183,7 +185,7 @@ public class Game{
             double x2 = player.getPos().getPosX();
             double y1 = i.getPos().getPosX();
             double y2 = player.getPos().getPosX();
-
+            
             double result = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
             if(result<=2*r){
                 switch(i.getItemID()){
@@ -194,14 +196,18 @@ public class Game{
                         player.addEquip(Equipment.LONG_BOW);
                     break;
                     case ARMOR_LV1:
-                        if(player.getArmor()!=Equipment.ARMOR_LV2 ||
+                        if(player.getArmor()!=Equipment.ARMOR_LV2 &&
                            player.getArmor()!=Equipment.ARMOR_LV3){
                             player.addEquip(Equipment.ARMOR_LV1);
+                        }else{
+                            continue;
                         }
                     break;
                     case ARMOR_LV2:
                         if(player.getArmor()!=Equipment.ARMOR_LV3){
                             player.addEquip(Equipment.ARMOR_LV2);
+                        }else{
+                            continue;
                         }
                     break;
                     case ARMOR_LV3:
@@ -243,6 +249,29 @@ class MapUpdater extends TimerTask{
             game.itemCollisionDetect(me);
         }
 
+        //Update map
+        double t = (double)map.getCurrentTick()/map.TICK_PER_SECOND;
+        if(t%102>=100){
+            map.setSaveZoneRadius(map.getSaveZoneRadius()-325.0/(2*map.TICK_PER_SECOND));
+        }
+
+        Logger.log(map.getSaveZoneRadius()+" "+t);
+
+        //If player outside of save zone
+        iter = game.getOnlinePlayers().entrySet().iterator();
+        while(iter.hasNext()){
+            ServerUser me = iter.next().getValue();
+            float x1 = map.getSaveZonePos().getPosX();
+            float y1 = map.getSaveZonePos().getPosY();
+            float x2 = me.getPos().getPosX();
+            float y2 = me.getPos().getPosY();
+            Logger.log(Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)));
+            if(Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)) > map.getSaveZoneRadius()){
+                if(map.getCurrentTick()%10==0){
+                    me.setBlood(me.getBlood()-1);
+                }
+            }
+        }
 
         iter = game.getOnlinePlayers().entrySet().iterator();
         while(iter.hasNext()){

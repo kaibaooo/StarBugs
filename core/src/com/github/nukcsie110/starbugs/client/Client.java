@@ -13,7 +13,7 @@ import java.util.*;
 
 
 public class Client extends Thread{
-    private static final int BUFFER_LEN = 102400;
+    private static final int BUFFER_LEN = 819200;
     private static final int SELECTOR_TIMEOUT = 1;
     private InetSocketAddress serverAddr; 
     private RecvBuffer recvBuf;
@@ -27,7 +27,7 @@ public class Client extends Thread{
     public Client(){
         this.recvBuf = new RecvBuffer(BUFFER_LEN);
         this.writeBuf = new WriteBuffer(BUFFER_LEN);
-        this.serverAddr = new InetSocketAddress("192.168.43.130", 8787);
+        this.serverAddr = new InetSocketAddress("127.0.0.1", 8787);
         this.ready = false;
         this.gameEnded = false;
     }

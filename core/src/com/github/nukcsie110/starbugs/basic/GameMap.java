@@ -2,7 +2,7 @@ package com.github.nukcsie110.starbugs.basic;
 
 public class GameMap{
     public static final int TICK_PER_SECOND = 50;
-    protected float saveZoneRadius = 0;
+    protected double saveZoneRadius = 0;
     protected Coordinate saveZoneCenterPos = new Coordinate(0,0,0);
     protected Long currentTick = 0l;
     protected Long nextSaveZoneTick = 0l;
@@ -14,17 +14,20 @@ public class GameMap{
     public float getLeftTime(){
         return (this.nextSaveZoneTick - this.currentTick)/this.TICK_PER_SECOND;
     }
-    public void setSaveZone(float newRadius, Coordinate newPos){
+    public void setSaveZone(double newRadius, Coordinate newPos){
         if(newRadius>=0){
             this.saveZoneCenterPos = newPos;
             this.saveZoneRadius = newRadius;
         }
     }
 
-    public float getSaveZoneRadius(){
+    public double getSaveZoneRadius(){
         return this.saveZoneRadius;
     }
-    public Coordinate getSaveZoneCenterPos(){
+    public void setSaveZoneRadius(double x){
+        this.saveZoneRadius = x;
+    }
+    public Coordinate getSaveZonePos(){
         return this.saveZoneCenterPos;
     }
 
